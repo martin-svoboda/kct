@@ -1,0 +1,78 @@
+stages:
+  - composer
+  - assets
+  - deploy
+
+variables:
+  PLUGIN_SLUG: kct
+
+cache:
+  paths:
+    - build/
+    - deps/
+    - vendor/
+
+composer:
+  stage: composer
+  image: composer:2.1.11
+  before_script:
+    - PATH=$(composer global config bin-dir --absolute --quiet):$PATH
+    - composer config -g cache-dir "$(pwd)/.composer-cache"
+    - composer global require wpify/scoper
+  script:
+    - composer install --no-dev --prefer-dist --optimize-autoloader --ignore-platform-reqs
+  only:
+    - tags
+
+assets:
+  stage: assets
+  image: node:14
+  script:
+    - npm install
+    - NODE_ENV=production npm run build
+  only:
+    - tags
+
+.deploy_template_wporg: &deploy_definition_wporg
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk update
+    - apk add subversion bash
+  script:
+    - ./bin/ci-deploy-wporg
+  only:
+    - tags
+
+.deploy_template_server: &deploy_definition_server
+  stage: deploy
+  image: alpine:latest
+  before_script:
+    - apk update
+    - apk add openssh-client bash rsync
+    - eval $(ssh-agent -s)
+    - echo "$PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan -t rsa "$SERVER_ADDR" >> ~/.ssh/known_hosts
+  script:
+    - ./bin/create-dist
+    - ./bin/ci-deploy-server
+
+deploy_production:
+  <<: *deploy_definition_wporg
+  environment:
+    name: production
+    url: https://www.wpify.io
+  only:
+    - tags
+
+deploy_staging:
+  <<: *deploy_definition_server
+  variables:
+    SERVER_PATH: $SERVER_PATH/$KCT_URL
+  environment:
+    name: staging
+    url: https://staging.wpify.io
+  only:
+    - master

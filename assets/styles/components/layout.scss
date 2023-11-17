@@ -1,0 +1,47 @@
+// Function to calculate column width
+@function calcColumnWidth($span) {
+  @return percentage($span / $columns);
+}
+
+// Mixin to create grid columns
+@mixin make-column($span: 1) {
+  flex: calcColumnWidth($span);
+  max-width: calcColumnWidth($span);
+  margin-right: $gutter;
+
+  &:last-child {
+	margin-right: 0;
+  }
+}
+
+.container {
+  width: 100%;
+  max-width: $container-width;
+  margin: 0 auto;
+  padding: 40px 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+
+  #secondary {
+	@media (min-width: $medium-screen) {
+	  max-width: 33%;
+	  flex: 0 0 auto;
+	  min-width: 250px;
+	}
+  }
+}
+
+.site-main {
+  @media (min-width: $medium-screen) {
+	flex: 1;
+  }
+}
+
+
+// Define classes for grid columns
+@for $i from 1 through $columns {
+  .col-#{$i} {
+	@include make-column($i);
+  }
+}

@@ -1,0 +1,20 @@
+{
+    "config": {
+        "platform-check": false,
+        "process-timeout": 1200
+    },
+    "require": {
+        "php": ">=7.3.0||^8.0.0",
+        "ext-json": "*",
+        "php-di/php-di": "^6.3",
+        "wpify/asset": "^1.2",
+        "wpify/custom-fields": "^3.0",
+        "wpify/model": "^4",
+        "wpify/plugin-utils": "^1.0",
+        "wpify/post-type": "^1.0",
+        "wpify/taxonomy": "^1.0",
+        "wpify/template": "^1.0",
+        "wpify/log": "^1.0",
+        "wpify/snippets": "^3.0"
+    }
+}

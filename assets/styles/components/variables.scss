@@ -1,0 +1,38 @@
+// Colors
+$primary-color: var(--primary-color, #0178A3);
+$secondary-color: var(--secondary-color, #1E3842 );
+$accent-color: #f39c12;
+$white-color: #ffffff;
+$text-color: $secondary-color;
+$link-color: $primary-color;
+$line-color: #DBDBDB;
+
+// Fonts
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@700&display=swap');
+
+$roboto-condensed: 'Roboto Condensed', sans-serif;
+$primary-font: 'Arial', sans-serif;
+$secondary-font: 'Times New Roman', serif;
+
+// Font sizes
+$base-font-size: 16px;
+$heading-1: 3rem;
+$heading-2: 2rem;
+$heading-3: 1.5rem;
+$heading-4: 1.2rem;
+$heading-5: 1rem;
+$heading-6: 0.8rem;
+
+// Breakpoints
+$small-screen: 576px;
+$medium-screen: 768px;
+$large-screen: 992px;
+$x-large-screen: 1200px;
+
+// Grid
+$columns: 12;
+$gutter: 20px;
+
+// Other values
+$border-radius: 5px;
+$container-width: 1240px;

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Create dist forlder
+mkdir -p ./dist/
+
+# Copy all relevant files from .rsyncinclude
+rsync -a --stats --include-from=.rsyncinclude --exclude="*" --exclude=".git" --delete-excluded ./ ./dist/

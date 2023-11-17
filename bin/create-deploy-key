@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+rm -f ./.ssh/id_rsa
+rm -f ./.ssh/id_rsa.pub
+mkdir -p ./.ssh
+ssh-keygen -m PEM -t rsa -P "" -C "wpify-ci@gitlab.com" -f ./.ssh/id_rsa

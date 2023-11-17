@@ -1,0 +1,29 @@
+{
+ "name": "kct",
+ "version": "1.0.0",
+ "scripts": {
+  "start": "wp-scripts start",
+  "hot": "wp-scripts start --hot",
+  "build": "wp-scripts build",
+  "packages-update": "wp-scripts packages-update"
+ },
+ "author": "WPify <info@wpify.io>",
+ "license": "GPL-2.0-or-later",
+ "engines": {
+  "node": ">=v14.17.6"
+ },
+ "sideEffects": [
+  "*.scss"
+ ],
+ "browserslist": [
+  "defaults",
+  "cover 97%"
+ ],
+ "devDependencies": {
+  "@wordpress/scripts": "^26.16.0",
+  "browser-sync": "^2.29.3",
+  "browser-sync-webpack-plugin": "^2.3.0",
+  "node-sass-glob-importer": "^5.3.3",
+  "svg-spritemap-webpack-plugin": "^4.5.0"
+ }
+}

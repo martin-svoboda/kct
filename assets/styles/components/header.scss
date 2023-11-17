@@ -1,0 +1,46 @@
+.site-header {
+  .container {
+	padding: 10px 20px;
+  }
+
+  .custom-logo-link {
+	flex: 0 0 auto;
+
+	img {
+	  max-width: 250px;
+	  max-height: 100px;
+	  height: auto;
+	  width: auto;
+	  display: block;
+	}
+  }
+
+  .site-header-right {
+	flex: 1;
+  }
+
+  .site-title {
+	font-family: $roboto-condensed;
+	font-size: $heading-2;
+	line-height: $heading-2;
+
+	a {
+	  text-decoration: none;
+	  color: $secondary-color;
+	}
+  }
+
+  .site-branding {
+	display: flex;
+	height: 60px;
+	align-content: center;
+	justify-content: space-between;
+	gap: 20px;
+	flex-wrap: wrap;
+	border-bottom: 1px solid $line-color;
+
+	& > * {
+	  margin-bottom: 0;
+	}
+  }
+}

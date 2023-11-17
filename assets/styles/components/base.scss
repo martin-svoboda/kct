@@ -1,0 +1,180 @@
+// Reset or Normalize
+@import 'normalize'; // Or include a reset CSS if desired
+
+// Box model and general styles
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $primary-font;
+  font-size: $base-font-size;
+  line-height: 1.7;
+  background: $white-color;
+  color: $secondary-color;
+}
+
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  clear: both;
+  line-height: normal;
+}
+
+h1 {
+  font-size: $heading-1;
+  font-family: $roboto-condensed;
+  /* Any other styles for h1 */
+}
+
+h2 {
+  font-size: $heading-2;
+  font-family: $roboto-condensed;
+  /* Any other styles for h2 */
+}
+
+h3 {
+  font-size: $heading-3;
+  font-family: $roboto-condensed;
+  /* Any other styles for h3 */
+}
+
+h4 {
+  font-size: $heading-4;
+  font-family: $primary-font;
+  /* Any other styles for h4 */
+}
+
+h5 {
+  font-size: $heading-5;
+  font-family: $primary-font;
+  /* Any other styles for h5 */
+}
+
+h6 {
+  font-size: $heading-6;
+  font-family: $primary-font;
+  /* Any other styles for h6 */
+}
+
+.font-primary {
+  font-family: $primary-font;
+}
+
+.font-secondary {
+  font-family: $secondary-font;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+dfn,
+cite,
+em,
+i {
+  font-style: italic;
+}
+
+blockquote {
+  margin: 0 1.5em;
+}
+
+address {
+  margin: 0 0 1.5em;
+}
+
+/* Links */
+a {
+  text-decoration: underline;
+  color: $link-color;
+  transition: all 0.3s;
+
+  &:hover {
+	filter: brightness(0.85);
+  }
+
+  &:focus {
+	outline: thin dotted;
+  }
+}
+
+/* Buttons */
+button, .button {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  text-decoration: none;
+  color: $white-color;
+  background-color: $primary-color;
+  height: 46px;
+  padding: 0 10px 0 15px;
+  text-transform: uppercase;
+  transition: all 0.3s;
+
+  &:hover, &:hover:after  {
+	filter: brightness(0.85);
+  }
+
+  &:before {
+	content: '';
+	position: absolute;
+	top: 0;
+	right: -20px;
+	background-color: $primary-color;
+	height: 100%;
+	width: 20px;
+	clip-path: polygon(0 0, 100% 50%, 0 100%,);
+  }
+  &:after {
+	content: '';
+	position: absolute;
+	top: 17px;
+	right: -20px;
+	background-color: $white-color;
+	height: 12px;
+	width: 16px;
+	clip-path: polygon(0 0, 70% 0, 100% 50%, 70% 100%, 0 100%,);
+  }
+}
+
+/* Lists */
+ul, ol {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding-left: 20px;
+}
+
+/* Elements */
+
+/* Make sure embeds and iframes fit their containers. */
+embed,
+iframe,
+object {
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+  max-width: 100%;
+}
+
+figure {
+  margin: 1em 0;
+}
+
+table {
+  margin: 0 0 1.5em;
+  width: 100%;
+}

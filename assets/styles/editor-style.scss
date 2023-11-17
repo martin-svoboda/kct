@@ -1,0 +1,31 @@
+@import "components/variables";
+@import "components/base";
+@import "components/layout";
+@import "components/header";
+@import "components/navigation";
+@import "components/gallery";
+@import "components/forms";
+@import "components/helpers";
+@import "components/accessibility";
+@import "components/gutenberg";
+@import "blocks/cover";
+@import "blocks/action";
+@import "blocks/infoboxes";
+
+
+.wp-block {
+  max-width: $container-width;
+}
+
+.wp-block[data-aligh=wide] {
+  max-width: $container-width;
+}
+
+.full-width {
+  width: 100%;
+  position: relative;
+  left: 0;
+  right: 0;
+  margin-left: 0;
+  margin-right: 0;
+}
