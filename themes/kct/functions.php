@@ -152,6 +152,9 @@ function kct_scripts() {
 }
 add_action( 'wp_enqueue_scripts', 'kct_scripts' );
 
+function kct_render($slug, $name = '', $data = array() ) {
+	kct_container()->get(KctDeps\Wpify\Template\WordPressTemplate::class)->print($slug, $name, $data);
+}
 /**
  * Implement the Custom Header feature.
  */

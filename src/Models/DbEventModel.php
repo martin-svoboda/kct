@@ -3,6 +3,7 @@
 namespace Kct\Models;
 
 use KctDeps\Wpify\Model\Attributes\Column;
+use KctDeps\Wpify\Model\Attributes\ReadOnlyProperty;
 use KctDeps\Wpify\Model\Model;
 
 /**
@@ -16,18 +17,21 @@ class DbEventModel extends Model {
 	public int $db_id = 0;
 
 	#[Column( type: Column::VARCHAR, params: 255 )]
+	public string $date= '';
+
+	#[Column( type: Column::VARCHAR, params: 255 )]
 	public string $title = '';
 
 	#[Column( type: Column::INT )]
 	public float $year = 0;
 
-	#[Column( type: Column::TEXT )]
+	#[Column( type: Column::VARCHAR, params: 255 )]
 	public string $place = '';
 
 	#[Column( type: Column::VARCHAR, params: 255 )]
 	public string $district = '';
 
-	#[Column( type: Column::TEXT )]
+	#[Column( type: Column::VARCHAR, params: 255 )]
 	public string $web = '';
 
 	#[Column( type: Column::VARCHAR, params: 255 )]
@@ -46,13 +50,21 @@ class DbEventModel extends Model {
 	public array $finish = array();
 
 	#[Column( type: Column::TEXT )]
-	public string $description = '';
+	public string $content = '';
+
+	#[Column( type: Column::TEXT )]
+	public array $contact = array();
 
 	#[Column( type: Column::JSON, nullable: true )]
 	public array $details = array();
 
 	#[Column( type: Column::JSON, nullable: true )]
-	public array $images = array();
+	public array $image = array();
 
+	#[ReadOnlyProperty]
+	public string $permalink = '';
 
+	public function get_permalink() {
+		return home_url( sprintf( 'akce/%s', $this->db_id ) );
+	}
 }

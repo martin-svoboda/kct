@@ -9,7 +9,29 @@
 @import "components/helpers";
 @import "components/accessibility";
 @import "components/gutenberg";
+@import "components/eventpost";
 @import "blocks/cover";
 @import "blocks/action";
 @import "blocks/infoboxes";
+
+.events {
+  margin-bottom: 3rem;
+
+  .event {
+	border-bottom: 1px solid $line-color;
+	color: $secondary-color;
+
+	&:hover {
+	  filter: none;
+	  background: $light-gray-color;
+	}
+
+	.date {
+	  .date-number {
+		font-size: $heading-3;
+		font-family: $roboto-condensed;
+	  }
+	}
+  }
+}
 

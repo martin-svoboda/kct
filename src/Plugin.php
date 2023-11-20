@@ -4,6 +4,7 @@ namespace Kct;
 
 use Kct\Managers\ApiManager;
 use Kct\Managers\BlocksManager;
+use Kct\Managers\FeaturesManager;
 use Kct\Managers\PostTypesManager;
 use Kct\Managers\RepositoryManager;
 use Kct\Managers\SnippetsManager;
@@ -12,6 +13,7 @@ final class Plugin {
 	public function __construct(
 		RepositoryManager $repository_manager,
 		ApiManager $api_manager,
+		FeaturesManager $features_manager,
 		BlocksManager $blocks_manager,
 		PostTypesManager $post_types_manager,
 		SnippetsManager $snippets_manager,
