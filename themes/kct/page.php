@@ -21,9 +21,6 @@ $no_bottom_padding = get_post_meta( get_the_ID(), 'no-bottom-padding', true ) ?:
 		<main id="primary" class="site-main">
 
 			<?php
-			echo '<pre>';
-			var_dump(get_query_var( 'db_id' ));
-			echo '</pre>';
 			while ( have_posts() ) :
 				the_post();
 

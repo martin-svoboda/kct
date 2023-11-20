@@ -23,11 +23,11 @@ class Events {
 	}
 
 	public function add_rewrite_rules() {
-		add_rewrite_rule( 'akce/([a-z0-9-]+)[/]?$', 'index.php?db_id=$matches[1]', 'top' );
+		add_rewrite_rule( 'akce-db/([a-z0-9-]+)[/]?$', 'index.php?db_id=$matches[1]', 'top' );
 	}
 
 	public function add_query_vars( $query_vars ) {
-		$query_vars[] = 'bd_id';
+		$query_vars[] = 'db_id';
 
 		return $query_vars;
 	}
@@ -44,6 +44,7 @@ class Events {
 	 */
 	public function import_db_events() {
 		$xml = file_get_contents( 'https://akcekct.kct-db.cz/export/akceexport1.php' );
+		//$xml = file_get_contents( 'https://akcekct.kct-db.cz/export/akceexport1x.php' );
 		$xml = mb_convert_encoding( $xml, 'UTF-8' );
 		$xml = json_decode( json_encode( simplexml_load_string( $xml ) ), true );
 
@@ -84,6 +85,7 @@ class Events {
 			$db_event->content    = isset( $xml_event['note'] ) && ! empty( $xml_event['note'] ) ? $xml_event['note'] : '';
 			$db_event->contact    = isset( $xml_event['contact'] ) && ! empty( $xml_event['contact'] ) ? (array) $xml_event['contact'] : [];
 			$db_event->details    = isset( $xml_event['detail'] ) && ! empty( $xml_event['detail'] ) ? (array) $xml_event['detail'] : [];
+			$db_event->proposal   = isset( $xml_event['proposal'] ) && ! empty( $xml_event['proposal'] ) ? (array) $xml_event['proposal'] : [];
 
 			$image = array();
 
@@ -146,5 +148,37 @@ class Events {
 		usort( $events, fn( $a, $b ) => strtotime( $a['date'] ) - strtotime( $b['date'] ) );
 
 		return $events;
+	}
+
+	/**
+	 * Get all events
+	 *
+	 * @return array
+	 * @throws KeyNotFoundException
+	 * @throws PrimaryKeyException
+	 * @throws RepositoryNotInitialized
+	 * @throws SqlException
+	 * @throws \ReflectionException
+	 */
+	public function get_event( $id, $bd_id ) {
+		var_dump( [ $id, $bd_id ] );
+
+		$post_data     = [];
+		$event_db_data = [];
+		if ( $id ) {
+			$post      = $this->event_repository->get( $id );
+			$post_data = $post->to_array();
+			$bd_id     = ! $bd_id && $post->db_id ? $post->db_id : 0;
+			dump( $post->title );
+			dump( $post_data );
+		}
+		if ( $bd_id ) {
+			$event_db      = $this->db_event_repository->get_by_db_id( (int) $bd_id );
+			$event_db_data = $event_db->to_array();
+		}
+		//dump($event);
+		echo '<h2>AA</h2>';
+
+		return array_merge( $event_db_data, $post_data );
 	}
 }

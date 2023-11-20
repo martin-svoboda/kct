@@ -20,27 +20,106 @@ class EventPostType extends AbstractCustomPostType {
 
 	public function setup() {
 		$this->wcf->create_metabox( array(
-			'id'         => 'akce',
-			'title'      => __( 'Detail akce', 'kct' ),
+			'id'         => 'data',
+			'title'      => __( 'Data akce', 'kct' ),
 			'post_types' => array( $this->get_post_type_key() ),
 			'context'    => 'advanced',
 			'priority'   => 'high',
 			'items'      => array(
 				array(
-					'type'  => 'text',
-					'id'    => 'isbn',
-					'title' => __( 'ISBN', 'kct' ),
-				),
-				array(
-					'type'  => 'text',
-					'id'    => 'author_name',
-					'title' => __( 'Author', 'kct' ),
+					'type'  => 'number',
+					'id'    => 'db_id',
+					'title' => __( 'ID akce z kct-db', 'kct' ),
+					'desc'  => __( 'ID akce z centrální Databáze turistických akcí KČT pro spárování dat', 'kct' ),
 				),
 				array(
 					'type'  => 'number',
-					'id'    => 'rating',
-					'title' => __( 'Rating', 'kct' ),
+					'id'    => 'year',
+					'title' => __( 'Ročník', 'kct' ),
 				),
+				array(
+					'type'  => 'text',
+					'id'    => 'place',
+					'title' => __( 'Místo akce', 'kct' ),
+				),
+				array(
+					'type'  => 'text',
+					'id'    => 'district',
+					'title' => __( 'Okres', 'kct' ),
+				),
+				array(
+					'id'    => 'start',
+					'type'  => 'group',
+					'title' => __( 'Start', 'kct' ),
+					'items' => array(
+						array(
+							'type'  => 'date',
+							'id'    => 'date',
+							'title' => __( 'Datum startu', 'kct' ),
+						),
+						array(
+							'type'  => 'text',
+							'id'    => 'time',
+							'title' => __( 'Čas startu', 'kct' ),
+						),
+						array(
+							'type'  => 'text',
+							'id'    => 'place',
+							'title' => __( 'Místo startu', 'kct' ),
+						),
+					)
+				),
+				array(
+					'id'    => 'finish',
+					'type'  => 'group',
+					'title' => __( 'Cíl', 'kct' ),
+					'items' => array(
+						array(
+							'type'  => 'date',
+							'id'    => 'date',
+							'title' => __( 'Datum cíle', 'kct' ),
+						),
+						array(
+							'type'  => 'text',
+							'id'    => 'time',
+							'title' => __( 'Čas cíle', 'kct' ),
+						),
+						array(
+							'type'  => 'text',
+							'id'    => 'place',
+							'title' => __( 'Místo cíle', 'kct' ),
+						),
+					)
+				),
+				array(
+					'id'      => 'contact',
+					'type'    => 'multi_group',
+					'title'   => __( 'Kontakty', 'kct' ),
+					'buttons' => array( 'add' => __( 'Přidat kontakt', 'kct' ) ),
+					'items'   => array(
+						array(
+							'type'  => 'text',
+							'id'    => 'person',
+							'title' => __( 'Osoba (Jméno a příjmení)', 'kct' ),
+						),
+						array(
+							'type'  => 'text',
+							'id'    => 'address',
+							'title' => __( 'Adresa', 'kct' ),
+						),
+						array(
+							'type'  => 'text',
+							'id'    => 'phone',
+							'title' => __( 'Telefon', 'kct' ),
+						),
+						array(
+							'type'  => 'text',
+							'id'    => 'email',
+							'title' => __( 'E-mail', 'kct' ),
+						),
+					)
+				),
+
 			),
 		) );
 	}
@@ -70,7 +149,7 @@ class EventPostType extends AbstractCustomPostType {
 				'title',
 				'editor',
 				'revisions',
-				'excerpt',
+				//'excerpt',
 				'thumbnail',
 				'custom-fields'
 			),

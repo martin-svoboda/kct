@@ -17,7 +17,7 @@ class DbEventModel extends Model {
 	public int $db_id = 0;
 
 	#[Column( type: Column::VARCHAR, params: 255 )]
-	public string $date= '';
+	public string $date = '';
 
 	#[Column( type: Column::VARCHAR, params: 255 )]
 	public string $title = '';
@@ -61,10 +61,13 @@ class DbEventModel extends Model {
 	#[Column( type: Column::JSON, nullable: true )]
 	public array $image = array();
 
+	#[Column( type: Column::JSON, nullable: true )]
+	public array $proposal = array();
+
 	#[ReadOnlyProperty]
 	public string $permalink = '';
 
 	public function get_permalink() {
-		return home_url( sprintf( 'akce/%s', $this->db_id ) );
+		return home_url( sprintf( 'akce-db/%s', $this->db_id ) );
 	}
 }

@@ -18,11 +18,7 @@ get_header();
 	<main id="primary" class="site-main container">
 
 		<?php
-		echo '<pre>';
-		var_dump(get_query_var( 'db_id' ));
-		echo '</pre>';
-		global $wp;
-		if ( str_starts_with($wp->request, 'akce') && $_GET['db_id'] ) {
+		if ( get_query_var( 'db_id' ) ) {
 			get_template_part( 'template-parts/content', 'akce' );
 		} elseif ( is_404() ) {
 			get_template_part( 'template-parts/content', '404' );
