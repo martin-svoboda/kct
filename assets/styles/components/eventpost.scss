@@ -7,7 +7,6 @@
 	background-color: $line-color;
 	position: relative;
 	padding-bottom: 2rem;
-	margin-bottom: -3rem;
 
 	&.large {
 	  padding-top: 20vw;
@@ -36,6 +35,7 @@
 
   .infoboxes {
 	z-index: 2;
+	margin-top: -3rem;
   }
 
   .event-content-wrap {

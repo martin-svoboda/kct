@@ -137,14 +137,17 @@ class Events {
 	 * @throws \ReflectionException
 	 */
 	public function get_events(): array {
+		// Získání všech databázových akcí
 		$db_events = $this->db_event_repository->find_all();
 
+		// Data převedeme na array
 		$events = array();
 		/** @var DbEventModel $db_event */
 		foreach ( $db_events as $key => $db_event ) {
 			$events[ $key ] = $db_event->to_array();
 		}
 
+		// Akce seřadíme podle data
 		usort( $events, fn( $a, $b ) => strtotime( $a['date'] ) - strtotime( $b['date'] ) );
 
 		return $events;
@@ -161,24 +164,31 @@ class Events {
 	 * @throws \ReflectionException
 	 */
 	public function get_event( $id, $bd_id ) {
-		var_dump( [ $id, $bd_id ] );
 
 		$post_data     = [];
 		$event_db_data = [];
+
+		// získání dat z custom post type pokud jsou
 		if ( $id ) {
 			$post      = $this->event_repository->get( $id );
 			$post_data = $post->to_array();
-			$bd_id     = ! $bd_id && $post->db_id ? $post->db_id : 0;
-			dump( $post->title );
 			dump( $post_data );
+			$bd_id     = empty( $bd_id ) && ! empty( $post->db_id ) ? $post->db_id : $bd_id;
 		}
+
+		// Získání dat z databázové akce pokud jsou
 		if ( $bd_id ) {
 			$event_db      = $this->db_event_repository->get_by_db_id( (int) $bd_id );
 			$event_db_data = $event_db->to_array();
 		}
-		//dump($event);
-		echo '<h2>AA</h2>';
 
-		return array_merge( $event_db_data, $post_data );
+		// Sloučení dat
+		$event = [];
+		foreach ( $post_data as $key => $value ) {
+			$event[ $key ] = !empty( $value ) ? $value : ( $event_db_data[ $key ] ?? null );
+		}
+		dump( $event );
+
+		return $event;
 	}
 }

@@ -60,7 +60,7 @@ class EventModel extends Post {
 //	public string $content;
 
 	public function get_date() {
-		return isset( $this->start ) && $this->start['date'] ? $this->start['date'] : '';
+		return isset( $this->start ) && !empty( $this->start ) && $this->start['date'] ? $this->start['date'] : '';
 	}
 
 //	public function to_array( array $props = array(), array $recursive = array() ): array {
