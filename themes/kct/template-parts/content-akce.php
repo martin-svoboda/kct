@@ -13,7 +13,7 @@ $event       = kct_container()->get( \Kct\Features\Events::class )->get_event( g
 var_dump( get_the_ID() );
 var_dump( $db_event_id );
 dump( kct_container()->get( \Kct\Repositories\EventRepository::class )->get_by_id( get_the_ID() ) );
-dump( kct_container()->get( \Kct\Repositories\EventRepository::class )->get( get_the_ID() ) );
+dump( kct_container()->get( \Kct\Repositories\EventRepository::class )->get( get_the_ID() )->to_array() );
 
 $image_url = '';
 if ( isset( $event['image'] ) && $event['image'] ) {
