@@ -10,6 +10,8 @@
 $db_event_id = get_query_var( 'db_id' ) ?? '';
 $event       = kct_container()->get( \Kct\Features\Events::class )->get_event( get_the_ID(), $db_event_id );
 
+var_dump( get_the_ID() );
+var_dump( $db_event_id );
 dump( kct_container()->get( \Kct\Repositories\EventRepository::class )->get_by_id( get_the_ID() ) );
 dump( kct_container()->get( \Kct\Repositories\EventRepository::class )->get( get_the_ID() ) );
 
