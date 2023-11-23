@@ -10,6 +10,9 @@
 $db_event_id = get_query_var( 'db_id' ) ?? '';
 $event       = kct_container()->get( \Kct\Features\Events::class )->get_event( get_the_ID(), $db_event_id );
 
+dump( kct_container()->get( \Kct\Repositories\EventRepository::class )->get_by_id( get_the_ID() ) );
+dump( kct_container()->get( \Kct\Repositories\EventRepository::class )->get( get_the_ID() ) );
+
 $image_url = '';
 if ( isset( $event['image'] ) && $event['image'] ) {
 	$image_url = $event['image']['url'];
@@ -135,11 +138,16 @@ if ( isset( $event['image'] ) && $event['image'] ) {
 				kct_post_thumbnail();
 			}
 			if ( isset( $event['details'] ) && ! empty( $event['details'] ) ) :
+				if ( isset( $event['details']['name'] ) && ! is_array( reset( $event['details'] ) ) ) {
+					$event['details'] = [ $event['details'] ];
+				}
+
 				$details = [];
 				foreach ( $event['details'] as $detail ) {
 					$text      = $detail['name'] . ( $detail['km'] ? ': ' . $detail['km'] : '' );
-					$details[] = sprintf( '<img src="%s" title="%s" width="30" height="30"> %s', $detail['icon'], $detail['name'], $text );;
+					$details[] = sprintf( '<img src="%s" title="%s" width="30" height="30"> %s', $detail['icon'], $detail['name'], $text );
 				}
+
 
 				if ( $details ) {
 					echo '<ul>';
@@ -158,13 +166,13 @@ if ( isset( $event['image'] ) && $event['image'] ) {
 				}
 				for ( $k = 0; $k < $contacts; $k ++ ) {
 					$input_data = array(
-							'person' => ! isset( $event['contact']['person'] ) ? '' : ( is_array( $event['contact']['person'] ) ? $event['contact']['person'][ $k ] : $event['contact']['person'] ),
-							'street' => ! isset( $event['contact']['street'] ) ? '' : ( is_array( $event['contact']['street'] ) ? $event['contact']['street'][ $k ] : $event['contact']['street'] ),
-							'zip'    => ! isset( $event['contact']['zip'] ) ? '' : ( is_array( $event['contact']['zip'] ) ? $event['contact']['zip'][ $k ] : $event['contact']['zip'] ),
-							'town'   => ! isset( $event['contact']['town'] ) ? '' : ( is_array( $event['contact']['town'] ) ? $event['contact']['town'][ $k ] : $event['contact']['town'] ),
-							'phone'  => ! isset( $event['contact']['phone'] ) ? '' : ( is_array( $event['contact']['phone'] ) ? $event['contact']['phone'][ $k ] : $event['contact']['phone'] ),
-							'email'  => ! isset( $event['contact']['email'] ) ? '' : ( is_array( $event['contact']['email'] ) ? $event['contact']['email'][ $k ] : $event['contact']['email'] ),
-							'web'    => ! isset( $event['contact']['web'] ) ? '' : ( is_array( $event['contact']['web'] ) ? $event['contact']['web'][ $k ] : $event['contact']['web'] ),
+							'person' => ! isset( $event['contact']['person'] ) ? '' : ( is_array( $event['contact']['person'] ) && isset( $event['contact']['person'][ $k ] ) ? $event['contact']['person'][ $k ] : $event['contact']['person'] ),
+							'street' => ! isset( $event['contact']['street'] ) ? '' : ( is_array( $event['contact']['street'] ) && isset( $event['contact']['street'][ $k ] ) ? $event['contact']['street'][ $k ] : $event['contact']['street'] ),
+							'zip'    => ! isset( $event['contact']['zip'] ) ? '' : ( is_array( $event['contact']['zip'] ) && isset( $event['contact']['zip'][ $k ] ) ? $event['contact']['zip'][ $k ] : $event['contact']['zip'] ),
+							'town'   => ! isset( $event['contact']['town'] ) ? '' : ( is_array( $event['contact']['town'] ) && isset( $event['contact']['town'][ $k ] ) ? $event['contact']['town'][ $k ] : $event['contact']['town'] ),
+							'phone'  => ! isset( $event['contact']['phone'] ) ? '' : ( is_array( $event['contact']['phone'] ) && isset( $event['contact']['phone'][ $k ] ) ? $event['contact']['phone'][ $k ] : $event['contact']['phone'] ),
+							'email'  => ! isset( $event['contact']['email'] ) ? '' : ( is_array( $event['contact']['email'] ) && isset( $event['contact']['email'][ $k ] ) ? $event['contact']['email'][ $k ] : $event['contact']['email'] ),
+							'web'    => ! isset( $event['contact']['web'] ) ? '' : ( is_array( $event['contact']['web'] ) && isset( $event['contact']['web'][ $k ] ) ? $event['contact']['web'][ $k ] : $event['contact']['web'] ),
 					);
 
 					$data = [];

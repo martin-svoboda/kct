@@ -35,6 +35,7 @@ class EventsBlock {
 	}
 
 	public function render( array $block_attributes, string $content ) {
+		$block_attributes['count'] = 5;
 		return $this->template->render( 'blocks/events', null, $block_attributes );
 	}
 }

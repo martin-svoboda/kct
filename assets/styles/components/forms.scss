@@ -1,14 +1,9 @@
-button,
 input[type="button"],
 input[type="reset"],
 input[type="submit"] {
-  border: 1px solid;
-  border-color: #ccc #ccc #bbb;
-  border-radius: 3px;
-  background: #e6e6e6;
-  color: rgba(0, 0, 0, 0.8);
-  line-height: 1;
-  padding: 0.6em 1em 0.4em;
+  border: 1px solid transparent;
+  border-radius: 3px 0 0 3px;
+
 }
 
 button:hover,

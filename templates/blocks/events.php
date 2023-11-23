@@ -8,10 +8,15 @@ if ( empty( ABSPATH ) ) {
  * @var $args array Template arguments
  */
 
+$count = $args['count'];
+
 // Get events
 $events_feature = kct_container()->get( \Kct\Features\Events::class );
 $events         = $events_feature->get_events();
-$events         = array_slice( $events, 0, 5 );
+
+if ( $count ) {
+	$events = array_slice( $events, 0, $count );
+}
 
 ?>
 <div class="events">
