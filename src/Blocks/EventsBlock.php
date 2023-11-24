@@ -36,6 +36,7 @@ class EventsBlock {
 
 	public function render( array $block_attributes, string $content ) {
 		$block_attributes['count'] = 5;
+		$block_attributes['time_period'] = 'future';
 		return $this->template->render( 'blocks/events', null, $block_attributes );
 	}
 }

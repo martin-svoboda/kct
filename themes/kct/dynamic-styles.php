@@ -1,8 +1,8 @@
 <?php
-header('Content-Type: text/css'); // Set header for CSS
+header( 'Content-Type: text/css' ); // Set header for CSS
 
 // Your dynamic colors retrieved from PHP
-$primary_color = '#0178A3';
+$primary_color   = get_theme_mod( 'primary_color', '#0178A3' );
 $secondary_color = '#1E3842';
 
 // Output SCSS with PHP variables

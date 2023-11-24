@@ -63,11 +63,14 @@ class EventModel extends Post {
 		return isset( $this->start ) && !empty( $this->start ) && $this->start['date'] ? $this->start['date'] : '';
 	}
 
-//	public function to_array( array $props = array(), array $recursive = array() ): array {
-//		$data              = parent::to_array( $props, $recursive );
-//		$data['title']     = $this->title;
-//		$data['image']     = $this->featured_image_id;
-//
-//		return $data;
-//	}
+	public function to_array( array $props = array(), array $recursive = array() ): array {
+		$data              = parent::to_array( $props, $recursive );
+		if ($this->featured_image) {
+			$data['image']     = array(
+				'url' => $this->featured_image->get_permalink(),
+			);
+		}
+
+		return $data;
+	}
 }

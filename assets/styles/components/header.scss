@@ -34,13 +34,41 @@
 	display: flex;
 	height: 60px;
 	align-content: center;
+	align-items: center;
 	justify-content: space-between;
 	gap: 20px;
 	flex-wrap: wrap;
 	border-bottom: 1px solid $line-color;
+	padding-bottom: 5px;
 
 	& > * {
 	  margin-bottom: 0;
+	}
+  }
+}
+
+.main-navigation {
+
+  ul {
+	li {
+	  a {
+		padding: 10px;
+		text-decoration: none;
+		color: inherit;
+		border-top: 2px solid transparent;
+
+		&:hover {
+		  color: $primary-color;
+		  border-color: $line-color;
+		}
+
+	  }
+	}
+  }
+  .current-menu-item {
+	a {
+	  font-weight: bold;
+	  border-color: $primary-color;
 	}
   }
 }

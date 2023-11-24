@@ -15,6 +15,7 @@ get_header();
 		<main id="primary" class="site-main">
 			<?php
 			$block_attributes['count'] = 0;
+			$block_attributes['time_period'] = '';
 			kct_container()->get( KctDeps\Wpify\Template\WordPressTemplate::class )->print( 'blocks/events', null, $block_attributes );
 			?>
 		</main><!-- #main -->

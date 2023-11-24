@@ -36,8 +36,8 @@ class Settings {
 	public function setup() {
 		$this->wcf->create_options_page( array(
 			'parent_slug' => 'options-general.php',
-			'page_title'  => __( 'Kct Settings', 'kct' ),
-			'menu_title'  => __( 'Kct', 'kct' ),
+			'page_title'  => __( 'Nastavení funkcí KČT', 'kct' ),
+			'menu_title'  => __( 'KČT', 'kct' ),
 			'menu_slug'   => self::KEY,
 			'capability'  => 'manage_options',
 			'items'       => array(
@@ -46,19 +46,25 @@ class Settings {
 					'type'  => 'group',
 					'items' => array(
 						array(
-							'title' => __( 'Some URL', 'wp-plugin' ),
-							'id'    => 'some_url',
-							'type'  => 'url',
+							'id'      => 'add_style',
+							'type'    => 'html',
+							'content' => '<style>.forminp input[type=number].small-text {width:200px}</style>',
 						),
 						array(
-							'title' => __( 'Some HTML', 'wp-plugin' ),
-							'id'    => 'some_html',
-							'type'  => 'wysiwyg',
+							'title' => __( 'Kalendář akcí z centrální DB', 'wp-plugin' ),
+							'type'  => 'title',
 						),
 						array(
-							'title' => __( 'Multi attachments', 'wp-plugin' ),
-							'id'    => 'some_attachments',
-							'type'  => 'multi_attachment',
+							'title' => __( 'Načítat akce z DB KČT', 'wp-plugin' ),
+							'label' => __( 'Načítat akce z centrální Databáce akcí KČT', 'wp-plugin' ),
+							'id'    => 'load_db_events',
+							'type'  => 'toggle',
+						),
+						array(
+							'title' => __( 'Kód oblasti / odboru', 'wp-plugin' ),
+							'desc' => __( 'Filtrovat akce jen pro konkrétní oblast (3 číslice) nebo odbor (6 číslic). 0 = vše.', 'wp-plugin' ),
+							'id'    => 'filter_events_by_department',
+							'type'  => 'number',
 						),
 					),
 				),

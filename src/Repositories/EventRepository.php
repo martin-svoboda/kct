@@ -14,8 +14,12 @@ use KctDeps\Wpify\Model\PostRepository;
  * @method EventModel get( $object = null )
  */
 class EventRepository extends PostRepository {
-	static function post_type(): string {
+	public function post_type(): string {
 		return EventPostType::KEY;
+	}
+
+	public function post_types(): array {
+		return array( $this->post_type() );
 	}
 
 	/**
@@ -25,28 +29,21 @@ class EventRepository extends PostRepository {
 		return EventModel::class;
 	}
 
-	/**
-	 * Get event by feed ID
-	 *
-	 * @param int $db_id XML feed ID
-	 *
-	 * @return EventModel|null
-	 * @throws KeyNotFoundException
-	 * @throws PrimaryKeyException
-	 * @throws RepositoryNotInitialized
-	 * @throws SqlException
-	 * @throws \ReflectionException
-	 */
-	public function get_by_id( int $id ): ?EventModel {
-		$args = array(
-			'post__in' => [ $id ],
-		);
+	public function find_all_published_by_date( $date_from = '', $date_to = '' ) {
+		$date_query = [];
+		$args       = [];
 
-		$items = $this->find( $args );
-		if ( ! empty( $items ) ) {
-			return $items[0];
+		if ( $date_from ) {
+			$date_query['after'] = strtotime( $date_from );
+		}
+		if ( $date_to ) {
+			$date_query['before'] = strtotime( $date_to );
 		}
 
-		return null;
+		if ( $date_query ) {
+			$args = array( 'date_query' => $date_query );
+		}
+
+		return $this->find_published( $args );
 	}
 }

@@ -10,10 +10,6 @@
 $db_event_id = get_query_var( 'db_id' ) ?? '';
 $event       = kct_container()->get( \Kct\Features\Events::class )->get_event( get_the_ID(), $db_event_id );
 
-var_dump( get_the_ID() );
-var_dump( $db_event_id );
-dump( kct_container()->get( \Kct\Repositories\EventRepository::class )->get_by_id( get_the_ID() ) );
-dump( kct_container()->get( \Kct\Repositories\EventRepository::class )->get( get_the_ID() )->to_array() );
 
 $image_url = '';
 if ( isset( $event['image'] ) && $event['image'] ) {
@@ -122,11 +118,21 @@ if ( isset( $event['image'] ) && $event['image'] ) {
 			<?php
 			//dump( $event['to']_array() );
 			echo $event['content'];
+			$gps_n = '';
+			$gps_e = '';
+			if ( ( isset( $event['start'] ) && ! empty( $event['start']['gps_n'] ) && ! empty( $event['start']['gps_e'] ) ) ) {
+				$gps_n = $event['start']['gps_n'];
+				$gps_e = $event['start']['gps_e'];
+			}
+			if ( ! $gps_n && ! $gps_e && ( isset( $event['finish'] ) && ! empty( $event['finish']['gps_n'] ) && ! empty( $event['finish']['gps_e'] ) ) ) {
+				$gps_n = $event['finish']['gps_n'];
+				$gps_e = $event['finish']['gps_e'];
+			}
 
-			if ( ( isset( $event['start'] ) && ! empty( $event['start']['gps_n'] ) && ! empty( $event['start']['gps_e'] ) ) ) { ?>
+			if ( $gps_n && $gps_e ) { ?>
 				<div>
 					<iframe style="border:none"
-							src="https://frame.mapy.cz/?x=<?= $event['start']['gps_e'] ?>&y=<?= $event['start']['gps_n'] ?>&z=13"
+							src="https://frame.mapy.cz/?x=<?= $gps_e ?>&y=<?= $gps_n ?>&z=13"
 							width="800" height="400" frameborder="0"></iframe>
 				</div>
 			<?php } ?>

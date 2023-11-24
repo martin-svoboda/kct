@@ -3,8 +3,11 @@
 namespace Kct\Features;
 
 use Kct\Models\DbEventModel;
+use Kct\Models\EventModel;
 use Kct\Repositories\DbEventRepository;
 use Kct\Repositories\EventRepository;
+use Kct\Repositories\SettingsRepository;
+use Kct\Settings;
 use KctDeps\Wpify\Model\Exceptions\KeyNotFoundException;
 use KctDeps\Wpify\Model\Exceptions\PrimaryKeyException;
 use KctDeps\Wpify\Model\Exceptions\RepositoryNotInitialized;
@@ -12,11 +15,17 @@ use KctDeps\Wpify\Model\Exceptions\SqlException;
 
 class Events {
 
+	public $db;
+
 	public function __construct(
 		private DbEventRepository $db_event_repository,
-		private EventRepository $event_repository
+		private EventRepository $event_repository,
+		private SettingsRepository $settings
 	) {
-//		add_action( 'init', array( $this, 'import_db_events' ) );
+		global $wpdb;
+		$this->db = $wpdb;
+
+		//add_action( 'init', array( $this, 'import_db_events' ) );
 		add_action( 'init', array( $this, 'add_rewrite_rules' ) );
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
 
@@ -43,14 +52,18 @@ class Events {
 	 * @throws \ReflectionException
 	 */
 	public function import_db_events() {
-		$xml = file_get_contents( 'https://akcekct.kct-db.cz/export/akceexport1.php' );
-		//$xml = file_get_contents( 'https://akcekct.kct-db.cz/export/akceexport1x.php' );
+		//$xml = file_get_contents( 'https://akcekct.kct-db.cz/export/akceexport1.php' );
+		$xml = file_get_contents( 'https://akcekct.kct-db.cz/export/akceexport1x.php' );
 		$xml = mb_convert_encoding( $xml, 'UTF-8' );
 		$xml = json_decode( json_encode( simplexml_load_string( $xml ) ), true );
 
 		if ( ! $xml ) {
 			return;
 		}
+
+		// filtr z nastavení
+		$filter_val = $this->settings->get_option( 'filter_events_by_department' );
+		$filter_by  = $this->get_filter_by( $filter_val );
 
 		foreach ( $xml['event'] as $xml_event ) {
 			// Skip deleted events
@@ -60,6 +73,16 @@ class Events {
 
 			// Skip empty events
 			if ( ( empty( $xml_event['name'] ) ) && ( empty( $xml_event['start'] ) ) ) {
+				continue;
+			}
+
+			if (
+				// pokud je nastaven fltr, přeskočit akce jemu neodpovídající
+				$filter_by && (
+					( 'region' === $filter_by && $filter_val != $xml_event['region'] ) ||
+					( 'department' === $filter_by && $filter_val != $xml_event['department'] )
+				)
+			) {
 				continue;
 			}
 
@@ -90,14 +113,27 @@ class Events {
 			$image = array();
 
 			if ( isset( $xml_event['photo'] ) && is_array( $xml_event['photo'] ) ) {
-				foreach ( $xml_event['photo'] as $photo ) {
-					if ( $photo['mainfoto'] !== 'Y' || ! isset( $photo['url'] ) ) {
-						continue;
+				if ( is_array( reset( $xml_event['photo'] ) ) ) {
+					foreach ( $xml_event['photo'] as $photo ) {
+						if (
+							$photo['mainfoto'] !== 'Y' ||
+							! isset( $photo['url'] )
+						) {
+							continue;
+						}
+
+						$image = array(
+							'url'    => $photo['url'],
+							'author' => $photo['author'] ?? '',
+							'title'  => $photo['description'] ?? '',
+						);
 					}
+
+				} else {
 					$image = array(
-						'url'    => $photo['url'],
-						'author' => $photo['author'] ?? '',
-						'title'  => $photo['description'] ?? '',
+						'url'    => $xml_event['photo']['url'],
+						'author' => $xml_event['photo']['author'] ?? '',
+						'title'  => $xml_event['photo']['description'] ?? '',
 					);
 				}
 			}
@@ -136,15 +172,52 @@ class Events {
 	 * @throws SqlException
 	 * @throws \ReflectionException
 	 */
-	public function get_events(): array {
-		// Získání všech databázových akcí
-		$db_events = $this->db_event_repository->find_all();
+	public function get_events( $date_from = '', $date_to = '' ): array {
+		// Získání všech akcí
+		$post_events = $this->event_repository->find_all_published_by_date( $date_from, $date_to );
+		$db_events   = $this->db_event_repository->find_all_by_date( $date_from, $date_to );
+		$to_exclude  = [];
 
-		// Data převedeme na array
+		// filtr z nastavení
+		$filter_val = $this->settings->get_option( 'filter_events_by_department' );
+		$filter_by  = $this->get_filter_by( $filter_val );
+
+		// Data CPT akcí převedeme na array a případně sloučíme se spárovanýni akcemi z DB
 		$events = array();
+		/** @var EventModel $post_event */
+		foreach ( $post_events as $post_event ) {
+			$post_data = $post_event->to_array();
+
+			if ( $post_event->db_id ) {
+				$event_db      = $this->db_event_repository->get_by_db_id( (int) $post_event->db_id );
+				$event_db_data = $event_db->to_array();
+				$event         = [];
+				foreach ( $post_data as $key => $value ) {
+					$event[ $key ] = ! empty( $value ) ? $value : ( $event_db_data[ $key ] ?? null );
+				}
+				$events[]     = $event;
+				$to_exclude[] = $event_db->db_id;
+			} else {
+				$events[] = $post_data;
+			}
+		}
+
+		// Data zbylích DB akcí převedeme na array a přidáme do pole akcí
 		/** @var DbEventModel $db_event */
-		foreach ( $db_events as $key => $db_event ) {
-			$events[ $key ] = $db_event->to_array();
+		foreach ( $db_events as $db_event ) {
+			if (
+				// Přeskočit akce sloučené s CPT
+				in_array( $db_event->db_id, $to_exclude ) ||
+				// pokud je nastaven fltr, přeskočit akce jemu neodpovídající
+				$filter_by && (
+					( 'region' === $filter_by && $filter_val != $db_event->region ) ||
+					( 'department' === $filter_by && $filter_val != $db_event->department )
+				)
+			) {
+				continue;
+			}
+
+			$events[] = $db_event->to_array();
 		}
 
 		// Akce seřadíme podle data
@@ -154,7 +227,7 @@ class Events {
 	}
 
 	/**
-	 * Get all events
+	 * Get event
 	 *
 	 * @return array
 	 * @throws KeyNotFoundException
@@ -164,15 +237,13 @@ class Events {
 	 * @throws \ReflectionException
 	 */
 	public function get_event( $id, $bd_id ) {
-
 		$post_data     = [];
 		$event_db_data = [];
 
 		// získání dat z custom post type pokud jsou
-		if ( $id ) {
+		if ( $id && get_post_type( $id ) == $this->event_repository->post_type() ) {
 			$post      = $this->event_repository->get( $id );
 			$post_data = $post->to_array();
-			dump( $post_data );
 			$bd_id     = empty( $bd_id ) && ! empty( $post->db_id ) ? $post->db_id : $bd_id;
 		}
 
@@ -182,13 +253,35 @@ class Events {
 			$event_db_data = $event_db->to_array();
 		}
 
+
 		// Sloučení dat
 		$event = [];
-		foreach ( $post_data as $key => $value ) {
-			$event[ $key ] = !empty( $value ) ? $value : ( $event_db_data[ $key ] ?? null );
+		if ( $post_data && $event_db_data ) {
+			foreach ( $post_data as $key => $value ) {
+				if ( in_array( $key, array( 'start', 'finish' ) ) && empty( $value['date'] ) ) {
+					$value = null;
+				}
+
+				$event[ $key ] = ! empty( $value ) ? $value : ( $event_db_data[ $key ] ?? null );
+			}
+		} else {
+			$event = $post_data ?: $event_db_data;
 		}
-		dump( $event );
 
 		return $event;
+	}
+
+	public function get_filter_by( $filter_value ) {
+		if ( ! $filter_value ) {
+			return '';
+		}
+
+		$numlength = strlen( (string) $filter_value );
+
+		return match ( $numlength ) {
+			3 => 'region',
+			6 => 'department',
+			default => '',
+		};
 	}
 }

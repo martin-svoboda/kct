@@ -8,11 +8,14 @@ if ( empty( ABSPATH ) ) {
  * @var $args array Template arguments
  */
 
-$count = $args['count'];
+$count       = $args['count'];
+$time_period = $args['time_period'];
 
+$date_from = $time_period == 'future' ? current_time( 'Y-m-d' ) : null;
+$date_to   = $time_period == 'past' ? current_time( 'Y-m-d' ) : null;
 // Get events
 $events_feature = kct_container()->get( \Kct\Features\Events::class );
-$events         = $events_feature->get_events();
+$events         = $events_feature->get_events( $date_from, $date_to );
 
 if ( $count ) {
 	$events = array_slice( $events, 0, $count );

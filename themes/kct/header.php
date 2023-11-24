@@ -16,9 +16,19 @@
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="profile" href="https://gmpg.org/xfn/11">
-	<link rel="stylesheet" type="text/css" href="<?= get_stylesheet_directory_uri() ?>/dynamic-styles.php">
 
 	<?php wp_head(); ?>
+
+	<style>
+		<?php
+		$primary_color   = get_theme_mod( 'primary_color', '#0178A3' );
+		$secondary_color = '#1E3842';
+		?>
+		:root {
+			--primary-color: <?= $primary_color ?>;
+			--secondary-color: <?= $secondary_color ?>;
+		}
+	</style>
 </head>
 
 <body <?php body_class(); ?>>
@@ -52,6 +62,13 @@
 						?>
 						<p class="site-description"><?php echo $kct_description; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							?></p>
+					<?php endif;
+					$secondary_logo = get_theme_mod( 'secondary_logo', '' );
+					if ( $secondary_logo ) :
+						$images = get_stylesheet_directory_uri() . '/images';
+						?>
+						<img src="<?php printf( '%s/logo_%s.png', $images, $secondary_logo ); ?>"
+							 class="secondary-logo">
 					<?php endif; ?>
 				</div><!-- .site-branding -->
 

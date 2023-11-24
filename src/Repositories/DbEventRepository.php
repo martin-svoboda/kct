@@ -8,6 +8,7 @@ use KctDeps\Wpify\Model\Exceptions\KeyNotFoundException;
 use KctDeps\Wpify\Model\Exceptions\PrimaryKeyException;
 use KctDeps\Wpify\Model\Exceptions\RepositoryNotInitialized;
 use KctDeps\Wpify\Model\Exceptions\SqlException;
+use KctDeps\Wpify\Model\Interfaces\ModelInterface;
 
 /**
  * @method DbEventModel create()
@@ -61,4 +62,29 @@ class DbEventRepository extends CustomTableRepository {
 		return null;
 	}
 
+	/**
+	 * Get all events by date
+	 *
+	 * @param $date_from
+	 * @param $date_to
+	 *
+	 * @return ModelInterface[]
+	 * @throws KeyNotFoundException
+	 * @throws PrimaryKeyException
+	 * @throws RepositoryNotInitialized
+	 * @throws SqlException
+	 * @throws \ReflectionException
+	 */
+	public function find_all_by_date( $date_from = '', $date_to = '' ) {
+		if ( ! $date_from ) {
+			$date_from = '2023-01-01';
+		}
+		$query = $this->db()->prepare( 'date >= %s', $date_from );
+
+		if ( $date_to ) {
+			$query .= $this->db()->prepare( ' AND date <= %s', $date_to );
+		}
+
+		return $this->find_all( [ 'where' => $query ] );
+	}
 }
