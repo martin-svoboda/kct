@@ -70,4 +70,20 @@ class DbEventModel extends Model {
 	public function get_permalink() {
 		return home_url( sprintf( 'akce-db/%s', $this->db_id ) );
 	}
+
+	public function to_array( array $props = array(), array $recursive = array() ): array {
+		$data = parent::to_array( $props, $recursive );
+
+		$data['lng'] = '';
+		$data['lat'] = '';
+		if ( ( isset( $data['start'] ) && ! empty( $data['start']['gps_n'] ) && ! empty( $data['start']['gps_e'] ) ) ) {
+			$data['lng'] = $data['start']['gps_e'];
+			$data['lat'] = $data['start']['gps_n'];
+		} elseif (  isset( $data['finish'] ) && ! empty( $data['finish']['gps_n'] ) && ! empty( $data['finish']['gps_e'] ) ) {
+			$data['lng'] = $data['finish']['gps_e'];
+			$data['lat'] = $data['finish']['gps_n'];
+		}
+
+		return $data;
+	}
 }

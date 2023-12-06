@@ -41,6 +41,10 @@ class Frontend {
 //			'script_after'  => 'console.log("script after plugin")',
 //		) );
 		$this->asset_factory->wp_script( $this->utils->get_plugin_path( 'build/plugin.css' ) );
+		$this->asset_factory->wp_script( $this->utils->get_plugin_path( 'build/events.js' ), array(
+			'script_after'  => 'console.log("events app loaded")',
+			'in_footer'     => true,
+		) );
 //		$this->asset_factory->theme( 'style.css' );
 //		$this->asset_factory->parent_theme( 'style.css' );
 //		$this->asset_factory->url( $this->utils->get_plugin_url( 'js/test.js' ) );

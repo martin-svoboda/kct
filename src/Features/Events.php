@@ -31,10 +31,29 @@ class Events {
 
 	}
 
+	/**
+	 * Adds a custom rewrite rule for the given database ID.
+	 *
+	 * This method adds a rewrite rule that matches the URL pattern 'akce-db/([a-z0-9-]+)[/]?$',
+	 * and maps it to the query string 'index.php?db_id=$matches[1]'. The rule is added to the top
+	 * of the rewrite rules list.
+	 *
+	 * @return void
+	 */
 	public function add_rewrite_rules() {
 		add_rewrite_rule( 'akce-db/([a-z0-9-]+)[/]?$', 'index.php?db_id=$matches[1]', 'top' );
 	}
 
+	/**
+	 * Adds a custom query variable for the database ID.
+	 *
+	 * This method adds the 'db_id' query variable to the given array of query variables.
+	 * This allows the database ID to be used in the query string of the URL.
+	 *
+	 * @param array $query_vars An array of query variables.
+	 *
+	 * @return array The updated array of query variables with 'db_id' added.
+	 */
 	public function add_query_vars( $query_vars ) {
 		$query_vars[] = 'db_id';
 
@@ -42,14 +61,21 @@ class Events {
 	}
 
 	/**
-	 * Import events from KČT DB
+	 * Imports events from a remote database.
+	 *
+	 * This method retrieves event data from a remote database through an XML API.
+	 * The XML is converted to UTF-8 encoding, parsed into a PHP array, and then processed.
+	 * The XML URL and filter settings are retrieved from the plugin's settings.
+	 *
+	 * The method iterates over each event in the XML data and performs the following steps:
+	 * - Skips deleted events.
+	 * - Skips empty events.
+	 * - Filters events based on the specified filter settings.
+	 * - Retrieves a saved event or creates a new one.
+	 * - Sets the event data based on the XML data.
+	 * - Saves the event to the local database.
 	 *
 	 * @return void
-	 * @throws KeyNotFoundException
-	 * @throws PrimaryKeyException
-	 * @throws RepositoryNotInitialized
-	 * @throws SqlException
-	 * @throws \ReflectionException
 	 */
 	public function import_db_events() {
 		//$xml = file_get_contents( 'https://akcekct.kct-db.cz/export/akceexport1.php' );
@@ -62,8 +88,12 @@ class Events {
 		}
 
 		// filtr z nastavení
-		$filter_val = $this->settings->get_option( 'filter_events_by_department' );
-		$filter_by  = $this->get_filter_by( $filter_val );
+		$filter_val = $this->settings->get_option( 'id_code' );
+		if ( ! $filter_val ) {
+			return;
+		}
+
+		$filter_by  = $this->settings->code_type();
 
 		foreach ( $xml['event'] as $xml_event ) {
 			// Skip deleted events
@@ -146,7 +176,16 @@ class Events {
 	}
 
 	/**
-	 * Import event types from KČT DB
+	 * Imports the event types from the given URL.
+	 *
+	 * This method imports the event types from the provided URL. It makes a GET request to the URL
+	 * and retrieves an XML file. The XML file is parsed and converted to an associative array using
+	 * the `simplexml_load_file()` function. If the XML file is not loaded successfully, the method
+	 * returns and no further processing is done.
+	 *
+	 * The XML data array is dumped using the `dump()` function, and then the script execution is terminated
+	 * using the `die()` function. This is done for debugging purposes and can be removed in a production
+	 * environment.
 	 *
 	 * @return void
 	 */
@@ -163,14 +202,17 @@ class Events {
 	}
 
 	/**
-	 * Get all events
+	 * Retrieves all events within the specified date range.
 	 *
-	 * @return array
-	 * @throws KeyNotFoundException
-	 * @throws PrimaryKeyException
-	 * @throws RepositoryNotInitialized
-	 * @throws SqlException
-	 * @throws \ReflectionException
+	 * This method retrieves all events by calling the `find_all_published_by_date` method on the
+	 * `$event_repository` object for custom post type events, and the `find_all_by_date` method on
+	 * the `$db_event_repository` object for events from the database. The retrieved events are then
+	 * filtered based on the settings, and merged into a single array.
+	 *
+	 * @param string $date_from The start date of the range. Default is an empty string.
+	 * @param string $date_to   The end date of the range. Default is an empty string.
+	 *
+	 * @return array An array of events within the specified date range.
 	 */
 	public function get_events( $date_from = '', $date_to = '' ): array {
 		// Získání všech akcí
@@ -179,8 +221,8 @@ class Events {
 		$to_exclude  = [];
 
 		// filtr z nastavení
-		$filter_val = $this->settings->get_option( 'filter_events_by_department' );
-		$filter_by  = $this->get_filter_by( $filter_val );
+		$filter_val = $this->settings->get_option( 'id_code' );
+		$filter_by  = $this->settings->code_type();
 
 		// Data CPT akcí převedeme na array a případně sloučíme se spárovanýni akcemi z DB
 		$events = array();
@@ -227,14 +269,17 @@ class Events {
 	}
 
 	/**
-	 * Get event
+	 * Retrieves event data based on the provided ID and database ID.
 	 *
-	 * @return array
-	 * @throws KeyNotFoundException
-	 * @throws PrimaryKeyException
-	 * @throws RepositoryNotInitialized
-	 * @throws SqlException
-	 * @throws \ReflectionException
+	 * This method retrieves event data from the custom post type if the ID is valid
+	 * and the post type matches. It also retrieves event data from the database event
+	 * if the database ID is provided. The retrieved data is merged together into a single
+	 * array and returned.
+	 *
+	 * @param int    $id    The event ID.
+	 * @param string $bd_id The database ID.
+	 *
+	 * @return array The event data array.
 	 */
 	public function get_event( $id, $bd_id ) {
 		$post_data     = [];
@@ -269,19 +314,5 @@ class Events {
 		}
 
 		return $event;
-	}
-
-	public function get_filter_by( $filter_value ) {
-		if ( ! $filter_value ) {
-			return '';
-		}
-
-		$numlength = strlen( (string) $filter_value );
-
-		return match ( $numlength ) {
-			3 => 'region',
-			6 => 'department',
-			default => '',
-		};
 	}
 }

@@ -10,9 +10,10 @@ const config = {
   entry: {
 		'theme': ['./assets/scripts/theme.js', './assets/styles/theme.scss'],
 		'plugin': ['./assets/scripts/plugin.js', './assets/styles/plugin.scss'],
-		'block-editor': './assets/scripts/block-editor.js',
-		'editor-style': './assets/styles/editor-style.scss'
-	},
+	  'events': ['./assets/apps/events/app.jsx'],
+	  'block-editor': './assets/scripts/block-editor.js',
+	  'editor-style': './assets/styles/editor-style.scss',
+  },
   output: {
     path: 'build',
   },

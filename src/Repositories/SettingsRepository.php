@@ -8,10 +8,12 @@ class SettingsRepository {
 	private $options = [];
 
 	/**
-	 * @param string $key
-	 * @param null   $default
+	 * Retrieves the value of the specified option.
 	 *
-	 * @return string|array
+	 * @param string $key     The option key to retrieve.
+	 * @param mixed  $default (optional) The default value to return if the option key does not exist. Default is null.
+	 *
+	 * @return mixed The value of the specified option, or the default value if the option key does not exist.
 	 */
 	public function get_option( $key = '', $default = null ) {
 		if ( ! $this->options ) {
@@ -26,9 +28,9 @@ class SettingsRepository {
 	}
 
 	/**
-	 * Get all options
+	 * Retrieves the options from the database.
 	 *
-	 * @return array|mixed
+	 * @return array The options from the database, or an empty array if no options exist.
 	 */
 	public function get_options() {
 		if ( ! $this->options ) {
@@ -36,5 +38,25 @@ class SettingsRepository {
 		}
 
 		return $this->options;
+	}
+
+	/**
+	 * Determines the type of code based on its length.
+	 *
+	 * @return string The code type. Possible values are 'region', 'department', or an empty string.
+	 */
+	public function code_type() {
+		$code = $this->get_option( 'id_code' );
+		if ( ! $code ) {
+			return '';
+		}
+
+		$numlength = strlen( (string) $code );
+
+		return match ( $numlength ) {
+			3 => 'region',
+			6 => 'department',
+			default => '',
+		};
 	}
 }

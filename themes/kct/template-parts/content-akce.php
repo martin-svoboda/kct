@@ -118,21 +118,11 @@ if ( isset( $event['image'] ) && $event['image'] ) {
 			<?php
 			//dump( $event['to']_array() );
 			echo $event['content'];
-			$gps_n = '';
-			$gps_e = '';
-			if ( ( isset( $event['start'] ) && ! empty( $event['start']['gps_n'] ) && ! empty( $event['start']['gps_e'] ) ) ) {
-				$gps_n = $event['start']['gps_n'];
-				$gps_e = $event['start']['gps_e'];
-			}
-			if ( ! $gps_n && ! $gps_e && ( isset( $event['finish'] ) && ! empty( $event['finish']['gps_n'] ) && ! empty( $event['finish']['gps_e'] ) ) ) {
-				$gps_n = $event['finish']['gps_n'];
-				$gps_e = $event['finish']['gps_e'];
-			}
 
-			if ( $gps_n && $gps_e ) { ?>
+			if ( $event['lng'] && $event['lat'] ) { ?>
 				<div>
 					<iframe style="border:none"
-							src="https://frame.mapy.cz/?x=<?= $gps_e ?>&y=<?= $gps_n ?>&z=13"
+							src="https://frame.mapy.cz/?x=<?= $event['lng'] ?>&y=<?= $event['lat'] ?>&z=13"
 							width="800" height="400" frameborder="0"></iframe>
 				</div>
 			<?php } ?>

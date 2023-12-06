@@ -2,11 +2,11 @@
 
 namespace Kct\Managers;
 
-use Kct\Api\ExampleApi;
+use Kct\Api\EventsApi;
 
 final class ApiManager {
 	public function __construct(
-		ExampleApi $example_api
+		EventsApi $events_api
 	) {
 	}
 }

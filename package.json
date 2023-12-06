@@ -25,5 +25,12 @@
   "browser-sync-webpack-plugin": "^2.3.0",
   "node-sass-glob-importer": "^5.3.3",
   "svg-spritemap-webpack-plugin": "^4.5.0"
+ },
+ "dependencies": {
+  "@wordpress/api-fetch": "^6.43.0",
+  "react": "^18.2.0",
+  "react-datepicker": "^4.23.0",
+  "react-dom": "^18.2.0",
+  "wpify-mapy-cz": "^1.1.4"
  }
 }
