@@ -2,7 +2,7 @@
 
 namespace Kct\PostTypes;
 
-use Kct\Taxonomies\PublisherTaxonomy;
+use Kct\Taxonomies\EventTypeTaxonomy;
 use KctDeps\Wpify\CustomFields\CustomFields;
 use KctDeps\Wpify\PostType\AbstractCustomPostType;
 
@@ -119,6 +119,24 @@ class EventPostType extends AbstractCustomPostType {
 						),
 					)
 				),
+				array(
+					'id'      => 'details',
+					'type'    => 'multi_group',
+					'title'   => __( 'Detaily (tipy) akce', 'kct' ),
+					'buttons' => array( 'add' => __( 'Přidat typ akce', 'kct' ) ),
+					'items'   => array(
+						array(
+							'type'  => 'select',
+							'id'    => 'type',
+							'title' => __( 'Typ akce', 'kct' ),
+						),
+						array(
+							'type'  => 'text',
+							'id'    => 'km',
+							'title' => __( 'Trasa (kilometry)', 'kct' ),
+						),
+					)
+				),
 
 			),
 		) );
@@ -137,7 +155,7 @@ class EventPostType extends AbstractCustomPostType {
 			'labels'             => $this->generate_labels( $singular, $plural ),
 			'public'             => true,
 			'hierarchical'       => false,
-			'taxonomies'         => array( PublisherTaxonomy::KEY ),
+			'taxonomies'         => array( EventTypeTaxonomy::KEY ),
 			'publicly_queryable' => true,
 			'show_ui'            => true,
 			'show_in_menu'       => true,
@@ -154,5 +172,21 @@ class EventPostType extends AbstractCustomPostType {
 				'custom-fields'
 			),
 		);
+	}
+
+	public function get_post_type_options() {
+		$event_types = get_option( 'event_types' );
+
+		if ( ! $event_types ) {
+			return [];
+		}
+
+		$options = [];
+		foreach ( $event_types as $id => $event_type ) {
+			$options[] = [$id => $event_type['name'] ];
+		}
+
+		return $options;
+
 	}
 }

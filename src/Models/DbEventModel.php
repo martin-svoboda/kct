@@ -79,9 +79,25 @@ class DbEventModel extends Model {
 		if ( ( isset( $data['start'] ) && ! empty( $data['start']['gps_n'] ) && ! empty( $data['start']['gps_e'] ) ) ) {
 			$data['lng'] = $data['start']['gps_e'];
 			$data['lat'] = $data['start']['gps_n'];
-		} elseif (  isset( $data['finish'] ) && ! empty( $data['finish']['gps_n'] ) && ! empty( $data['finish']['gps_e'] ) ) {
+		} elseif ( isset( $data['finish'] ) && ! empty( $data['finish']['gps_n'] ) && ! empty( $data['finish']['gps_e'] ) ) {
 			$data['lng'] = $data['finish']['gps_e'];
 			$data['lat'] = $data['finish']['gps_n'];
+		}
+
+		$event_types = get_option( 'event_types' );
+		if ( $event_types && ! empty( $data['details'] ) && is_array( $data['details'] ) ) {
+			if ( isset( $data['details']['detailid'] ) ) {
+				$detail            = $data['details'];
+				$data['details']   = [];
+				$data['details'][] = $detail;
+			}
+			foreach ( $data['details'] as $key => $detail ) {
+				if ( ! isset( $event_types[ $detail['detailid'] ] ) ) {
+					continue;
+				}
+
+				$data['details'][ $key ]['icon'] = $event_types[ $detail['detailid'] ]['icon'];
+			}
 		}
 
 		return $data;

@@ -8,10 +8,6 @@ use Kct\Repositories\DbEventRepository;
 use Kct\Repositories\EventRepository;
 use Kct\Repositories\SettingsRepository;
 use Kct\Settings;
-use KctDeps\Wpify\Model\Exceptions\KeyNotFoundException;
-use KctDeps\Wpify\Model\Exceptions\PrimaryKeyException;
-use KctDeps\Wpify\Model\Exceptions\RepositoryNotInitialized;
-use KctDeps\Wpify\Model\Exceptions\SqlException;
 
 class Events {
 
@@ -25,10 +21,11 @@ class Events {
 		global $wpdb;
 		$this->db = $wpdb;
 
-		//add_action( 'init', array( $this, 'import_db_events' ) );
+		//add_action( 'init', array( $this, 'import_event_types' ) );
 		add_action( 'init', array( $this, 'add_rewrite_rules' ) );
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
-
+		add_action( 'admin_action_load_db_events', array( $this, 'import_db_events' ) );
+		add_action( 'admin_action_load_db_event_types', array( $this, 'import_event_types' ) );
 	}
 
 	/**
@@ -75,11 +72,13 @@ class Events {
 	 * - Sets the event data based on the XML data.
 	 * - Saves the event to the local database.
 	 *
+	 * @param bool $just_updated The flag indicating whether the resource has just been updated
+	 *
 	 * @return void
 	 */
-	public function import_db_events() {
-		//$xml = file_get_contents( 'https://akcekct.kct-db.cz/export/akceexport1.php' );
-		$xml = file_get_contents( 'https://akcekct.kct-db.cz/export/akceexport1x.php' );
+	public function import_db_events( $just_updated = false ) {
+		$url = 'https://akcekct.kct-db.cz/export/' . ( $just_updated ? 'akceexport1' : 'akceexport1x' ) . '.php';
+		$xml = file_get_contents( $url );
 		$xml = mb_convert_encoding( $xml, 'UTF-8' );
 		$xml = json_decode( json_encode( simplexml_load_string( $xml ) ), true );
 
@@ -93,7 +92,7 @@ class Events {
 			return;
 		}
 
-		$filter_by  = $this->settings->code_type();
+		$filter_by = $this->settings->code_type();
 
 		foreach ( $xml['event'] as $xml_event ) {
 			// Skip deleted events
@@ -173,32 +172,109 @@ class Events {
 			$this->db_event_repository->save( $db_event );
 		}
 
+		// stop function if is trigger by cron
+		if ( $just_updated ) {
+			return;
+		}
+
+		// import event types to options
+		$this->import_event_types( true );
+
+		// return back to setting page
+		$return_url = add_query_arg( array(
+			'page'          => Settings::KEY,
+			'events_loaded' => 1
+		), admin_url( 'options-general.php' ) );
+
+		wp_safe_redirect( $return_url, 302, 'kct' );
+		exit();
 	}
 
 	/**
-	 * Imports the event types from the given URL.
+	 * Imports event types from a remote XML source.
 	 *
-	 * This method imports the event types from the provided URL. It makes a GET request to the URL
-	 * and retrieves an XML file. The XML file is parsed and converted to an associative array using
-	 * the `simplexml_load_file()` function. If the XML file is not loaded successfully, the method
-	 * returns and no further processing is done.
+	 * This method retrieves an XML file from the remote URL "https://akcekct.kct-db.cz/export/akceexport4.php",
+	 * converts it to UTF-8 encoding, and parses it as a JSON object.
+	 * The XML data is then processed to extract relevant information about event types.
 	 *
-	 * The XML data array is dumped using the `dump()` function, and then the script execution is terminated
-	 * using the `die()` function. This is done for debugging purposes and can be removed in a production
-	 * environment.
+	 * If the XML data is not available or the processing fails, the method returns early.
+	 *
+	 * For each event type in the XML, the method creates a subdirectory named "imagesakce" under the WordPress
+	 * uploads directory, if it doesn't already exist. The method then downloads the icon file associated with
+	 * the event type and saves it to the created subdirectory. If the download and save are successful, the
+	 * file path in the uploads directory is stored as the icon URL. Otherwise, the original icon URL from
+	 * the XML is used.
+	 *
+	 * Finally, the method updates the "event_types" option in the WordPress options table with the new
+	 * event types array.
 	 *
 	 * @return void
 	 */
-	public function import_event_types() {
+	public function import_event_types( $just_updated = false ) {
 		$url = "https://akcekct.kct-db.cz/export/akceexport4.php";
-		$xml = json_decode( json_encode( simplexml_load_file( $url ) ), true );
+		$xml = file_get_contents( $url );
+		$xml = mb_convert_encoding( $xml, 'UTF-8' );
+		$xml = json_decode( json_encode( simplexml_load_string( $xml ) ), true );
 
 		if ( ! $xml ) {
 			return;
 		}
 
-		dump( $xml );
-		die();
+		$event_types = [];
+		foreach ( $xml['detail'] as $xml_detail ) {
+
+			// Skip deleted
+			if ( ( isset( $xml_detail['deleted'] ) && $xml_detail['deleted'] == 'Y' ) || ! isset( $xml_detail['icon'] ) ) {
+				continue;
+			}
+
+			// create subdir if not exist
+			$subdir = 'imagesakce';
+			$dir    = wp_upload_dir()['basedir'] . '/' . $subdir . '/';
+			if ( ! file_exists( $dir ) ) {
+				mkdir( $dir, 0755, true );
+			}
+
+			// Get icon file data
+			$file_url   = $xml_detail['icon'];
+			$image_data = file_get_contents( $file_url );
+			$file_name  = basename( $file_url );
+
+			// Save icon file to the uploads directory
+			$save_result = false;
+			if ( $image_data !== false ) {
+				$file_path   = $dir . $file_name;
+				$save_result = file_put_contents( $file_path, $image_data );
+			}
+
+			// set event type data
+			$event_types[ $xml_detail['detailid'] ] = array(
+				'name'   => $xml_detail['name'],
+				'icon'   => $save_result ? wp_upload_dir()['baseurl'] . '/' . $subdir . '/' . $file_name : $xml_detail['icon'],
+				'char'   => $xml_detail['char'],
+				'weight' => $xml_detail['weight'],
+			);
+		}
+
+		// update options
+		update_option( 'event_types', $event_types );
+
+		// stop function if is trigger from another action
+		if ( $just_updated ) {
+			return;
+		}
+
+		// import event types to options
+		$this->import_event_types();
+
+		// return back to setting page
+		$return_url = add_query_arg( array(
+			'page'          => Settings::KEY,
+			'events_loaded' => 1
+		), admin_url( 'options-general.php' ) );
+
+		wp_safe_redirect( $return_url, 302, 'kct' );
+		exit();
 	}
 
 	/**

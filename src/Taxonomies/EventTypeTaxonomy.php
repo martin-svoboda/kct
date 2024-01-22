@@ -6,8 +6,8 @@ use Kct\PostTypes\EventPostType;
 use KctDeps\Wpify\CustomFields\CustomFields;
 use KctDeps\Wpify\Taxonomy\AbstractCustomTaxonomy;
 
-class PublisherTaxonomy extends AbstractCustomTaxonomy {
-	const KEY = 'publisher';
+class EventTypeTaxonomy extends AbstractCustomTaxonomy {
+	const KEY = 'typ_akce';
 
 	/** @var CustomFields */
 	protected $wcf;
@@ -24,8 +24,8 @@ class PublisherTaxonomy extends AbstractCustomTaxonomy {
 			'items'    => array(
 				array(
 					'type'  => 'url',
-					'id'    => 'url',
-					'title' => __( 'URL', 'kct' ),
+					'id'    => 'icon',
+					'title' => __( 'URL ikony', 'kct' ),
 				),
 				array(
 					'type'  => 'attachment',

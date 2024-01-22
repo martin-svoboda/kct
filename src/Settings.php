@@ -32,6 +32,8 @@ class Settings {
 		$this->wcf = $wcf;
 
 		$this->setup();
+
+		add_action( 'admin_notices', array( $this, 'settings_notices' ) );
 	}
 
 	/**
@@ -65,17 +67,43 @@ class Settings {
 			),
 		);
 
-		if ( $this->code_type() ) {
+		if ( kct_container()->get( SettingsRepository::class )->code_type() ) {
+			$event_types = get_option('event_types');
+			$event_types_list = [];
+			foreach ($event_types as $event_type) {
+				$event_types_list[] = sprintf('<img src="%s" title="%s"/> ', $event_type["icon"], $event_type["name"] );
+			}
+
 			$settings = array_merge( $settings, array(
 				array(
 					'title' => __( 'Kalendář akcí z centrální DB', 'kct' ),
 					'type'  => 'title',
 				),
 				array(
-					'title' => __( 'Načítat akce z DB KČT', 'kct' ),
-					'label' => __( 'Načítat akce z centrální Databáce akcí KČT', 'kct' ),
+					'label' => __( 'Načíst akce z DB KČT', 'kct' ),
+					'desc'  => __( 'Načíst všechny dostupné akce pro váš odbor / oblast z centrální Databáze akcí KČT. (Akce může chvíli trvat.)', 'kct' ),
 					'id'    => 'load_db_events',
+					'type'  => 'button',
+					'url'   => add_query_arg( array( 'action' => 'load_db_events' ), admin_url( 'admin.php' ) ),
+				),
+				array(
+					'title' => __( 'Pravidelně aktualizovat akce', 'kct' ),
+					'label' => __( 'Pravidelně aktualizovat a načítat nové akce z centrální Databáce akcí KČT', 'kct' ),
+					'id'    => 'update_db_events',
 					'type'  => 'toggle',
+				),
+				array(
+					'label' => __( 'Načíst tipy akcí z DB KČT', 'kct' ),
+					'desc'  => __( 'Načíst všechny dostupné tipy akcí z centrální Databáze KČT. (Akce může chvíli trvat.)', 'kct' ),
+					'id'    => 'load_db_event_types',
+					'type'  => 'button',
+					'url'   => add_query_arg( array( 'action' => 'load_db_event_types' ), admin_url( 'admin.php' ) ),
+				),
+				array(
+					'label' => __( 'Uložené tipy akcí', 'kct' ),
+					'id'    => 'event_types_list',
+					'type'  => 'html',
+					'content'  => implode( ' ', $event_types_list),
 				),
 			) );
 		}
@@ -94,5 +122,33 @@ class Settings {
 				),
 			),
 		) );
+	}
+
+	/**
+	 * Method to display success updated events notice on the plugin options page.
+	 *
+	 * @return void
+	 */
+	public function settings_notices(): void {
+		if ( ! isset( $_GET['page'] ) || $_GET['page'] != $this::KEY ) {
+			return;
+		}
+
+		if ( isset( $_GET['events_loaded'] ) && $_GET['events_loaded'] ) {
+			?>
+			<div class="notice notice-success is-dismissible">
+				<p><?php _e( 'Načtení akcí z centrální Databáze akcí KČT byla úspěšná.', 'kct' ); ?></p>
+			</div>
+			<?php
+		}
+	}
+
+	/**
+	 * Method to get the URL of the plugin settings page.
+	 *
+	 * @return string The URL of the plugin settings page.
+	 */
+	public function get_settings_url(): string {
+		return add_query_arg( [ 'page' => $this::KEY ], admin_url( 'options-general.php' ) );
 	}
 }

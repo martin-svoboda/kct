@@ -34,10 +34,10 @@ class EventRepository extends PostRepository {
 		$args       = [];
 
 		if ( $date_from ) {
-			$date_query['after'] = strtotime( $date_from );
+			$date_query['after'] = $date_from;
 		}
 		if ( $date_to ) {
-			$date_query['before'] = strtotime( $date_to );
+			$date_query['before'] = $date_to;
 		}
 
 		if ( $date_query ) {
