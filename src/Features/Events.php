@@ -21,11 +21,11 @@ class Events {
 		global $wpdb;
 		$this->db = $wpdb;
 
-		//add_action( 'init', array( $this, 'import_event_types' ) );
 		add_action( 'init', array( $this, 'add_rewrite_rules' ) );
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
 		add_action( 'admin_action_load_db_events', array( $this, 'import_db_events' ) );
 		add_action( 'admin_action_load_db_event_types', array( $this, 'import_event_types' ) );
+		add_action( 'save_post_akce', array( $this, 'update_start_date' ), 10, 3 );
 	}
 
 	/**
@@ -216,61 +216,58 @@ class Events {
 		$xml = mb_convert_encoding( $xml, 'UTF-8' );
 		$xml = json_decode( json_encode( simplexml_load_string( $xml ) ), true );
 
-		if ( ! $xml ) {
-			return;
+		if ( $xml ) {
+
+			$event_types = [];
+			foreach ( $xml['detail'] as $xml_detail ) {
+
+				// Skip deleted
+				if ( ( isset( $xml_detail['deleted'] ) && $xml_detail['deleted'] == 'Y' ) || ! isset( $xml_detail['icon'] ) ) {
+					continue;
+				}
+
+				// create subdir if not exist
+				$subdir = 'imagesakce';
+				$dir    = wp_upload_dir()['basedir'] . '/' . $subdir . '/';
+				if ( ! file_exists( $dir ) ) {
+					mkdir( $dir, 0755, true );
+				}
+
+				// Get icon file data
+				$file_url   = $xml_detail['icon'];
+				$image_data = file_get_contents( $file_url );
+				$file_name  = basename( $file_url );
+
+				// Save icon file to the uploads directory
+				$save_result = false;
+				if ( $image_data !== false ) {
+					$file_path   = $dir . $file_name;
+					$save_result = file_put_contents( $file_path, $image_data );
+				}
+
+				// set event type data
+				$event_types[ $xml_detail['detailid'] ] = array(
+					'detailid' => $xml_detail['detailid'],
+					'name'     => $xml_detail['name'],
+					'icon'     => $save_result ? wp_upload_dir()['baseurl'] . '/' . $subdir . '/' . $file_name : $xml_detail['icon'],
+					'char'     => $xml_detail['char'],
+					'weight'   => $xml_detail['weight'],
+				);
+			}
+
+			// update options
+			update_option( 'event_types', $event_types );
 		}
-
-		$event_types = [];
-		foreach ( $xml['detail'] as $xml_detail ) {
-
-			// Skip deleted
-			if ( ( isset( $xml_detail['deleted'] ) && $xml_detail['deleted'] == 'Y' ) || ! isset( $xml_detail['icon'] ) ) {
-				continue;
-			}
-
-			// create subdir if not exist
-			$subdir = 'imagesakce';
-			$dir    = wp_upload_dir()['basedir'] . '/' . $subdir . '/';
-			if ( ! file_exists( $dir ) ) {
-				mkdir( $dir, 0755, true );
-			}
-
-			// Get icon file data
-			$file_url   = $xml_detail['icon'];
-			$image_data = file_get_contents( $file_url );
-			$file_name  = basename( $file_url );
-
-			// Save icon file to the uploads directory
-			$save_result = false;
-			if ( $image_data !== false ) {
-				$file_path   = $dir . $file_name;
-				$save_result = file_put_contents( $file_path, $image_data );
-			}
-
-			// set event type data
-			$event_types[ $xml_detail['detailid'] ] = array(
-				'name'   => $xml_detail['name'],
-				'icon'   => $save_result ? wp_upload_dir()['baseurl'] . '/' . $subdir . '/' . $file_name : $xml_detail['icon'],
-				'char'   => $xml_detail['char'],
-				'weight' => $xml_detail['weight'],
-			);
-		}
-
-		// update options
-		update_option( 'event_types', $event_types );
 
 		// stop function if is trigger from another action
 		if ( $just_updated ) {
 			return;
 		}
 
-		// import event types to options
-		$this->import_event_types();
-
 		// return back to setting page
 		$return_url = add_query_arg( array(
-			'page'          => Settings::KEY,
-			'events_loaded' => 1
+			'page'              => Settings::KEY,
+			'eventtypes_loaded' => 1
 		), admin_url( 'options-general.php' ) );
 
 		wp_safe_redirect( $return_url, 302, 'kct' );
@@ -290,10 +287,10 @@ class Events {
 	 *
 	 * @return array An array of events within the specified date range.
 	 */
-	public function get_events( $date_from = '', $date_to = '' ): array {
+	public function get_events( $date_from = '', $date_to = '', $type = '' ): array {
 		// Získání všech akcí
-		$post_events = $this->event_repository->find_all_published_by_date( $date_from, $date_to );
-		$db_events   = $this->db_event_repository->find_all_by_date( $date_from, $date_to );
+		$post_events = $this->event_repository->find_all_published_by_date( $date_from, $date_to, $type );
+		$db_events   = $this->db_event_repository->find_all_by_date( $date_from, $date_to, $type );
 		$to_exclude  = [];
 
 		// filtr z nastavení
@@ -305,6 +302,8 @@ class Events {
 		/** @var EventModel $post_event */
 		foreach ( $post_events as $post_event ) {
 			$post_data = $post_event->to_array();
+
+			$post_data['details'] = $this->merge_event_details_data( $post_data['details'] );
 
 			if ( $post_event->db_id ) {
 				$event_db      = $this->db_event_repository->get_by_db_id( (int) $post_event->db_id );
@@ -321,24 +320,26 @@ class Events {
 		}
 
 		// Data zbylích DB akcí převedeme na array a přidáme do pole akcí
-		/** @var DbEventModel $db_event */
-		foreach ( $db_events as $db_event ) {
-			if (
-				// Přeskočit akce sloučené s CPT
-				in_array( $db_event->db_id, $to_exclude ) ||
-				// pokud je nastaven fltr, přeskočit akce jemu neodpovídající
-				$filter_by && (
-					( 'region' === $filter_by && $filter_val != $db_event->region ) ||
-					( 'department' === $filter_by && $filter_val != $db_event->department )
-				)
-			) {
-				continue;
-			}
+		if ( $db_events ) {
+			/** @var DbEventModel $db_event */
+			foreach ( $db_events as $db_event ) {
+				if (
+					// Přeskočit akce sloučené s CPT
+					in_array( $db_event->db_id, $to_exclude ) ||
+					// pokud je nastaven fltr, přeskočit akce jemu neodpovídající
+					$filter_by && (
+						( 'region' === $filter_by && $filter_val != $db_event->region ) ||
+						( 'department' === $filter_by && $filter_val != $db_event->department )
+					)
+				) {
+					continue;
+				}
 
-			$events[] = $db_event->to_array();
+				$events[] = $db_event->to_array();
+			}
 		}
 
-		// Akce seřadíme podle data
+// Akce seřadíme podle data
 		usort( $events, fn( $a, $b ) => strtotime( $a['date'] ) - strtotime( $b['date'] ) );
 
 		return $events;
@@ -366,6 +367,8 @@ class Events {
 			$post      = $this->event_repository->get( $id );
 			$post_data = $post->to_array();
 			$bd_id     = empty( $bd_id ) && ! empty( $post->db_id ) ? $post->db_id : $bd_id;
+
+			$post_data['details'] = $this->merge_event_details_data( $post_data['details'] );
 		}
 
 		// Získání dat z databázové akce pokud jsou
@@ -390,5 +393,40 @@ class Events {
 		}
 
 		return $event;
+	}
+
+	public function get_event_types() {
+		return (array) get_option( 'event_types' );
+	}
+
+	public function merge_event_details_data( $post_details ) {
+		$event_types = $this->get_event_types();
+		$new_details = [];
+
+		foreach ( $post_details as $detail ) {
+			foreach ( $event_types as $type ) {
+				if ( $detail['detailid'] == $type['detailid'] ) {
+					// Sloučení detailu akce s uloženými informacemi z options
+					$new_detail    = array_merge( $detail, $type );
+					$new_details[] = $new_detail;
+					break;
+				}
+			}
+		}
+
+		return $new_details;
+	}
+
+	function update_start_date( $post_id, $post, $update ) {
+		// Načtení meta hodnoty "start" pro aktualizovaný nebo nově vytvořený příspěvek
+		$start_data = get_post_meta( $post_id, 'start', true );
+
+		// Získání data začátku akce z serializovaného pole
+		$start_date = isset( $start_data['date'] ) ? $start_data['date'] : '';
+
+		// Aktualizace hodnoty "start_date"
+		if ( ! empty( $start_date ) ) {
+			update_post_meta( $post_id, 'start_date', $start_date );
+		}
 	}
 }

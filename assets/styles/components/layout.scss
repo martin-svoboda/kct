@@ -45,3 +45,7 @@
 	@include make-column($i);
   }
 }
+
+.blog #primary header {
+  padding-top: 2rem;
+}

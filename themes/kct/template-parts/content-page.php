@@ -16,8 +16,6 @@
 		</header><!-- .entry-header -->
 	<?php } ?>
 
-	<?php kct_post_thumbnail(); ?>
-
 	<div class="entry-content">
 		<?php
 		the_content();

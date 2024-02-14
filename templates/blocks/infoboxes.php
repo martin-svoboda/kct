@@ -12,7 +12,7 @@ $boxes = $args['boxes'];
 
 
 ?>
-<div class="infoboxes">
+<div class="kct-block infoboxes">
 	<?php foreach ( $boxes
 
 	as $box ) :

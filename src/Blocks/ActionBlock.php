@@ -61,8 +61,14 @@ class ActionBlock {
 					'type'    => 'select',
 					'label'   => __( 'Pozice obrázku', 'kct' ),
 					'options' => array(
-						array( 'right' => 3, 'label' => 'Vpravo uvnitř kontejneru' ),
-						array( 'right-absolute' => 2, 'label' => 'Vpravo bez odsazení' )
+						array(
+							'value' => 'right',
+							'label' => 'Vpravo uvnitř kontejneru'
+						),
+						array(
+							'value' => 'right-absolute',
+							'label' => 'Vpravo bez odsazení'
+						)
 					),
 				),
 			),

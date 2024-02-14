@@ -6,6 +6,7 @@ use Kct\Blocks\ActionBlock;
 use Kct\Blocks\CoverBlock;
 use Kct\Blocks\EventsBlock;
 use Kct\Blocks\InfoBoxesBlock;
+use Kct\Blocks\NewsBlock;
 use KctDeps\Wpify\Asset\AssetFactory;
 use KctDeps\Wpify\PluginUtils\PluginUtils;
 
@@ -19,7 +20,8 @@ final class BlocksManager {
 		CoverBlock $cover_block,
 		ActionBlock $action_block,
 		InfoBoxesBlock $info_boxes_block,
-		EventsBlock $events_block
+		EventsBlock $events_block,
+		NewsBlock $news_block
 	) {
 		$this->utils         = $utils;
 		$this->asset_factory = $asset_factory;

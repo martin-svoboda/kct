@@ -18,17 +18,6 @@
 	<link rel="profile" href="https://gmpg.org/xfn/11">
 
 	<?php wp_head(); ?>
-
-	<style>
-		<?php
-		$primary_color   = get_theme_mod( 'primary_color', '#0178A3' );
-		$secondary_color = '#1E3842';
-		?>
-		:root {
-			--primary-color: <?= $primary_color ?>;
-			--secondary-color: <?= $secondary_color ?>;
-		}
-	</style>
 </head>
 
 <body <?php body_class(); ?>>

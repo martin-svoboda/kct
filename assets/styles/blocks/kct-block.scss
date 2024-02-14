@@ -1,0 +1,18 @@
+.kct-block {
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+.editor-styles-wrapper .kct-block {
+  &:first-child, &:last-child {
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+  }
+}

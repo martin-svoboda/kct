@@ -14,7 +14,7 @@ const EventItem = ({ item }) => {
 
 	return (
 		<li>
-			<a href={item.permalink} className="event">
+			<a href={item.permalink} className="event" title={`${dayName} ${dateNumber} ${dateYear} ${item.title}` }>
 				<div className="date">
 					{item.date && (
 						<>
@@ -36,7 +36,7 @@ const EventItem = ({ item }) => {
 					<p>
 						{item.details && Array.isArray(item.details) &&
 							item.details
-								.filter(detail => !!(detail.km && detail.name))
+								.filter(detail => !!(detail.km && detail.name && detail.km.length > 0))
 								.map(detail => {
 									const words = detail.name.split(" ");
 									const acronym = words.map(word => word.charAt(0)).join("").toUpperCase();

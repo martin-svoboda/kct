@@ -141,6 +141,14 @@ class Settings {
 			</div>
 			<?php
 		}
+
+		if ( isset( $_GET['eventtypes_loaded'] ) && $_GET['eventtypes_loaded'] ) {
+			?>
+			<div class="notice notice-success is-dismissible">
+				<p><?php _e( 'Načtení typů akcí z centrální Databáze akcí KČT byla úspěšná.', 'kct' ); ?></p>
+			</div>
+			<?php
+		}
 	}
 
 	/**

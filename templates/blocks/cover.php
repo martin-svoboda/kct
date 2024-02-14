@@ -14,7 +14,7 @@ $text       = $args['text'];
 $link       = $args['link'];
 
 ?>
-<div class="block-cover full-width" <?php if ( $background ) { ?> style="background-image: url('<?= wp_get_attachment_url( $background ) ?>')" <?php } ?>>
+<div class="kct-block block-cover full-width" <?php if ( $background ) { ?> style="background-image: url('<?= wp_get_attachment_url( $background ) ?>')" <?php } ?>>
 	<div class="container">
 		<div class="content">
 			<?php if ( ! empty( $title ) ): ?>

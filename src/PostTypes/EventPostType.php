@@ -126,9 +126,10 @@ class EventPostType extends AbstractCustomPostType {
 					'buttons' => array( 'add' => __( 'Přidat typ akce', 'kct' ) ),
 					'items'   => array(
 						array(
-							'type'  => 'select',
-							'id'    => 'type',
-							'title' => __( 'Typ akce', 'kct' ),
+							'type'    => 'select',
+							'id'      => 'detailid',
+							'title'   => __( 'Typ akce', 'kct' ),
+							'options' => $this->get_post_type_options(),
 						),
 						array(
 							'type'  => 'text',
@@ -155,7 +156,7 @@ class EventPostType extends AbstractCustomPostType {
 			'labels'             => $this->generate_labels( $singular, $plural ),
 			'public'             => true,
 			'hierarchical'       => false,
-			'taxonomies'         => array( EventTypeTaxonomy::KEY ),
+			//'taxonomies'         => array( EventTypeTaxonomy::KEY ),
 			'publicly_queryable' => true,
 			'show_ui'            => true,
 			'show_in_menu'       => true,
@@ -182,8 +183,11 @@ class EventPostType extends AbstractCustomPostType {
 		}
 
 		$options = [];
-		foreach ( $event_types as $id => $event_type ) {
-			$options[] = [$id => $event_type['name'] ];
+		foreach ( $event_types as $event_type ) {
+			$options[] = [
+				'label' => $event_type['name'],
+				'value' => $event_type['detailid'],
+			];
 		}
 
 		return $options;

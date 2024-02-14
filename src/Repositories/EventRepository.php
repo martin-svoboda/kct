@@ -29,19 +29,40 @@ class EventRepository extends PostRepository {
 		return EventModel::class;
 	}
 
-	public function find_all_published_by_date( $date_from = '', $date_to = '' ) {
-		$date_query = [];
-		$args       = [];
 
+	public function find_all_published_by_date( $date_from = '', $date_to = '', $type = '' ) {
 		if ( $date_from ) {
-			$date_query['after'] = $date_from;
-		}
-		if ( $date_to ) {
-			$date_query['before'] = $date_to;
+			$meta_query[] = [
+				'key'     => 'start_date',
+				'value'   => $date_from,
+				'compare' => '>=',
+				'type'    => 'DATE',
+			];
 		}
 
-		if ( $date_query ) {
-			$args = array( 'date_query' => $date_query );
+		if ( $date_to ) {
+			$meta_query[] = [
+				'key'     => 'start_date',
+				'value'   => $date_to,
+				'compare' => '<=',
+				'type'    => 'DATE',
+			];
+		}
+
+		if ( $type ) {
+			$meta_query[] = [
+				'key'     => 'details',
+				'value'   => sprintf( '"detailid";s:%s:"%s";', strlen( $type ), $type ),
+				'compare' => 'LIKE',
+			];
+		}
+
+		$args = [];
+		if ( $meta_query ) {
+			$args['meta_query'] = array(
+				'relation' => 'AND',
+				$meta_query
+			);
 		}
 
 		return $this->find_published( $args );

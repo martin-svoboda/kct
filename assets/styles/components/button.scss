@@ -1,0 +1,39 @@
+.button, .wp-element-button {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  text-decoration: none;
+  color: $white-color;
+  background-color: $primary-color;
+  height: 46px;
+  padding: 0 10px 0 15px;
+  text-transform: uppercase;
+  transition: all 0.3s;
+  border-radius: 3px;
+  font-size: 1.2rem;
+
+  &:hover, &:hover:after  {
+	filter: brightness(0.85);
+  }
+
+  &:before {
+	content: '';
+	position: absolute;
+	top: 0;
+	right: -20px;
+	background-color: $primary-color;
+	height: 100%;
+	width: 21px;
+	clip-path: polygon(0 0, 100% 50%, 0 100%,);
+  }
+  &:after {
+	content: '';
+	position: absolute;
+	top: 17px;
+	right: -20px;
+	background-color: $white-color;
+	height: 12px;
+	width: 16px;
+	clip-path: polygon(0 0, 70% 0, 100% 50%, 70% 100%, 0 100%,);
+  }
+}

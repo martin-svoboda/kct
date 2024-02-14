@@ -8,8 +8,9 @@ if ( empty( ABSPATH ) ) {
  * @var $args array Template arguments
  */
 
-$count       = $args['count'];
-$time_period = $args['time_period'];
+$count       = $args['count'] ?: 5;
+$time_period = $args['time_period'] ?: 'future';
+$button      = $args['button'];
 
 $date_from = $time_period == 'future' ? current_time( 'Y-m-d' ) : null;
 $date_to   = $time_period == 'past' ? current_time( 'Y-m-d' ) : null;
@@ -22,7 +23,7 @@ if ( $count ) {
 }
 
 ?>
-<div class="events">
+<div class="kct-block events">
 	<ul class="events-list">
 		<?php
 		foreach ( $events as $event ) : ?>
@@ -104,4 +105,5 @@ if ( $count ) {
 			</li>
 		<?php endforeach; ?>
 	</ul>
+    <?php if ($button) { ?><a class="button mt-1" href="<?= get_post_type_archive_link('akce') ?>" title="<?= $button ?>"><?= $button ?></a><?php }; ?>
 </div>

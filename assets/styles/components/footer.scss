@@ -1,0 +1,25 @@
+.site-footer {
+  background: $secondary-color;
+  color: $white-color;
+
+  a {
+    color: $white-color;
+  }
+
+  .container {
+    flex-direction: column;
+    // padding: 10px 20px;
+  }
+
+  .widget-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem 3rem;
+
+    div {
+      width: 100%;
+      min-width: 300px;
+      flex: 1 0 0;
+    }
+  }
+}

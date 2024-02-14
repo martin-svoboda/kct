@@ -5,25 +5,25 @@
   position: relative;
 
   &:after {
-	content: '';
-	position: absolute;
-	top: 0;
-	left: 0;
-	bottom: 0;
-	width: 50%;
-	min-width: 300px;
-	opacity: 0.4;
-	background: linear-gradient(90deg, #000 52.43%, rgba(0, 0, 0, 0.00) 100%);
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 50%;
+    min-width: 300px;
+    opacity: 0.4;
+    background: linear-gradient(90deg, #000 52.43%, rgba(0, 0, 0, 0.00) 100%);
   }
 
   .content {
-	color: $white-color;
-	max-width: 400px;
-	padding: 50px 0;
-	z-index: 1;
+    color: $white-color;
+    max-width: 400px;
+    padding: 50px 0;
+    z-index: 1;
 
-	h2 {
-	  font-size: $heading-1;
-	}
+    h2 {
+      font-size: $heading-1;
+    }
   }
 }

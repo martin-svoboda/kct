@@ -2,7 +2,7 @@
 /**
  * kct functions and definitions
  *
- * @link https://developer.wordpress.org/themes/basics/theme-functions/
+ * @link    https://developer.wordpress.org/themes/basics/theme-functions/
  *
  * @package kct
  */
@@ -65,8 +65,8 @@ function kct_setup() {
 			'comment-list',
 			'gallery',
 			'caption',
-			'style',
-			'script',
+			//'style',
+			//'script',
 		)
 	);
 
@@ -100,6 +100,7 @@ function kct_setup() {
 		)
 	);
 }
+
 add_action( 'after_setup_theme', 'kct_setup' );
 
 /**
@@ -112,6 +113,7 @@ add_action( 'after_setup_theme', 'kct_setup' );
 function kct_content_width() {
 	$GLOBALS['content_width'] = apply_filters( 'kct_content_width', 640 );
 }
+
 add_action( 'after_setup_theme', 'kct_content_width', 0 );
 
 /**
@@ -131,7 +133,19 @@ function kct_widgets_init() {
 			'after_title'   => '</h2>',
 		)
 	);
+	register_sidebar(
+		array(
+			'name'          => esc_html__( 'Footer', 'kct' ),
+			'id'            => 'footer',
+			'description'   => esc_html__( 'Add widgets here.', 'kct' ),
+			'before_widget' => '<div id="%1$s" class="widget %2$s">',
+			'after_widget'  => '</div>',
+			'before_title'  => '<h3 class="widget-title">',
+			'after_title'   => '</h3>',
+		)
+	);
 }
+
 add_action( 'widgets_init', 'kct_widgets_init' );
 
 /**
@@ -150,11 +164,31 @@ function kct_scripts() {
 		wp_enqueue_script( 'comment-reply' );
 	}
 }
+
 add_action( 'wp_enqueue_scripts', 'kct_scripts' );
 
-function kct_render($slug, $name = '', $data = array() ) {
-	kct_container()->get(KctDeps\Wpify\Template\WordPressTemplate::class)->print($slug, $name, $data);
+function kct_dynamic_styles() {
+	?>
+    <style>
+        <?php
+		$primary_color   = get_theme_mod( 'primary_color', '#0178A3' );
+		$secondary_color = '#1E3842';
+		?>
+        :root {
+            --primary-color: <?= $primary_color ?>;
+            --secondary-color: <?= $secondary_color ?>;
+        }
+    </style>
+	<?php
 }
+add_action( 'wp_head', 'kct_dynamic_styles' );
+add_action( 'admin_head', 'kct_dynamic_styles' );
+
+
+function kct_render( $slug, $name = '', $data = array() ) {
+	kct_container()->get( KctDeps\Wpify\Template\WordPressTemplate::class )->print( $slug, $name, $data );
+}
+
 /**
  * Implement the Custom Header feature.
  */

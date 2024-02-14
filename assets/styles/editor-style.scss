@@ -4,14 +4,17 @@
 @import "components/header";
 @import "components/navigation";
 @import "components/gallery";
-//@import "components/forms";
+@import "components/button";
 @import "components/helpers";
 @import "components/accessibility";
 @import "components/gutenberg";
+@import "components/articles";
+@import "blocks/kct-block";
 @import "blocks/cover";
 @import "blocks/action";
 @import "blocks/infoboxes";
 @import "blocks/events";
+@import "blocks/news";
 
 
 .wp-block {

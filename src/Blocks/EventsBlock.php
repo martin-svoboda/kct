@@ -25,18 +25,41 @@ class EventsBlock {
 			'icon'            => 'calendar',
 			'render_callback' => array( $this, 'render' ),
 			'items'           => array(
+//				array(
+//					'type'  => 'text',
+//					'id'    => 'title',
+//					'title' => __( 'Nadpis', 'kct' ),
+//				),
+				array(
+					'id'      => 'time_period',
+					'type'    => 'select',
+					'label'   => __( 'Časové období', 'kct' ),
+					'options' => array(
+						array(
+							'value' => 'future',
+							'label' => 'Budoucí'
+						),
+						array(
+							'value' => 'past',
+							'label' => 'Minulé'
+						)
+					),
+				),
+				array(
+					'type'  => 'number',
+					'id'    => 'count',
+					'title' => __( 'Počet zobrazených akcí', 'kct' ),
+				),
 				array(
 					'type'  => 'text',
-					'id'    => 'title',
-					'title' => __( 'Nadpis', 'kct' ),
+					'id'    => 'button',
+					'title' => __( 'Text tlačítka na kalendář akcí', 'kct' ),
 				),
 			),
 		) );
 	}
 
 	public function render( array $block_attributes, string $content ) {
-		$block_attributes['count'] = 5;
-		$block_attributes['time_period'] = 'future';
 		return $this->template->render( 'blocks/events', null, $block_attributes );
 	}
 }

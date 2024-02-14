@@ -63,10 +63,11 @@ class DbEventRepository extends CustomTableRepository {
 	}
 
 	/**
-	 * Get all events by date
+	 * Get all events by date and type
 	 *
 	 * @param $date_from
 	 * @param $date_to
+	 * @param $type
 	 *
 	 * @return ModelInterface[]
 	 * @throws KeyNotFoundException
@@ -75,7 +76,7 @@ class DbEventRepository extends CustomTableRepository {
 	 * @throws SqlException
 	 * @throws \ReflectionException
 	 */
-	public function find_all_by_date( $date_from = '', $date_to = '' ) {
+	public function find_all_by_date( $date_from = '', $date_to = '', $type = '' ) {
 		if ( ! $date_from ) {
 			$date_from = '2023-01-01';
 		}
@@ -83,6 +84,9 @@ class DbEventRepository extends CustomTableRepository {
 
 		if ( $date_to ) {
 			$query .= $this->db()->prepare( ' AND date <= %s', $date_to );
+		}
+		if ( $type ) {
+			$query .= $this->db()->prepare( ' AND JSON_CONTAINS(details, JSON_OBJECT("detailid", %s))', $type );
 		}
 
 		return $this->find_all( [ 'where' => $query ] );
