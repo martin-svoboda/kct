@@ -70,9 +70,13 @@ class Settings {
 		if ( kct_container()->get( SettingsRepository::class )->code_type() ) {
 			$event_types = get_option('event_types');
 			$event_types_list = [];
-			foreach ($event_types as $event_type) {
-				$event_types_list[] = sprintf('<img src="%s" title="%s"/> ', $event_type["icon"], $event_type["name"] );
+			if ($event_types) {
+				foreach ( $event_types as $event_type ) {
+					$event_types_list[] = sprintf( '<img src="%s" title="%s"/> ', $event_type["icon"], $event_type["name"] );
+				}
 			}
+
+			$schedule_timestamp = wp_next_scheduled( 'kct_update_events' ) ?: __( 'nenaplánovano', 'kct' );
 
 			$settings = array_merge( $settings, array(
 				array(
@@ -84,11 +88,11 @@ class Settings {
 					'desc'  => __( 'Načíst všechny dostupné akce pro váš odbor / oblast z centrální Databáze akcí KČT. (Akce může chvíli trvat.)', 'kct' ),
 					'id'    => 'load_db_events',
 					'type'  => 'button',
-					'url'   => add_query_arg( array( 'action' => 'load_db_events' ), admin_url( 'admin.php' ) ),
+					'url'   => add_query_arg( array( 'kct-action' => 'load_db_events' ), home_url() ),
 				),
 				array(
 					'title' => __( 'Pravidelně aktualizovat akce', 'kct' ),
-					'label' => __( 'Pravidelně aktualizovat a načítat nové akce z centrální Databáce akcí KČT', 'kct' ),
+					'label' => sprintf( __( 'Pravidelně aktualizovat a načítat nové akce z centrální Databáce akcí KČT. Další aktualizace naplánována na: %s', 'kct' ), is_integer( $schedule_timestamp ) ? date( 'j. n. Y. H:i', $schedule_timestamp ) : __( 'nenaplánovano', 'kct' ) ),
 					'id'    => 'update_db_events',
 					'type'  => 'toggle',
 				),
@@ -97,7 +101,7 @@ class Settings {
 					'desc'  => __( 'Načíst všechny dostupné tipy akcí z centrální Databáze KČT. (Akce může chvíli trvat.)', 'kct' ),
 					'id'    => 'load_db_event_types',
 					'type'  => 'button',
-					'url'   => add_query_arg( array( 'action' => 'load_db_event_types' ), admin_url( 'admin.php' ) ),
+					'url'   => add_query_arg( array( 'kct-action' => 'load_db_event_types' ), home_url() ),
 				),
 				array(
 					'label' => __( 'Uložené tipy akcí', 'kct' ),

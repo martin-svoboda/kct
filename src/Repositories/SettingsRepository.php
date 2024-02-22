@@ -7,6 +7,10 @@ use Kct\Settings;
 class SettingsRepository {
 	private $options = [];
 
+	public function get_key() {
+		return Settings::KEY;
+	}
+
 	/**
 	 * Retrieves the value of the specified option.
 	 *

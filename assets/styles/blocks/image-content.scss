@@ -1,0 +1,109 @@
+.block-image-with-content {
+	background: no-repeat center center;
+	background-size: cover;
+	position: relative;
+
+	&:after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.7);
+	}
+
+	.container {
+		justify-content: space-between;
+		gap: 0 2rem;
+		display: grid;
+		grid-template-columns: 1fr;
+	}
+
+	@media (min-width: $medium-screen) {
+		.container {
+			grid-template-columns: 2fr 1fr;
+		}
+
+		.container.left {
+			grid-template-columns: 1fr 2fr;
+		}
+	}
+
+	.container.left {
+		grid-template-columns: 1fr 2fr;
+	}
+
+	.content {
+		width: 100%;
+		color: white;
+		z-index: 1;
+
+		.button, .wp-element-button {
+			color: var(--primary-color);
+			background-color: white;
+		}
+
+		ul {
+			list-style: none;
+			padding-left: 0;
+
+			li {
+				position: relative;
+				padding-left: 2.2em;
+				margin-bottom: 0.5em;
+
+				&::after {
+					position: absolute;
+					height: 1.7em;
+					left: 0;
+					top: 0;
+					width: 1.7em;
+					content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%2300824F' d='M22.707 12.707a1 1 0 0 0-1.414-1.414L14.5 18.086l-3.293-3.293a1 1 0 0 0-1.414 1.414l4 4a1 1 0 0 0 1.414 0zM16 2C8.268 2 2 8.268 2 16s6.268 14 14 14s14-6.268 14-14S23.732 2 16 2M4 16C4 9.373 9.373 4 16 4s12 5.373 12 12s-5.373 12-12 12S4 22.627 4 16'/%3E%3C/svg%3E");
+				}
+			}
+		}
+	}
+
+	img {
+		max-width: 100%;
+		z-index: 1;
+	}
+
+	.right img, .left img {
+		height: fit-content;
+	}
+
+	.right-absolute img, .left-absolute img {
+		position: relative;
+		bottom: -40px;
+
+		@media (min-width: $medium-screen) {
+			position: absolute;
+			bottom: 0;
+		}
+	}
+
+	.right-absolute img {
+		right: -20px;
+
+		@media (min-width: $medium-screen) {
+			right: 0;
+		}
+	}
+
+	.left img {
+		order: -1;
+	}
+
+	.left-absolute img {
+		order: -1;
+		left: -20px;
+
+		@media (min-width: $medium-screen) {
+			left: 0;
+		}
+	}
+}

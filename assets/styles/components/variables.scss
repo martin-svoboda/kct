@@ -1,7 +1,18 @@
 // Colors
+:root {
+	--red-color: #FF0000;
+	--blue-color: #0A55A3;
+	--green-color: #00824F;
+	--yellow-color: #FFCC00;
+}
+
 $primary-color: var(--primary-color, #0178A3);
 $secondary-color: var(--secondary-color, #1E3842 );
-$accent-color: #f39c12;
+$red-color: var(--red-color);
+$blue-color: var(--blue-color);
+$green-color: var(--green-color);
+$yellow-color: var(--yellow-color);
+$accent-color: $yellow-color;
 $white-color: #ffffff;
 $light-gray-color: #f5f5f5;
 $text-color: $secondary-color;
@@ -37,3 +48,5 @@ $gutter: 20px;
 // Other values
 $border-radius: 5px;
 $container-width: 1240px;
+
+

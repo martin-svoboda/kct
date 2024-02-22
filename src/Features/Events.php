@@ -23,9 +23,46 @@ class Events {
 
 		add_action( 'init', array( $this, 'add_rewrite_rules' ) );
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
-		add_action( 'admin_action_load_db_events', array( $this, 'import_db_events' ) );
-		add_action( 'admin_action_load_db_event_types', array( $this, 'import_event_types' ) );
+		//add_action( 'admin_action_load_db_events', array( $this, 'schedule_import_events' ) );
+		//add_action( 'admin_action_load_db_event_types', array( $this, 'import_event_types' ) );
 		add_action( 'save_post_akce', array( $this, 'update_start_date' ), 10, 3 );
+		add_action( 'update_option_' . $this->settings->get_key(), array(
+			$this,
+			'maybe_schedule_update_events'
+		), 10, 3 );
+		add_action( 'kct_import_events', array( $this, 'import_db_events' ) );
+		add_action( 'kct_update_events', array( $this, 'schedule_update_events' ) );
+
+		add_action( 'template_redirect', function () {
+			if ( ! get_query_var( 'kct-action' ) ) {
+				return;
+			}
+
+			if ( get_query_var( 'kct-action' ) == 'load_db_events' ) {
+				//$this->schedule_import_events();
+				$this->import_db_events();
+			}
+			if ( get_query_var( 'kct-action' ) == 'load_db_event_types' ) {
+				$this->import_event_types();
+			}
+			if ( get_query_var( 'kct-action' ) == 'fix-types' ) {
+				$event_types = $this->get_event_types();
+				foreach ( $event_types as $key => $type ) {
+					$event_types[ $key ]['icon'] = str_replace( '.test', '.cz', $type['icon'] );
+				}
+				update_option( 'event_types', $event_types );
+			}
+
+			wp_safe_redirect( add_query_arg( array(
+				'page' => $this->settings->get_key(),
+			), admin_url( 'options-general.php' ) ), 302, 'kct' );
+		} );
+//		add_action('init', function (){
+//			dump(_get_cron_array());
+//		});
+//		add_action( 'init', function () {
+//			dump( wp_get_schedules() );
+//		} );
 	}
 
 	/**
@@ -53,8 +90,40 @@ class Events {
 	 */
 	public function add_query_vars( $query_vars ) {
 		$query_vars[] = 'db_id';
+		$query_vars[] = 'kct-action';
 
 		return $query_vars;
+	}
+
+	/**
+	 * Schedule update db events from xml feed if is toggled
+	 *
+	 * @param $option_name
+	 * @param $old_value
+	 * @param $value
+	 */
+	public function maybe_schedule_update_events( $old_value, $value, $option ) {
+		if ( $old_value['update_db_events'] === $value['update_db_events'] ) {
+			return;
+		}
+
+		$timestamp = wp_next_scheduled( 'kct_update_events' );
+
+		if ( $value['update_db_events'] && ! $timestamp ) {
+			wp_schedule_event( time(), 'daily', 'kct_update_events' );
+		}
+
+		if ( ! $value['update_db_events'] && $timestamp ) {
+			wp_unschedule_event( $timestamp, 'kct_update_events' );
+		}
+	}
+
+	public function schedule_import_events() {
+		wp_schedule_single_event( time(), 'kct_import_events' );
+	}
+
+	public function schedule_update_events() {
+		$this->import_db_events( true );
 	}
 
 	/**
@@ -93,7 +162,6 @@ class Events {
 		}
 
 		$filter_by = $this->settings->code_type();
-
 		foreach ( $xml['event'] as $xml_event ) {
 			// Skip deleted events
 			if ( isset( $xml_event->deleted ) && $xml_event->deleted == 'Y' ) {

@@ -127,7 +127,7 @@ if ( ! function_exists( 'kct_post_thumbnail' ) ) :
 
             <a class="post-thumbnail" href="<?php the_permalink(); ?>" aria-hidden="true" tabindex="-1">
 				<?php
-				if ( ! has_post_thumbnail() ) {
+				if ( ! has_post_thumbnail() && get_post_type(get_the_ID()) == 'post' ) {
 					?>
                     <div class="thumbnail-replacement">
                         <?php

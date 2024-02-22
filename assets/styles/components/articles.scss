@@ -32,7 +32,8 @@
     }
 
     img {
-      object-fit: cover;
+		object-fit: contain;
+		max-height: 100%;
     }
   }
 }

@@ -32,6 +32,8 @@ final class Plugin {
 	 * @param bool $network_wide
 	 */
 	public function deactivate( bool $network_wide ) {
+		$timestamp = wp_next_scheduled( 'kct_update_events' );
+		wp_unschedule_event( $timestamp, 'kct_update_events' );
 	}
 
 	/**
@@ -47,6 +49,7 @@ final class Plugin {
 	 */
 	public function kct_theme_is_active() {
 		$theme = wp_get_theme();
+
 		return 'kct' === $theme->name || 'kct' === $theme->parent_theme;
 	}
 }

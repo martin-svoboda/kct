@@ -24,7 +24,7 @@ $link       = $args['link'];
 				<p><?php echo $text; ?></p>
 			<?php endif; ?>
 			<?php if ( ! empty( $link ) ): ?>
-				<a class="button" href="<?= $link['url'] ?>" target="<?= $link['target'] ?>"
+				<a class="button white" href="<?= $link['url'] ?>" target="<?= $link['target'] ?>"
 				   title="<?= $link['label'] ?>"><?= $link['label'] ?></a>
 			<?php endif; ?>
 		</div>

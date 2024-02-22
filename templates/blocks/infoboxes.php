@@ -20,9 +20,11 @@ $boxes = $args['boxes'];
 	$title = $box['title'];
 	$text  = $box['text'];
 	$link  = $box['link'];
+	$color = $box['color'];
 	?>
 	<<?= $link['url'] ? 'a href="' . $link['url'] . '" target="' . $link['target'] . '"
-					   title="' . $link['label'] . '"' : 'div' ?> class="cart shadow">
+					   title="' . $link['label'] . '"' : 'div' ?> class="cart
+	shadow" <?= $color ? 'style="background-color: var( ' . $color . ')"' : '' ?>>
 	<?php if ( ! empty( $image ) ) {
 		echo wp_get_attachment_image( $image );
 	} ?>

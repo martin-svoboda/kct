@@ -5,6 +5,7 @@ namespace Kct\Managers;
 use Kct\Blocks\ActionBlock;
 use Kct\Blocks\CoverBlock;
 use Kct\Blocks\EventsBlock;
+use Kct\Blocks\ImageWithContentBlock;
 use Kct\Blocks\InfoBoxesBlock;
 use Kct\Blocks\NewsBlock;
 use KctDeps\Wpify\Asset\AssetFactory;
@@ -21,7 +22,8 @@ final class BlocksManager {
 		ActionBlock $action_block,
 		InfoBoxesBlock $info_boxes_block,
 		EventsBlock $events_block,
-		NewsBlock $news_block
+		NewsBlock $news_block,
+		ImageWithContentBlock $image_with_content_block
 	) {
 		$this->utils         = $utils;
 		$this->asset_factory = $asset_factory;

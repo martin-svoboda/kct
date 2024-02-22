@@ -39,7 +39,8 @@ input[type="time"],
 input[type="datetime"],
 input[type="datetime-local"],
 input[type="color"],
-textarea {
+textarea,
+select {
   color: #666;
   border: 1px solid #ccc;
   border-radius: 3px;
@@ -61,12 +62,9 @@ input[type="time"]:focus,
 input[type="datetime"]:focus,
 input[type="datetime-local"]:focus,
 input[type="color"]:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
   color: #111;
-}
-
-select {
-  border: 1px solid #ccc;
 }
 
 textarea {

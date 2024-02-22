@@ -56,6 +56,37 @@ class InfoBoxesBlock {
 							'id'    => 'link',
 							'title' => __( 'Odkaz tlačítka', 'kct' ),
 						),
+						array(
+							'type'    => 'select',
+							'id'      => 'color',
+							'title'   => __( 'Barva boxu', 'kct' ),
+							'options' => array(
+								array(
+									'value' => '--primary-color',
+									'label' => __( 'Primární barva', 'kct' ),
+								),
+								array(
+									'value' => '--secondary-color',
+									'label' => __( 'Sekundární barva', 'kct' ),
+								),
+								array(
+									'value' => '--red-color',
+									'label' => __( 'Červená', 'kct' ),
+								),
+								array(
+									'value' => '--blue-color',
+									'label' => __( 'Modrá', 'kct' ),
+								),
+								array(
+									'value' => '--green-color',
+									'label' => __( 'Zelená', 'kct' ),
+								),
+								array(
+									'value' => '--yellow-color',
+									'label' => __( 'Žlutá', 'kct' ),
+								),
+							)
+						),
 					),
 				),
 			),

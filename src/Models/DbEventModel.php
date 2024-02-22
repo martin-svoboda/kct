@@ -85,7 +85,7 @@ class DbEventModel extends Model {
 		}
 
 		$event_types = get_option( 'event_types' );
-		if ( $event_types && ! empty( $data['details'] ) && is_array( $data['details'] ) ) {
+		/*if ( $event_types && ! empty( $data['details'] ) && is_array( $data['details'] ) ) {
 			if ( isset( $data['details']['detailid'] ) ) {
 				$detail            = $data['details'];
 				$data['details']   = [];
@@ -96,9 +96,9 @@ class DbEventModel extends Model {
 					continue;
 				}
 
-				$data['details'][ $key ]['icon'] = $event_types[ $detail['detailid'] ]['icon'];
+				//$data['details'][ $key ]['icon'] = $event_types[ $detail['detailid'] ]['icon'];
 			}
-		}
+		}*/
 
 		return $data;
 	}
