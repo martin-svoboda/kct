@@ -1,51 +1,83 @@
 // Function to calculate column width
 @function calcColumnWidth($span) {
-  @return percentage($span / $columns);
+	@return percentage($span / $columns);
 }
 
 // Mixin to create grid columns
 @mixin make-column($span: 1) {
-  flex: calcColumnWidth($span);
-  max-width: calcColumnWidth($span);
-  margin-right: $gutter;
+	flex: calcColumnWidth($span);
+	max-width: calcColumnWidth($span);
+	margin-right: $gutter;
 
-  &:last-child {
-	margin-right: 0;
-  }
+	&:last-child {
+		margin-right: 0;
+	}
 }
 
 .container {
-  width: 100%;
-  max-width: $container-width;
-  margin: 0 auto;
-  padding: 40px 20px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
+	width: 100%;
+	max-width: $container-width;
+	margin: 0 auto;
+	padding: 40px 20px;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2rem;
 
-  #secondary {
-	@media (min-width: $medium-screen) {
-	  max-width: 33%;
-	  flex: 0 0 auto;
-	  min-width: 250px;
+	&:has(header.full-width ) {
+		padding-top: 0;
 	}
-  }
+
+	#secondary {
+		@media (min-width: $medium-screen) {
+			max-width: 33%;
+			flex: 0 0 auto;
+			min-width: 250px;
+		}
+	}
 }
 
 .site-main {
-  @media (min-width: $medium-screen) {
-	flex: 1;
-  }
+	@media (min-width: $medium-screen) {
+		flex: 1;
+	}
 }
 
 
 // Define classes for grid columns
 @for $i from 1 through $columns {
-  .col-#{$i} {
-	@include make-column($i);
-  }
+	.col-#{$i} {
+		@include make-column($i);
+	}
+}
+
+.entry-header.full-width {
+	background: no-repeat center center;
+	background-size: cover;
+	background-color: $line-color;
+	position: relative;
+	margin-bottom: 2rem;
+
+	.entry-title {
+		margin-bottom: 0;
+	}
+
+	&.large {
+		padding-top: 20vw;
+		color: $white-color;
+
+		&:after {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+			opacity: 0.6;
+			background: linear-gradient(15deg,#000 20%,rgba(0,0,0,0) 70%);
+		}
+	}
 }
 
 .blog #primary header {
-  padding-top: 2rem;
+	padding-top: 2rem;
 }

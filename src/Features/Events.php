@@ -133,6 +133,12 @@ class Events {
 	 * The XML is converted to UTF-8 encoding, parsed into a PHP array, and then processed.
 	 * The XML URL and filter settings are retrieved from the plugin's settings.
 	 *
+	 * https://www.akcekct.kct-db.cz/export/akceexport1.php jaen změny akcí v poslední době
+	 * https://www.akcekct.kct-db.cz/export/akceexport1x.php Všechny dostupné akce
+	 * https://www.akcekct.kct-db.cz/export/akceexport2.php Seznam oblastí
+	 * https://www.akcekct.kct-db.cz/export/akceexport3.php Seznam odborů
+	 * https://www.akcekct.kct-db.cz/export/akceexport4.php typy akcí
+	 *
 	 * The method iterates over each event in the XML data and performs the following steps:
 	 * - Skips deleted events.
 	 * - Skips empty events.
@@ -146,6 +152,10 @@ class Events {
 	 * @return void
 	 */
 	public function import_db_events( $just_updated = false ) {
+		if (!is_main_site()) {
+			return;
+		}
+
 		$url = 'https://akcekct.kct-db.cz/export/' . ( $just_updated ? 'akceexport1' : 'akceexport1x' ) . '.php';
 		$xml = file_get_contents( $url );
 		$xml = mb_convert_encoding( $xml, 'UTF-8' );
@@ -164,7 +174,7 @@ class Events {
 		$filter_by = $this->settings->code_type();
 		foreach ( $xml['event'] as $xml_event ) {
 			// Skip deleted events
-			if ( isset( $xml_event->deleted ) && $xml_event->deleted == 'Y' ) {
+			if ( isset( $xml_event['deleted'] ) && $xml_event['deleted'] == 'Y' ) {
 				continue;
 			}
 
@@ -355,15 +365,20 @@ class Events {
 	 *
 	 * @return array An array of events within the specified date range.
 	 */
-	public function get_events( $date_from = '', $date_to = '', $type = '' ): array {
+	public function get_events( $date_from = '', $date_to = '', $type = '', $department = '' ): array {
 		// Získání všech akcí
-		$post_events = $this->event_repository->find_all_published_by_date( $date_from, $date_to, $type );
+		$post_events = $department ? [] : $this->event_repository->find_all_published_by_date( $date_from, $date_to, $type );
 		$db_events   = $this->db_event_repository->find_all_by_date( $date_from, $date_to, $type );
 		$to_exclude  = [];
 
 		// filtr z nastavení
 		$filter_val = $this->settings->get_option( 'id_code' );
 		$filter_by  = $this->settings->code_type();
+
+		if ($department) {
+			$filter_val = $department;
+			$filter_by  = 'department';
+		}
 
 		// Data CPT akcí převedeme na array a případně sloučíme se spárovanýni akcemi z DB
 		$events = array();

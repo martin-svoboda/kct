@@ -49,16 +49,6 @@ class Settings {
 				'type'    => 'html',
 				'content' => '<style>.forminp input[type=number].small-text {width:200px}</style>',
 			),
-//			array(
-//				'title'   => __( 'Typ webu a fukcí', 'kct' ),
-//				'desc'    => __( 'Vyberte typ webu pro jaký budou uzpůsobeny funkce pluginu a šablony.', 'kct' ),
-//				'id'      => 'site_type',
-//				'type'    => 'select',
-//				'options' => array(
-//					'region'     => __( 'Oblast', 'kct' ),
-//					'department' => __( 'Odbor', 'kct' ),
-//				),
-//			),
 			array(
 				'title' => __( 'Kód oblasti / odboru', 'kct' ),
 				'desc'  => __( 'Zadejte kód vaší oblasti (3 číslice) nebo odboru (6 číslic).', 'kct' ),
@@ -67,50 +57,50 @@ class Settings {
 			),
 		);
 
-		if ( kct_container()->get( SettingsRepository::class )->code_type() ) {
-			$event_types = get_option('event_types');
-			$event_types_list = [];
-			if ($event_types) {
-				foreach ( $event_types as $event_type ) {
-					$event_types_list[] = sprintf( '<img src="%s" title="%s"/> ', $event_type["icon"], $event_type["name"] );
-				}
-			}
-
-			$schedule_timestamp = wp_next_scheduled( 'kct_update_events' ) ?: __( 'nenaplánovano', 'kct' );
-
-			$settings = array_merge( $settings, array(
-				array(
-					'title' => __( 'Kalendář akcí z centrální DB', 'kct' ),
-					'type'  => 'title',
-				),
-				array(
-					'label' => __( 'Načíst akce z DB KČT', 'kct' ),
-					'desc'  => __( 'Načíst všechny dostupné akce pro váš odbor / oblast z centrální Databáze akcí KČT. (Akce může chvíli trvat.)', 'kct' ),
-					'id'    => 'load_db_events',
-					'type'  => 'button',
-					'url'   => add_query_arg( array( 'kct-action' => 'load_db_events' ), home_url() ),
-				),
-				array(
-					'title' => __( 'Pravidelně aktualizovat akce', 'kct' ),
-					'label' => sprintf( __( 'Pravidelně aktualizovat a načítat nové akce z centrální Databáce akcí KČT. Další aktualizace naplánována na: %s', 'kct' ), is_integer( $schedule_timestamp ) ? date( 'j. n. Y. H:i', $schedule_timestamp ) : __( 'nenaplánovano', 'kct' ) ),
-					'id'    => 'update_db_events',
-					'type'  => 'toggle',
-				),
-				array(
-					'label' => __( 'Načíst tipy akcí z DB KČT', 'kct' ),
-					'desc'  => __( 'Načíst všechny dostupné tipy akcí z centrální Databáze KČT. (Akce může chvíli trvat.)', 'kct' ),
-					'id'    => 'load_db_event_types',
-					'type'  => 'button',
-					'url'   => add_query_arg( array( 'kct-action' => 'load_db_event_types' ), home_url() ),
-				),
-				array(
-					'label' => __( 'Uložené tipy akcí', 'kct' ),
-					'id'    => 'event_types_list',
-					'type'  => 'html',
-					'content'  => implode( ' ', $event_types_list),
-				),
-			) );
-		}
+//		if ( kct_container()->get( SettingsRepository::class )->code_type() ) {
+//			$event_types = get_option('event_types');
+//			$event_types_list = [];
+//			if ($event_types) {
+//				foreach ( $event_types as $event_type ) {
+//					$event_types_list[] = sprintf( '<img src="%s" title="%s"/> ', $event_type["icon"], $event_type["name"] );
+//				}
+//			}
+//
+//			$schedule_timestamp = wp_next_scheduled( 'kct_update_events' ) ?: __( 'nenaplánovano', 'kct' );
+//
+//			$settings = array_merge( $settings, array(
+//				array(
+//					'title' => __( 'Kalendář akcí z centrální DB', 'kct' ),
+//					'type'  => 'title',
+//				),
+//				array(
+//					'label' => __( 'Načíst akce z DB KČT', 'kct' ),
+//					'desc'  => __( 'Načíst všechny dostupné akce pro váš odbor / oblast z centrální Databáze akcí KČT. (Akce může chvíli trvat.)', 'kct' ),
+//					'id'    => 'load_db_events',
+//					'type'  => 'button',
+//					'url'   => add_query_arg( array( 'kct-action' => 'load_db_events' ), home_url() ),
+//				),
+//				array(
+//					'title' => __( 'Pravidelně aktualizovat akce', 'kct' ),
+//					'label' => sprintf( __( 'Pravidelně aktualizovat a načítat nové akce z centrální Databáce akcí KČT. Další aktualizace naplánována na: %s', 'kct' ), is_integer( $schedule_timestamp ) ? date( 'j. n. Y. H:i', $schedule_timestamp ) : __( 'nenaplánovano', 'kct' ) ),
+//					'id'    => 'update_db_events',
+//					'type'  => 'toggle',
+//				),
+//				array(
+//					'label' => __( 'Načíst tipy akcí z DB KČT', 'kct' ),
+//					'desc'  => __( 'Načíst všechny dostupné tipy akcí z centrální Databáze KČT. (Akce může chvíli trvat.)', 'kct' ),
+//					'id'    => 'load_db_event_types',
+//					'type'  => 'button',
+//					'url'   => add_query_arg( array( 'kct-action' => 'load_db_event_types' ), home_url() ),
+//				),
+//				array(
+//					'label' => __( 'Uložené tipy akcí', 'kct' ),
+//					'id'    => 'event_types_list',
+//					'type'  => 'html',
+//					'content'  => implode( ' ', $event_types_list),
+//				),
+//			) );
+//		}
 
 		$this->wcf->create_options_page( array(
 			'parent_slug' => 'options-general.php',

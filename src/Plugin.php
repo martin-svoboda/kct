@@ -20,6 +20,9 @@ final class Plugin {
 		Frontend $frontend,
 		Settings $settings
 	) {
+		if (defined('WP_CLI') && WP_CLI) {
+			kct_container()->get(CLI::class);
+		}
 	}
 
 	/**

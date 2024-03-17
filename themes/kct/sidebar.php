@@ -7,7 +7,7 @@
  * @package kct
  */
 
-if ( ! is_active_sidebar( 'sidebar-1' ) || is_singular('akce') ) {
+if ( ! is_active_sidebar( 'sidebar-1' ) || is_singular('akce') || is_singular('odbory') ) {
 	return;
 }
 ?>
