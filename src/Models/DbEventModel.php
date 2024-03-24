@@ -2,6 +2,7 @@
 
 namespace Kct\Models;
 
+use DateTime;
 use KctDeps\Wpify\Model\Attributes\Column;
 use KctDeps\Wpify\Model\Attributes\ReadOnlyProperty;
 use KctDeps\Wpify\Model\Model;
@@ -84,7 +85,16 @@ class DbEventModel extends Model {
 			$data['lat'] = $data['finish']['gps_n'];
 		}
 
+		if ( $data['date'] ) {
+			$data['formated_date'] = array(
+				'day_name' => date_i18n( 'l', strtotime( $data['date'] ) ),
+				'number'   => date_i18n( 'j. n.', strtotime( $data['date'] ) ),
+				'year'     => date_i18n( 'Y', strtotime( $data['date'] ) ),
+			);
+		}
+
 		$event_types = get_option( 'event_types' );
+
 		/*if ( $event_types && ! empty( $data['details'] ) && is_array( $data['details'] ) ) {
 			if ( isset( $data['details']['detailid'] ) ) {
 				$detail            = $data['details'];

@@ -1,26 +1,15 @@
 import React from 'react';
 
 const EventItem = ({ item }) => {
-	const formatDate = (dateString) => {
-		const date = new Date(dateString);
-		return {
-			dayName: date.toLocaleDateString('default', { weekday: 'long' }),
-			dateNumber: date.toLocaleDateString('default', { day: 'numeric', month: 'numeric' }),
-			dateYear: date.toLocaleDateString('default', { year: 'numeric' }),
-		};
-	};
-
-	const { dayName, dateNumber, dateYear } = item.date ? formatDate(item.date) : {};
-
 	return (
 		<li>
-			<a href={item.permalink} className="event" title={`${dayName} ${dateNumber} ${dateYear} ${item.title}` }>
+			<a href={item.permalink} className="event" title={`${item.formated_date.day_name} ${item.formated_date.number} ${item.formated_date.year} ${item.title}` }>
 				<div className="date">
-					{item.date && (
+					{item.formated_date && (
 						<>
-							<span className="day-name">{dayName}</span>
-							<span className="date-number">{dateNumber}</span>
-							<span className="date-year">{dateYear}</span>
+							<span className="day-name">{item.formated_date.day_name}</span>
+							<span className="date-number">{item.formated_date.number}</span>
+							<span className="date-year">{item.formated_date.year}</span>
 						</>
 					)}
 				</div>

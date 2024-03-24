@@ -33,7 +33,7 @@ class EventRepository extends PostRepository {
 	public function find_all_published_by_date( $date_from = '', $date_to = '', $type = '' ) {
 		if ( $date_from ) {
 			$meta_query[] = [
-				'key'     => 'start_date',
+				'key'     => 'date',
 				'value'   => $date_from,
 				'compare' => '>=',
 				'type'    => 'DATE',
@@ -42,7 +42,7 @@ class EventRepository extends PostRepository {
 
 		if ( $date_to ) {
 			$meta_query[] = [
-				'key'     => 'start_date',
+				'key'     => 'date',
 				'value'   => $date_to,
 				'compare' => '<=',
 				'type'    => 'DATE',

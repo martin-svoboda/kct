@@ -59,7 +59,7 @@ $department = kct_container()->get( \Kct\Repositories\DepartmentRepository::clas
 				<p>E-mail: <?php echo implode( ', ', $emails ) ?></p>
 			<?php } ?>
 			<?php if ( $department->web ) { ?>
-				<p>Web: <?php printf( '<a href="%s" target="_blank">%s</a>', esc_url( $department->web ), $department->web ) ?></p>
+				<p><?php printf( '<a href="%s" class="button" target="_blank">%s</a>', esc_url( $department->web ), __('Web odboru') ) ?></p>
 			<?php } ?>
 			<?php if ( $department->lng && $department->lat ) { ?>
 				<div>

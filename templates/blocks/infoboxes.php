@@ -20,7 +20,7 @@ $boxes = $args['boxes'];
 	$title = $box['title'];
 	$text  = $box['text'];
 	$link  = $box['link'];
-	$color = $box['color'];
+	$color = $box['color'] ?? '';
 	?>
 	<<?= $link['url'] ? 'a href="' . $link['url'] . '" target="' . $link['target'] . '"
 					   title="' . $link['label'] . '"' : 'div' ?> class="cart

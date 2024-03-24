@@ -2,12 +2,14 @@
 
 namespace Kct\Features;
 
+use DateTime;
 use Kct\Models\DbEventModel;
 use Kct\Models\EventModel;
 use Kct\Repositories\DbEventRepository;
 use Kct\Repositories\EventRepository;
 use Kct\Repositories\SettingsRepository;
 use Kct\Settings;
+use WP_Post;
 
 class Events {
 
@@ -25,37 +27,42 @@ class Events {
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
 		//add_action( 'admin_action_load_db_events', array( $this, 'schedule_import_events' ) );
 		//add_action( 'admin_action_load_db_event_types', array( $this, 'import_event_types' ) );
-		add_action( 'save_post_akce', array( $this, 'update_start_date' ), 10, 3 );
-		add_action( 'update_option_' . $this->settings->get_key(), array(
-			$this,
-			'maybe_schedule_update_events'
-		), 10, 3 );
+		add_action( 'save_post', array( $this, 'update_start_date' ), 999, 3 );
+
 		add_action( 'kct_import_events', array( $this, 'import_db_events' ) );
 		add_action( 'kct_update_events', array( $this, 'schedule_update_events' ) );
 
-		add_action( 'template_redirect', function () {
-			if ( ! get_query_var( 'kct-action' ) ) {
+		add_action( 'admin_init', function () {
+			if ( ! isset( $_REQUEST['kct-action'] ) ) {
 				return;
 			}
 
-			if ( get_query_var( 'kct-action' ) == 'load_db_events' ) {
-				//$this->schedule_import_events();
-				$this->import_db_events();
-			}
-			if ( get_query_var( 'kct-action' ) == 'load_db_event_types' ) {
-				$this->import_event_types();
-			}
-			if ( get_query_var( 'kct-action' ) == 'fix-types' ) {
-				$event_types = $this->get_event_types();
-				foreach ( $event_types as $key => $type ) {
-					$event_types[ $key ]['icon'] = str_replace( '.test', '.cz', $type['icon'] );
+			if ( $_REQUEST['kct-action'] == 'convert-action' ) {
+				if ( isset( $_REQUEST['_wpnonce'] ) && wp_verify_nonce( $_REQUEST['_wpnonce'], 'kct-convert-action' ) ) {
+					$this->convert_event( intval( $_REQUEST['db_id'] ) );
+				} else {
+					die( __( 'Chyba v ověření zabezpečení.', 'kct' ) );
 				}
-				update_option( 'event_types', $event_types );
 			}
 
-			wp_safe_redirect( add_query_arg( array(
-				'page' => $this->settings->get_key(),
-			), admin_url( 'options-general.php' ) ), 302, 'kct' );
+//			if ( get_query_var( 'kct-action' ) == 'load_db_events' ) {
+//				//$this->schedule_import_events();
+//				$this->import_db_events();
+//			}
+//			if ( get_query_var( 'kct-action' ) == 'load_db_event_types' ) {
+//				$this->import_event_types();
+//			}
+//			if ( get_query_var( 'kct-action' ) == 'fix-types' ) {
+//				$event_types = $this->get_event_types();
+//				foreach ( $event_types as $key => $type ) {
+//					$event_types[ $key ]['icon'] = str_replace( '.test', '.cz', $type['icon'] );
+//				}
+//				update_option( 'event_types', $event_types );
+//			}
+
+//			wp_safe_redirect( add_query_arg( array(
+//				'page' => $this->settings->get_key(),
+//			), admin_url( 'options-general.php' ) ), 302, 'kct' );
 		} );
 //		add_action('init', function (){
 //			dump(_get_cron_array());
@@ -152,7 +159,7 @@ class Events {
 	 * @return void
 	 */
 	public function import_db_events( $just_updated = false ) {
-		if (!is_main_site()) {
+		if ( ! is_main_site() ) {
 			return;
 		}
 
@@ -250,21 +257,8 @@ class Events {
 			$this->db_event_repository->save( $db_event );
 		}
 
-		// stop function if is trigger by cron
-		if ( $just_updated ) {
-			return;
-		}
-
 		// import event types to options
 		$this->import_event_types( true );
-
-		// return back to setting page
-		$return_url = add_query_arg( array(
-			'page'          => Settings::KEY,
-			'events_loaded' => 1
-		), admin_url( 'options-general.php' ) );
-
-		wp_safe_redirect( $return_url, 302, 'kct' );
 		exit();
 	}
 
@@ -288,7 +282,7 @@ class Events {
 	 *
 	 * @return void
 	 */
-	public function import_event_types( $just_updated = false ) {
+	public function import_event_types() {
 		$url = "https://akcekct.kct-db.cz/export/akceexport4.php";
 		$xml = file_get_contents( $url );
 		$xml = mb_convert_encoding( $xml, 'UTF-8' );
@@ -337,18 +331,6 @@ class Events {
 			update_option( 'event_types', $event_types );
 		}
 
-		// stop function if is trigger from another action
-		if ( $just_updated ) {
-			return;
-		}
-
-		// return back to setting page
-		$return_url = add_query_arg( array(
-			'page'              => Settings::KEY,
-			'eventtypes_loaded' => 1
-		), admin_url( 'options-general.php' ) );
-
-		wp_safe_redirect( $return_url, 302, 'kct' );
 		exit();
 	}
 
@@ -375,7 +357,7 @@ class Events {
 		$filter_val = $this->settings->get_option( 'id_code' );
 		$filter_by  = $this->settings->code_type();
 
-		if ($department) {
+		if ( $department ) {
 			$filter_val = $department;
 			$filter_by  = 'department';
 		}
@@ -475,6 +457,10 @@ class Events {
 			$event = $post_data ?: $event_db_data;
 		}
 
+//		foreach ( $event as $data ) {
+//			if ()
+//		}
+
 		return $event;
 	}
 
@@ -485,6 +471,10 @@ class Events {
 	public function merge_event_details_data( $post_details ) {
 		$event_types = $this->get_event_types();
 		$new_details = [];
+
+		if ( ! $post_details ) {
+			return $post_details;
+		}
 
 		foreach ( $post_details as $detail ) {
 			foreach ( $event_types as $type ) {
@@ -500,16 +490,44 @@ class Events {
 		return $new_details;
 	}
 
+	/**
+	 * @param int     $post_id
+	 * @param WP_Post $post
+	 * @param bool    $update
+	 *
+	 * @return void
+	 */
 	function update_start_date( $post_id, $post, $update ) {
+		if ( $post->post_type !== $this->event_repository->post_type() ) {
+			return;
+		}
+
 		// Načtení meta hodnoty "start" pro aktualizovaný nebo nově vytvořený příspěvek
 		$start_data = get_post_meta( $post_id, 'start', true );
 
-		// Získání data začátku akce z serializovaného pole
+		// Získání data začátku akce ze serializovaného pole
 		$start_date = isset( $start_data['date'] ) ? $start_data['date'] : '';
 
 		// Aktualizace hodnoty "start_date"
 		if ( ! empty( $start_date ) ) {
-			update_post_meta( $post_id, 'start_date', $start_date );
+			update_post_meta( $post_id, 'date', $start_date );
 		}
+	}
+
+	private function convert_event( $db_id ) {
+		/** @var EventModel $event */
+		$event = $this->event_repository->create();
+		/** @var DbEventModel $db_event */
+		$db_event = $this->db_event_repository->get_by_db_id( $db_id );
+
+		$event->db_id = $db_id;
+		$event->title = $db_event->title;
+		if ( $db_event->year ) {
+			$event->slug = sanitize_title( $db_event->year . ' ' . $db_event->title );
+		}
+
+		$this->event_repository->save( $event );
+
+		wp_safe_redirect( get_edit_post_link( $event->id ), 302, 'kct' );
 	}
 }

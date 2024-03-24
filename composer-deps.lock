@@ -441,16 +441,16 @@
         },
         {
             "name": "wpify/asset",
-            "version": "1.2.7",
+            "version": "1.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wpify/asset.git",
-                "reference": "6bc587810b33e47a86120cf2897790454d0ade38"
+                "reference": "1ba1fca71ccedd25326c06946ef4caa094e1fdfb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wpify/asset/zipball/6bc587810b33e47a86120cf2897790454d0ade38",
-                "reference": "6bc587810b33e47a86120cf2897790454d0ade38",
+                "url": "https://api.github.com/repos/wpify/asset/zipball/1ba1fca71ccedd25326c06946ef4caa094e1fdfb",
+                "reference": "1ba1fca71ccedd25326c06946ef4caa094e1fdfb",
                 "shasum": ""
             },
             "type": "library",
@@ -471,30 +471,27 @@
             ],
             "support": {
                 "issues": "https://github.com/wpify/asset/issues",
-                "source": "https://github.com/wpify/asset/tree/1.2.7"
+                "source": "https://github.com/wpify/asset/tree/1.2.8"
             },
-            "time": "2022-11-16T19:05:58+00:00"
+            "time": "2024-03-01T11:47:12+00:00"
         },
         {
             "name": "wpify/custom-fields",
-            "version": "3.12.3",
+            "version": "3.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wpify/custom-fields.git",
-                "reference": "de85aba81540a181a57aa241fbca98dc0da0b5ff"
+                "reference": "b073a82899c9ddf69c7573cf31ba83c9839e8bb0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wpify/custom-fields/zipball/de85aba81540a181a57aa241fbca98dc0da0b5ff",
-                "reference": "de85aba81540a181a57aa241fbca98dc0da0b5ff",
+                "url": "https://api.github.com/repos/wpify/custom-fields/zipball/b073a82899c9ddf69c7573cf31ba83c9839e8bb0",
+                "reference": "b073a82899c9ddf69c7573cf31ba83c9839e8bb0",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": ">=7.4||<=8.1"
-            },
-            "require-dev": {
-                "symfony/var-dumper": "^v5.4"
+                "php": ">=7.4.33"
             },
             "type": "library",
             "autoload": {
@@ -512,9 +509,9 @@
             "description": "WPify Custom Fields",
             "support": {
                 "issues": "https://github.com/wpify/custom-fields/issues",
-                "source": "https://github.com/wpify/custom-fields/tree/3.12.3"
+                "source": "https://github.com/wpify/custom-fields/tree/3.13.0"
             },
-            "time": "2024-01-18T15:38:27+00:00"
+            "time": "2024-03-15T10:15:10+00:00"
         },
         {
             "name": "wpify/log",
@@ -559,16 +556,16 @@
         },
         {
             "name": "wpify/model",
-            "version": "4.1.7",
+            "version": "4.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wpify/model.git",
-                "reference": "2ac8388c5f9796eb0d954e00055d91b355b17b1c"
+                "reference": "d58b81467e7d72ce0d467cd0867cebb814c9c9b7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wpify/model/zipball/2ac8388c5f9796eb0d954e00055d91b355b17b1c",
-                "reference": "2ac8388c5f9796eb0d954e00055d91b355b17b1c",
+                "url": "https://api.github.com/repos/wpify/model/zipball/d58b81467e7d72ce0d467cd0867cebb814c9c9b7",
+                "reference": "d58b81467e7d72ce0d467cd0867cebb814c9c9b7",
                 "shasum": ""
             },
             "require": {
@@ -593,9 +590,9 @@
             "description": "WPify Model",
             "support": {
                 "issues": "https://github.com/wpify/model/issues",
-                "source": "https://github.com/wpify/model/tree/4.1.7"
+                "source": "https://github.com/wpify/model/tree/4.1.8"
             },
-            "time": "2023-12-05T10:17:44+00:00"
+            "time": "2024-03-06T09:14:25+00:00"
         },
         {
             "name": "wpify/plugin-utils",
@@ -673,16 +670,16 @@
         },
         {
             "name": "wpify/snippets",
-            "version": "3.1.5",
+            "version": "3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wpify/snippets.git",
-                "reference": "b002697077e9d214c9ed8ba4faa436e9b0a860cd"
+                "reference": "f5d9f7d36489bde31e945e99850928dfe49d66c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wpify/snippets/zipball/b002697077e9d214c9ed8ba4faa436e9b0a860cd",
-                "reference": "b002697077e9d214c9ed8ba4faa436e9b0a860cd",
+                "url": "https://api.github.com/repos/wpify/snippets/zipball/f5d9f7d36489bde31e945e99850928dfe49d66c4",
+                "reference": "f5d9f7d36489bde31e945e99850928dfe49d66c4",
                 "shasum": ""
             },
             "type": "library",
@@ -707,9 +704,9 @@
             ],
             "support": {
                 "issues": "https://github.com/wpify/snippets/issues",
-                "source": "https://github.com/wpify/snippets/tree/3.1.5"
+                "source": "https://github.com/wpify/snippets/tree/3.2.1"
             },
-            "time": "2023-11-16T08:52:35+00:00"
+            "time": "2024-03-21T13:05:54+00:00"
         },
         {
             "name": "wpify/taxonomy",

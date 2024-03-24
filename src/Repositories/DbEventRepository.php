@@ -50,16 +50,20 @@ class DbEventRepository extends CustomTableRepository {
 	 * @throws \ReflectionException
 	 */
 	public function get_by_db_id( int $db_id ): ?DbEventModel {
+		switch_to_blog( 1 );
+
 		$args = array(
 			'where' => $this->db()->prepare( 'db_id = %d', $db_id ),
 		);
 
+		$event = null;
 		$items = $this->find( $args );
 		if ( ! empty( $items ) ) {
-			return $items[0];
+			$event = $items[0];
 		}
+		restore_current_blog();
 
-		return null;
+		return $event;
 	}
 
 	/**
@@ -80,6 +84,8 @@ class DbEventRepository extends CustomTableRepository {
 		if ( ! $date_from ) {
 			$date_from = '2023-01-01';
 		}
+		switch_to_blog( 1 );
+
 		$query = $this->db()->prepare( 'date >= %s', $date_from );
 
 		if ( $date_to ) {
@@ -89,6 +95,10 @@ class DbEventRepository extends CustomTableRepository {
 			$query .= $this->db()->prepare( ' AND JSON_CONTAINS(details, JSON_OBJECT("detailid", %s))', $type );
 		}
 
-		return $this->find_all( [ 'where' => $query ] );
+		$data = $this->find_all( [ 'where' => $query ] );
+
+		restore_current_blog();
+
+		return $data;
 	}
 }

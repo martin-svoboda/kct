@@ -2,6 +2,7 @@
 
 namespace Kct\Models;
 
+use DateTime;
 use Kct\Repositories\EventRepository;
 use KctDeps\Wpify\Model\Attributes\Meta;
 use KctDeps\Wpify\Model\Attributes\ReadOnlyProperty;
@@ -50,6 +51,9 @@ class EventModel extends Post {
 	#[Meta]
 	public ?array $proposal;
 
+	#[Meta]
+	public ?array $start_date;
+
 	#[ReadOnlyProperty]
 	public ?string $date;
 
@@ -79,6 +83,14 @@ class EventModel extends Post {
 		} elseif (  isset( $data['finish'] ) && ! empty( $data['finish']['gps_n'] ) && ! empty( $data['finish']['gps_e'] ) ) {
 			$data['lng'] = $data['finish']['gps_e'];
 			$data['lat'] = $data['finish']['gps_n'];
+		}
+
+		if ( $data['date'] ) {
+			$data['formated_date'] = array(
+				'day_name' => date_i18n( 'l', strtotime( $data['date'] ) ),
+				'number'   => date_i18n( 'j. n.', strtotime( $data['date'] ) ),
+				'year'     => date_i18n( 'Y', strtotime( $data['date'] ) ),
+			);
 		}
 
 		return $data;

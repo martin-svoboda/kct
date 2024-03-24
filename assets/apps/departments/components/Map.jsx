@@ -17,7 +17,7 @@ const Map = ({items}) => {
 					layer: 'markers',
 					//pin: 'https://placekitten.com/20/30',
 					//pointer: true,
-					card: { header: item.title, body: 'This is Marker 1', footer: 'This is Marker 1 footer' },
+					card: { header: item.title, body: item.town, footer: `<a href=${item.permalink}>Detail odboru</a>` },
 					click: (event, options, marker) => console.log(event, options, marker),
 				};
 			}

@@ -6,6 +6,7 @@
  *
  * @package kct
  */
+global $post;
 
 $db_event_id = get_query_var( 'db_id' ) ?? '';
 $event       = kct_container()->get( \Kct\Features\Events::class )->get_event( get_the_ID(), $db_event_id );
@@ -116,7 +117,6 @@ if ( isset( $event['image'] ) && $event['image'] ) {
 	<div class="event-content-wrap">
 		<div class="entry-content">
 			<?php
-			//dump( $event['to']_array() );
 			echo $event['content'];
 
 			if ( $event['lng'] && $event['lat'] ) { ?>
@@ -125,7 +125,18 @@ if ( isset( $event['image'] ) && $event['image'] ) {
 							src="https://frame.mapy.cz/?x=<?= $event['lng'] ?>&y=<?= $event['lat'] ?>&z=13"
 							width="800" height="400" frameborder="0"></iframe>
 				</div>
-			<?php } ?>
+			<?php }
+			if ( ! $db_event_id ) {
+				kct_entry_footer();
+			} else {
+				$url = add_query_arg( array(
+					'kct-action' => 'convert-action',
+					'db_id'      => $db_event_id,
+					'_wpnonce'   => wp_create_nonce( 'kct-convert-action' ),
+				), admin_url( 'admin-post.php' ) );
+
+				echo '<a class="" href="' . esc_url( $url ) . '">Převést na vlastní akci a upravit</a>';
+			} ?>
 		</div><!-- .entry-content -->
 		<div class="event-sidebar">
 
@@ -203,10 +214,4 @@ if ( isset( $event['image'] ) && $event['image'] ) {
 			<?php endif; ?>
 		</div>
 	</div>
-
-	<?php if ( ! $db_event_id ) : ?>
-		<footer class="entry-footer">
-			<?php kct_entry_footer(); ?>
-		</footer><!-- .entry-footer -->
-	<?php endif; ?>
 </article><!-- #post-<?php the_ID(); ?> -->
