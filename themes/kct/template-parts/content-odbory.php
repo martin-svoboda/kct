@@ -52,8 +52,10 @@ $department = kct_container()->get( \Kct\Repositories\DepartmentRepository::clas
 			<?php } ?>
 			<?php if ( $department->emails ) {
 				$emails = [];
-				foreach ( $department->emails as $email ) {
-					$emails[] = sprintf( '<a href="mailto:%1$s">%1$s</a>', $email );
+				foreach ($department->emails as $email) {
+					// Zakrýt e-mailovou adresu pomocí obfuscation
+					$obfuscated_email = str_replace("@", " [zav] ", $email);
+					$emails[] = sprintf('<span class="email-obfuscated" data-email="%1$s">Skryto</span>', $obfuscated_email);
 				}
 				?>
 				<p>E-mail: <?php echo implode( ', ', $emails ) ?></p>

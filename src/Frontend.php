@@ -34,6 +34,10 @@ class Frontend {
 	}
 
 	public function setup_assets() {
+		$this->asset_factory->wp_script( $this->utils->get_plugin_path( 'build/plugin.js' ), array(
+			'in_footer'    => true,
+		) );
+
 		if ( is_post_type_archive( 'akce' ) ) {
 			$this->asset_factory->wp_script( $this->utils->get_plugin_path( 'build/events.js' ), array(
 				'script_after' => 'console.log("events app loaded")',

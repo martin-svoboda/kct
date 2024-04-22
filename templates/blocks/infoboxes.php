@@ -26,7 +26,7 @@ $boxes = $args['boxes'];
 					   title="' . $link['label'] . '"' : 'div' ?> class="cart
 	shadow" <?= $color ? 'style="background-color: var( ' . $color . ')"' : '' ?>>
 	<?php if ( ! empty( $image ) ) {
-		echo wp_get_attachment_image( $image );
+		echo wp_get_attachment_image( $image, 'medium' );
 	} ?>
 	<div class="content">
 		<?php if ( ! empty( $title ) ): ?>

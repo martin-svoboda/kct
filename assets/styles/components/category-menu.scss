@@ -1,0 +1,16 @@
+.category-menu {
+	margin-bottom: 2rem;
+
+	&__item {
+		padding: .5rem 1rem;
+		border-radius: 5px;
+		background: $white-color;
+		color: $secondary-color;
+		text-decoration: none;
+
+		&.active {
+			background: $primary-color;
+			color: $white-color;
+		}
+	}
+}

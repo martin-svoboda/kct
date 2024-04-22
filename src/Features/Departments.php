@@ -94,7 +94,7 @@ class Departments {
 				$department->zip         = strval( $xml_department['zip'] ?: '' );
 				$department->town        = strval( $xml_department['town'] ?: '' );
 				$department->state       = strval( $xml_department['state'] ?: '' );
-				$department->web         = strval( is_array( $xml_department['web'] ) ? $xml_department['web'][0] : $xml_department['web'] );
+				$department->web         = strval( is_array( $xml_department['web'] ) && ! empty( $xml_department['web'] ) ? $xml_department['web'][0] : $xml_department['web'] );
 				$department->phones      = is_array( $xml_department['phone'] ) ? $xml_department['phone'] : [ $xml_department['phone'] ];
 				$department->emails      = is_array( $xml_department['email'] ) ? $xml_department['email'] : [ $xml_department['email'] ];
 				$department->lng         = floatval( $xml_department['gps_e'] ?: 0 );

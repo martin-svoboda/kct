@@ -23,10 +23,6 @@ class EventPostType extends AbstractCustomPostType {
 	}
 
 	public function setup() {
-		if ( ! isset( $_GET['action'] ) || $_GET['action'] !== 'edit' ) {
-			return;
-		}
-
 		$items = array(
 			array(
 				'type'  => 'number',

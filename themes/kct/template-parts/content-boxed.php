@@ -23,6 +23,12 @@
             <div class="entry-meta">
 				<?php
 				kct_posted_on();
+
+				$categories_list = get_the_category_list( esc_html__( ', ', 'kct' ) );
+				if ( $categories_list ) {
+					/* translators: 1: list of categories. */
+					printf( '<span class="cat-links">' . esc_html__( ' | %1$s', 'kct' ) . '</span>', $categories_list ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				}
 				?>
             </div><!-- .entry-meta -->
 		<?php endif; ?>

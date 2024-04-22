@@ -14,8 +14,8 @@
 
 get_header();
 ?>
-    <div class="container pt-0">
-        <main id="primary" class="site-main">
+	<div class="container pt-0">
+		<main id="primary" class="site-main">
 
 			<?php
 			if ( get_query_var( 'db_id' ) ) {
@@ -26,15 +26,44 @@ get_header();
 
 				if ( have_posts() ) :
 
-					if ( is_home() && ! is_front_page() ) :
+					if ( ( is_home() && ! is_front_page() ) || is_archive() ) :
 						?>
-                        <header>
-                            <h1 class="entry-title"><?php echo get_the_title( get_option( 'page_for_posts', true ) ); ?></h1>
-                        </header>
+						<header>
+							<h1 class="entry-title"><?php echo get_the_title( get_option( 'page_for_posts', true ) ); ?></h1>
+
+							<?php
+							$categories = get_categories();
+							if ( $categories && count( $categories ) > 1 ) {
+								/** @var \WP_Query $wp_query */
+								global $wp_query;
+
+								$current = 'all';
+								if ( is_archive() ) {
+									$query   = $wp_query->query;
+									$current = get_query_var( 'category_name' ) ?? $current;
+								}
+								?>
+								<div class="category-menu">
+									<a href="<?php echo get_permalink( get_option( 'page_for_posts', true ) ) ?>"
+									   class="category-menu__item shadow<?php echo $current === 'all' ? ' active' : '' ?>"
+									>Všechny</a>
+									<?php
+									/** @var \WP_Term $category */
+									foreach ( $categories as $category ) {
+										?>
+										<a href="<?php echo get_term_link( $category ) ?>"
+										   class="category-menu__item shadow<?php echo $current === $category->slug ? ' active' : '' ?>"
+										><?php echo $category->name ?></a>
+										<?php
+									}
+									?>
+								</div>
+							<?php } ?>
+						</header>
 					<?php
 					endif;
 					?>
-                    <div class="articles_grid"> <?php
+					<div class="articles_grid"> <?php
 					/* Start the Loop */
 					while ( have_posts() ) :
 						the_post();
@@ -48,7 +77,7 @@ get_header();
 
 					endwhile;
 					?>
-                    </div><?php
+					</div><?php
 					the_posts_navigation();
 
 				else :
@@ -59,7 +88,7 @@ get_header();
 			}
 			?>
 
-        </main><!-- #main -->
-    </div>
+		</main><!-- #main -->
+	</div>
 <?php
 get_footer();

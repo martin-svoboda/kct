@@ -73,11 +73,13 @@
 			bottom: 0;
 			width: 100%;
 			opacity: 0.6;
-			background: linear-gradient(15deg,#000 20%,rgba(0,0,0,0) 70%);
+			background: linear-gradient(15deg, #000 20%, rgba(0, 0, 0, 0) 70%);
 		}
 	}
 }
 
-.blog #primary header {
-	padding-top: 2rem;
+.blog, .archive {
+	#primary > header {
+		padding-top: 2rem;
+	}
 }

@@ -12,10 +12,10 @@ $db_event_id = get_query_var( 'db_id' ) ?? '';
 $event       = kct_container()->get( \Kct\Features\Events::class )->get_event( get_the_ID(), $db_event_id );
 
 $image_url = '';
-if ( isset( $event['image'] ) && $event['image'] ) {
-	$image_url = $event['image']['url'];
-} else {
+if ( is_single() && has_post_thumbnail() ) {
 	$image_url = get_the_post_thumbnail_url( null, 'full' );
+} elseif ( isset( $event['image'] ) && $event['image'] ) {
+	$image_url = $event['image']['url'];
 }
 ?>
 
