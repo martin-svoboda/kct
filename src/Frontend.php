@@ -23,6 +23,9 @@ class Frontend {
 		$this->setup_theme();
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'setup_assets' ) );
+		add_filter( 'excerpt_length', function () {
+			return 20;
+		} );
 		//$this->setup_assets();
 	}
 
@@ -35,7 +38,7 @@ class Frontend {
 
 	public function setup_assets() {
 		$this->asset_factory->wp_script( $this->utils->get_plugin_path( 'build/plugin.js' ), array(
-			'in_footer'    => true,
+			'in_footer' => true,
 		) );
 
 		if ( is_post_type_archive( 'akce' ) ) {

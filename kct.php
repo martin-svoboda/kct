@@ -2,7 +2,7 @@
 /*
  * Plugin Name:       Kct
  * Description:       Plugin skeleton with theme by WPify
- * Version:           1.0.0
+ * Version:           KCT_VERSION
  * Requires PHP:      7.3.0
  * Requires at least: 5.3.0
  * Author:            WPify

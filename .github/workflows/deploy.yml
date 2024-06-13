@@ -1,0 +1,82 @@
+name: Deployment
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    env:
+      SSH_SERVER: 37.235.102.5
+      SSH_USER: root
+      SSH_PATH: /www/hosting/sokct.cz/www
+      SSH_PORT: 22
+      WP_CLI: wp --allow-root
+      PLUGIN_VERSION: ${{ github.ref }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: /tmp/composer-cache
+          key: ${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+      - uses: php-actions/composer@v6
+        with:
+          php_extensions: json
+          version: 2
+          dev: no
+      - run: composer global config --no-plugins allow-plugins.wpify/scoper true
+      - run: composer global require wpify/scoper
+      - run: sudo chown -R $USER:$USER $GITHUB_WORKSPACE/vendor
+      - run: composer install --no-dev --optimize-autoloader
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npm run build
+      - name: Archive plugin artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: vendor
+          path: |
+            deps/
+            vendor/
+            build/
+      - run: |
+          set -euxo pipefail
+
+          eval $(ssh-agent -s -a /tmp/ssh_agent.sock)
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -t rsa "$SSH_SERVER" >> ~/.ssh/known_hosts
+          echo -e "Host remote\n\tHostName $SSH_SERVER\n\tPort $SSH_PORT\n\tUser $SSH_USER\n" > ~/.ssh/config
+          chmod 600 ~/.ssh/config
+
+          sed -i "s/KCT_VERSION/$PLUGIN_VERSION/g" "style.css"
+
+          alias deploy='rsync -av --delete --no-perms --no-owner --no-group --partial --exclude="/.*" --exclude="*.scss" --exclude="*.sh"'
+
+          deploy \
+            *.php \
+            assets \
+            build \
+            deps \
+            js \
+            src \
+            templates \
+            themes \
+            vendor \
+            remote:$SSH_PATH/wp-content/plugins/kct/
+
+          ssh -T remote <<-EOF
+          set -euxo pipefail
+          cd $SSH_PATH
+          $WP_CLI core update-db
+          $WP_CLI language core update
+          $WP_CLI language plugin update --all
+          $WP_CLI language theme update --all
+          $WP_CLI rewrite flush
+          $WP_CLI cache flush
+          EOF

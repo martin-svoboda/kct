@@ -11,7 +11,7 @@ const DepartmentItem = ({item}) => {
 				<div className="content">
 					<h3>{item.title}</h3>
 					<p>
-						{item.town}
+						Odbor č. {item.department_id} | {item.town}
 					</p>
 				</div>
 			</a>

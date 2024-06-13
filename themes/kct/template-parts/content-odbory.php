@@ -16,6 +16,7 @@ $department = kct_container()->get( \Kct\Repositories\DepartmentRepository::clas
 	<header
 		class="entry-header full-width">
 		<div class="container">
+			odbor č. <?php echo $department->department_id ?>
 			<h1 class="entry-title"><?= $department->title ?></h1>
 		</div>
 	</header><!-- .entry-header -->
