@@ -1,6 +1,11 @@
 .site-header {
 	.container {
 		padding: 10px 20px;
+
+		@media only screen and (max-width: 500px) {
+			padding: 10px;
+			gap: 1rem;
+		}
 	}
 
 	.custom-logo-link {
@@ -12,6 +17,10 @@
 			height: auto;
 			width: auto;
 			display: block;
+
+			@media only screen and (max-width: 500px) {
+				max-width: 60px;
+			}
 		}
 	}
 
@@ -23,10 +32,21 @@
 		font-family: $roboto-condensed;
 		font-size: $heading-2;
 		line-height: $heading-2;
+		flex: 1;
+
+		@media only screen and (max-width: 500px) {
+			font-size: $heading-3;
+		}
 
 		a {
 			text-decoration: none;
 			color: $secondary-color;
+		}
+	}
+
+	.secondary-logo {
+		@media only screen and (max-width: 420px) {
+			display: none;
 		}
 	}
 
@@ -40,6 +60,10 @@
 		flex-wrap: wrap;
 		border-bottom: 1px solid $line-color;
 		padding-bottom: 5px;
+
+		@media only screen and (max-width: 420px) {
+			height: 40px;
+		}
 
 		& > * {
 			margin-bottom: 0;
