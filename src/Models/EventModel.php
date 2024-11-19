@@ -63,9 +63,9 @@ class EventModel extends Post {
 //	#[ReadOnlyProperty]
 //	public string $content;
 
-	public function get_date() {
-		return isset( $this->start ) && ! empty( $this->start ) && $this->start['date'] ? $this->start['date'] : '';
-	}
+//	public function get_date() {
+//		return $this->date ?: ( ! empty( $this->start ) && $this->start['date'] ? $this->start['date'] : '' );
+//	}
 
 	public function to_array( array $props = array(), array $recursive = array() ): array {
 		$data = parent::to_array( $props, $recursive );
@@ -80,7 +80,7 @@ class EventModel extends Post {
 		if ( ( isset( $data['start'] ) && ! empty( $data['start']['gps_n'] ) && ! empty( $data['start']['gps_e'] ) ) ) {
 			$data['lng'] = $data['start']['gps_e'];
 			$data['lat'] = $data['start']['gps_n'];
-		} elseif (  isset( $data['finish'] ) && ! empty( $data['finish']['gps_n'] ) && ! empty( $data['finish']['gps_e'] ) ) {
+		} elseif ( isset( $data['finish'] ) && ! empty( $data['finish']['gps_n'] ) && ! empty( $data['finish']['gps_e'] ) ) {
 			$data['lng'] = $data['finish']['gps_e'];
 			$data['lat'] = $data['finish']['gps_n'];
 		}
