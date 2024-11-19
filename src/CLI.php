@@ -20,12 +20,12 @@ class CLI extends WP_CLI_Command {
 	}
 
 	public function import_events() {
-		$departments = kct_container()->get( Events::class );
-		$departments->import_db_events();
+		$events = kct_container()->get( Events::class );
+		$events->import_db_events();
 	}
 
 	public function update_events() {
-		$departments = kct_container()->get( Events::class );
-		$departments->import_db_events( true );
+		$events = kct_container()->get( Events::class );
+		$events->import_db_events( true );
 	}
 }

@@ -129,13 +129,15 @@ if ( is_single() && has_post_thumbnail() ) {
 			if ( ! $db_event_id ) {
 				kct_entry_footer();
 			} else {
-				$url = add_query_arg( array(
-					'kct-action' => 'convert-action',
-					'db_id'      => $db_event_id,
-					'_wpnonce'   => wp_create_nonce( 'kct-convert-action' ),
-				), admin_url( 'admin-post.php' ) );
+				if ( current_user_can( 'edit_posts' ) ) {
+					$url = add_query_arg( array(
+						'kct-action' => 'convert-action',
+						'db_id'      => $db_event_id,
+						'_wpnonce'   => wp_create_nonce( 'kct-convert-action' ),
+					), admin_url( 'admin-post.php' ) );
 
-				echo '<a class="" href="' . esc_url( $url ) . '">Převést na vlastní akci a upravit</a>';
+					echo '<a class="" href="' . esc_url( $url ) . '">Převést na vlastní akci a upravit</a>';
+				}
 			} ?>
 		</div><!-- .entry-content -->
 		<div class="event-sidebar">

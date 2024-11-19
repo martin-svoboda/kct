@@ -40,6 +40,13 @@ class EventPostType extends AbstractCustomPostType {
 		if ( $event && $event->db_id ) {
 			$items = array_merge( $items, array(
 				array(
+					'type'              => 'date',
+					'id'                => 'date',
+					'title'             => __( 'Datum startu <span style="color:red">(vyžadováno)</span>', 'kct' ),
+					'desc'              => __( 'Bez uvedení data startu se akce nezobrazí ve výpise akcí. Musí souhlasit s centrální DB. Upravte jen v případě chyby.', 'kct' ),
+					'custom_attributes' => array( 'required' => 'required' ),
+				),
+				array(
 					'type'    => 'html',
 					'id'      => 'db_info',
 					'content' => __( '<p style="color: red">Veškerá data o akci se načítají z databáze akcí. Pokud některá data chcete upravit, tak to prosím udělejte tam.</p><p>Zde tedy jen upravujte vlastní obsah, případně náhledový obrázek, pro vaši akci.</p>', 'kct' ),

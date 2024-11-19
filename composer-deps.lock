@@ -8,26 +8,27 @@
     "packages": [
         {
             "name": "laravel/serializable-closure",
-            "version": "v1.3.3",
+            "version": "v1.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "3dbf8a8e914634c48d389c1234552666b3d43754"
+                "reference": "f865a58ea3a0107c336b7045104c75243fa59d96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/3dbf8a8e914634c48d389c1234552666b3d43754",
-                "reference": "3dbf8a8e914634c48d389c1234552666b3d43754",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/f865a58ea3a0107c336b7045104c75243fa59d96",
+                "reference": "f865a58ea3a0107c336b7045104c75243fa59d96",
                 "shasum": ""
             },
             "require": {
                 "php": "^7.3|^8.0"
             },
             "require-dev": {
-                "nesbot/carbon": "^2.61",
+                "illuminate/support": "^8.0|^9.0|^10.0|^11.0",
+                "nesbot/carbon": "^2.61|^3.0",
                 "pestphp/pest": "^1.21.3",
                 "phpstan/phpstan": "^1.8.2",
-                "symfony/var-dumper": "^5.4.11"
+                "symfony/var-dumper": "^5.4.11|^6.2.0|^7.0.0"
             },
             "type": "library",
             "extra": {
@@ -64,20 +65,20 @@
                 "issues": "https://github.com/laravel/serializable-closure/issues",
                 "source": "https://github.com/laravel/serializable-closure"
             },
-            "time": "2023-11-08T14:08:06+00:00"
+            "time": "2024-11-11T17:06:04+00:00"
         },
         {
             "name": "monolog/monolog",
-            "version": "2.9.2",
+            "version": "2.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog.git",
-                "reference": "437cb3628f4cf6042cc10ae97fc2b8472e48ca1f"
+                "reference": "5cf826f2991858b54d5c3809bee745560a1042a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/437cb3628f4cf6042cc10ae97fc2b8472e48ca1f",
-                "reference": "437cb3628f4cf6042cc10ae97fc2b8472e48ca1f",
+                "url": "https://api.github.com/repos/Seldaek/monolog/zipball/5cf826f2991858b54d5c3809bee745560a1042a7",
+                "reference": "5cf826f2991858b54d5c3809bee745560a1042a7",
                 "shasum": ""
             },
             "require": {
@@ -98,8 +99,8 @@
                 "mongodb/mongodb": "^1.8",
                 "php-amqplib/php-amqplib": "~2.4 || ^3",
                 "phpspec/prophecy": "^1.15",
-                "phpstan/phpstan": "^0.12.91",
-                "phpunit/phpunit": "^8.5.14",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^8.5.38 || ^9.6.19",
                 "predis/predis": "^1.1 || ^2.0",
                 "rollbar/rollbar": "^1.3 || ^2 || ^3",
                 "ruflin/elastica": "^7",
@@ -154,7 +155,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Seldaek/monolog/issues",
-                "source": "https://github.com/Seldaek/monolog/tree/2.9.2"
+                "source": "https://github.com/Seldaek/monolog/tree/2.10.0"
             },
             "funding": [
                 {
@@ -166,7 +167,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-27T15:25:26+00:00"
+            "time": "2024-11-12T12:43:37+00:00"
         },
         {
             "name": "php-di/invoker",
@@ -441,16 +442,16 @@
         },
         {
             "name": "wpify/asset",
-            "version": "1.2.8",
+            "version": "1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wpify/asset.git",
-                "reference": "1ba1fca71ccedd25326c06946ef4caa094e1fdfb"
+                "reference": "faf957af650b441b49f03cb7ffa42abfe157b43b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wpify/asset/zipball/1ba1fca71ccedd25326c06946ef4caa094e1fdfb",
-                "reference": "1ba1fca71ccedd25326c06946ef4caa094e1fdfb",
+                "url": "https://api.github.com/repos/wpify/asset/zipball/faf957af650b441b49f03cb7ffa42abfe157b43b",
+                "reference": "faf957af650b441b49f03cb7ffa42abfe157b43b",
                 "shasum": ""
             },
             "type": "library",
@@ -471,22 +472,22 @@
             ],
             "support": {
                 "issues": "https://github.com/wpify/asset/issues",
-                "source": "https://github.com/wpify/asset/tree/1.2.8"
+                "source": "https://github.com/wpify/asset/tree/1.3.0"
             },
-            "time": "2024-03-01T11:47:12+00:00"
+            "time": "2024-07-29T15:25:55+00:00"
         },
         {
             "name": "wpify/custom-fields",
-            "version": "3.13.0",
+            "version": "3.14.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wpify/custom-fields.git",
-                "reference": "b073a82899c9ddf69c7573cf31ba83c9839e8bb0"
+                "reference": "a04885848f045700cb1430becd41a82c9a711db2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wpify/custom-fields/zipball/b073a82899c9ddf69c7573cf31ba83c9839e8bb0",
-                "reference": "b073a82899c9ddf69c7573cf31ba83c9839e8bb0",
+                "url": "https://api.github.com/repos/wpify/custom-fields/zipball/a04885848f045700cb1430becd41a82c9a711db2",
+                "reference": "a04885848f045700cb1430becd41a82c9a711db2",
                 "shasum": ""
             },
             "require": {
@@ -509,9 +510,9 @@
             "description": "WPify Custom Fields",
             "support": {
                 "issues": "https://github.com/wpify/custom-fields/issues",
-                "source": "https://github.com/wpify/custom-fields/tree/3.13.0"
+                "source": "https://github.com/wpify/custom-fields/tree/3.14.2"
             },
-            "time": "2024-03-15T10:15:10+00:00"
+            "time": "2024-08-30T16:32:57+00:00"
         },
         {
             "name": "wpify/log",
@@ -556,16 +557,16 @@
         },
         {
             "name": "wpify/model",
-            "version": "4.1.8",
+            "version": "4.1.18",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wpify/model.git",
-                "reference": "d58b81467e7d72ce0d467cd0867cebb814c9c9b7"
+                "reference": "7d687968dbbf144a0aef393288945dd7e5de1ef8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wpify/model/zipball/d58b81467e7d72ce0d467cd0867cebb814c9c9b7",
-                "reference": "d58b81467e7d72ce0d467cd0867cebb814c9c9b7",
+                "url": "https://api.github.com/repos/wpify/model/zipball/7d687968dbbf144a0aef393288945dd7e5de1ef8",
+                "reference": "7d687968dbbf144a0aef393288945dd7e5de1ef8",
                 "shasum": ""
             },
             "require": {
@@ -590,9 +591,9 @@
             "description": "WPify Model",
             "support": {
                 "issues": "https://github.com/wpify/model/issues",
-                "source": "https://github.com/wpify/model/tree/4.1.8"
+                "source": "https://github.com/wpify/model/tree/4.1.18"
             },
-            "time": "2024-03-06T09:14:25+00:00"
+            "time": "2024-10-15T10:54:26+00:00"
         },
         {
             "name": "wpify/plugin-utils",
@@ -670,16 +671,16 @@
         },
         {
             "name": "wpify/snippets",
-            "version": "3.2.1",
+            "version": "3.2.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wpify/snippets.git",
-                "reference": "f5d9f7d36489bde31e945e99850928dfe49d66c4"
+                "reference": "8da328c616e8bbf4582014da4a169a12fcb3c42a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wpify/snippets/zipball/f5d9f7d36489bde31e945e99850928dfe49d66c4",
-                "reference": "f5d9f7d36489bde31e945e99850928dfe49d66c4",
+                "url": "https://api.github.com/repos/wpify/snippets/zipball/8da328c616e8bbf4582014da4a169a12fcb3c42a",
+                "reference": "8da328c616e8bbf4582014da4a169a12fcb3c42a",
                 "shasum": ""
             },
             "type": "library",
@@ -704,9 +705,9 @@
             ],
             "support": {
                 "issues": "https://github.com/wpify/snippets/issues",
-                "source": "https://github.com/wpify/snippets/tree/3.2.1"
+                "source": "https://github.com/wpify/snippets/tree/3.2.4"
             },
-            "time": "2024-03-21T13:05:54+00:00"
+            "time": "2024-07-26T07:36:21+00:00"
         },
         {
             "name": "wpify/taxonomy",

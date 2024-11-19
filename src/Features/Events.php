@@ -522,12 +522,22 @@ class Events {
 
 		$event->db_id = $db_id;
 		$event->title = $db_event->title;
+		$event->date  = $db_event->date;
+
 		if ( $db_event->year ) {
 			$event->slug = sanitize_title( $db_event->year . ' ' . $db_event->title );
 		}
 
 		$this->event_repository->save( $event );
 
-		wp_safe_redirect( get_edit_post_link( $event->id ), 302, 'kct' );
+		$url = get_edit_post_link( $event->id );
+		if ( ! $url ) {
+			$url = add_query_arg( array(
+				'post'   => $event->id,
+				'action' => 'edit',
+			), admin_url( 'post.php' ) );
+		}
+
+		wp_safe_redirect( $url, 302, 'kct' );
 	}
 }

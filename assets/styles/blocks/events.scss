@@ -40,6 +40,20 @@
       justify-content: end;
       align-content: flex-start;
       flex-wrap: wrap;
+
+		.proposal-icon {
+			width: 29px;
+			height: 29px;
+			margin-right: 1px;
+			margin-bottom: 1px;
+			border: 1px solid black;
+			color: $primary-color;
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-content: center;
+			box-shadow: 1px 1px black;
+		}
     }
 
     .content {

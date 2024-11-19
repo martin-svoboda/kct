@@ -31,6 +31,7 @@ class EventRepository extends PostRepository {
 
 
 	public function find_all_published_by_date( $date_from = '', $date_to = '', $type = '' ) {
+		$meta_query = [];
 		if ( $date_from ) {
 			$meta_query[] = [
 				'key'     => 'date',
