@@ -57,6 +57,9 @@ class EventModel extends Post {
 	#[Meta]
 	public ?string $date;
 
+	#[Meta]
+	public ?array $main_page_connection;
+
 //	#[ReadOnlyProperty]
 //	public string $title;
 //

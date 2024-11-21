@@ -52,6 +52,9 @@ class DepartmentModel extends Post {
 	#[Meta]
 	public string $changed = '';
 
+	#[Meta]
+	public string $logo = '';
+
 
 	public function to_array( array $props = array(), array $recursive = array() ): array {
 		$data = parent::to_array( $props, $recursive );

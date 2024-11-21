@@ -6,6 +6,7 @@ use DateTime;
 use Kct\Models\DbEventModel;
 use Kct\Models\EventModel;
 use Kct\Repositories\DbEventRepository;
+use Kct\Repositories\DepartmentRepository;
 use Kct\Repositories\EventRepository;
 use Kct\Repositories\SettingsRepository;
 use Kct\Settings;
@@ -18,6 +19,7 @@ class Events {
 	public function __construct(
 		private DbEventRepository $db_event_repository,
 		private EventRepository $event_repository,
+		private DepartmentRepository $department_repository,
 		private SettingsRepository $settings
 	) {
 		global $wpdb;
@@ -27,7 +29,8 @@ class Events {
 		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
 		//add_action( 'admin_action_load_db_events', array( $this, 'schedule_import_events' ) );
 		//add_action( 'admin_action_load_db_event_types', array( $this, 'import_event_types' ) );
-		add_action( 'save_post', array( $this, 'update_start_date' ), 999, 3 );
+		add_action( 'save_post', array( $this, 'update_start_date' ), 899, 3 );
+		add_action( 'save_post', array( $this, 'send_to_main_website' ), 999, 3 );
 
 		add_action( 'kct_import_events', array( $this, 'import_db_events' ) );
 		add_action( 'kct_update_events', array( $this, 'schedule_update_events' ) );
@@ -465,14 +468,22 @@ class Events {
 	}
 
 	public function get_event_types() {
-		return (array) get_option( 'event_types' );
+		$event_types = get_option( 'event_types' );
+
+		if ( empty( $event_types ) && is_multisite() ) {
+			switch_to_blog( 1 );
+			$event_types = get_option( 'event_types' );
+			restore_current_blog();
+		}
+
+		return (array) $event_types;
 	}
 
 	public function merge_event_details_data( $post_details ) {
 		$event_types = $this->get_event_types();
 		$new_details = [];
 
-		if ( ! $post_details ) {
+		if ( ! $post_details || empty( $event_types ) ) {
 			return $post_details;
 		}
 
@@ -512,6 +523,86 @@ class Events {
 		if ( ! empty( $start_date ) ) {
 			update_post_meta( $post_id, 'date', $start_date );
 		}
+	}
+
+	/**
+	 * @param int     $post_id
+	 * @param WP_Post $post
+	 * @param bool    $update
+	 *
+	 * @return void
+	 */
+	function send_to_main_website( $post_id, $post, $update ) {
+		if ( $post->post_type !== $this->event_repository->post_type() ) {
+			return;
+		}
+
+		$event = $this->event_repository->get( $post_id );
+
+		if (
+			! $event->main_page_connection
+			|| ! $event->main_page_connection['connect']
+		) {
+			return;
+		}
+
+		$department       = $this->settings->get_option( 'id_code' );
+		$db_event_id      = intval( $department * 10000 + $event->id );
+		$current_home_url = home_url();
+		$image_id         = $event->get_featured_image_id();
+		$organiser        = array( 'name' => '' );
+		$image            = array();
+
+		if ( $image_id ) {
+			$image = array(
+				'url'    => get_attachment_link( $image_id ),
+				'author' => '',
+				'title'  => $event->title,
+			);
+		}
+
+
+		// Load saved event or crate new
+		$db_event = $this->db_event_repository->get_by_db_id( $db_event_id );
+
+		switch_to_blog( 1 );
+
+		if ( is_null( $db_event ) ) {
+			$db_event = $this->db_event_repository->create();
+		}
+
+		$main_department = $this->department_repository->get_by_department_id( $department );
+
+		restore_current_blog();
+
+		if ( $main_department ) {
+			$organiser['name'] = $main_department->title;
+			$organiser['web']  = $current_home_url;
+		}
+
+		// Set data
+		$db_event->db_id      = intval( $db_event_id );
+		$db_event->date       = $event->date;
+		$db_event->title      = $event->title;
+		$db_event->year       = $event->year;
+		$db_event->place      = $event->place;
+		$db_event->district   = $event->district;
+		$db_event->web        = $event->permalink;
+		$db_event->region     = substr( $department, 0, 3 );
+		$db_event->department = $department;
+		$db_event->organiser  = $organiser;
+		$db_event->start      = $event->start;
+		$db_event->finish     = $event->finish;
+		$db_event->content    = $event->main_page_connection['promo_text'];
+		$db_event->contact    = $event->contact;
+		$db_event->details    = $this->merge_event_details_data( $event->details );
+		$db_event->proposal   = $event->proposal;
+		$db_event->image      = $image;
+
+		// Save
+		switch_to_blog( 1 );
+		$this->db_event_repository->save( $db_event );
+		restore_current_blog();
 	}
 
 	private function convert_event( $db_id ) {

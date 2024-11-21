@@ -3,6 +3,7 @@
 namespace Kct\PostTypes;
 
 use Kct\Repositories\EventRepository;
+use Kct\Repositories\SettingsRepository;
 use Kct\Taxonomies\EventTypeTaxonomy;
 use KctDeps\Wpify\CustomFields\CustomFields;
 use KctDeps\Wpify\PostType\AbstractCustomPostType;
@@ -125,8 +126,8 @@ class EventPostType extends AbstractCustomPostType {
 				),
 				array(
 					'id'      => 'contact',
-					'type'    => 'multi_group',
-					'title'   => __( 'Kontakty', 'kct' ),
+					'type'    => 'group',
+					'title'   => __( 'Kontakt', 'kct' ),
 					'buttons' => array( 'add' => __( 'Přidat kontakt', 'kct' ) ),
 					'items'   => array(
 						array(
@@ -171,6 +172,29 @@ class EventPostType extends AbstractCustomPostType {
 					)
 				),
 			) );
+
+			if ( 'department' === kct_container()->get( SettingsRepository::class )->code_type() && is_multisite() ) {
+				$items = array_merge( $items, array(
+					array(
+						'id'    => 'main_page_connection',
+						'type'  => 'group',
+						'title' => __( 'Propojení s webem oblasti', 'kct' ),
+						'items' => array(
+							array(
+								'type'  => 'toggle',
+								'id'    => 'connect',
+								'title' => __( 'Zveřejnit na webu oblasti', 'kct' ),
+							),
+							array(
+								'type'        => 'wysiwyg',
+								'id'          => 'promo_text',
+								'title'       => __( 'Krátký text do obsahu', 'kct' ),
+								'description' => __( 'Text, který se propíše do obsahu oblastního webu.', 'kct' ),
+							),
+						)
+					)
+				) );
+			}
 		}
 
 		$this->wcf->create_metabox( array(

@@ -1,12 +1,30 @@
 .department-post {
 	width: 100%;
 
-	.container {
-		flex-flow: column;
-		align-content: center;
-		gap: 0;
-		position: relative;
-		z-index: 1;
+	.entry-header {
+		.container {
+			position: relative;
+			flex-flow: row;
+			flex-wrap: wrap;
+			gap: 20px;
+			z-index: 1;
+
+			@media (min-width: $medium-screen) {
+				flex-wrap: nowrap;
+			}
+
+			div {
+				display: flex;
+				flex-flow: column;
+				justify-content: center;
+				gap: 0;
+				position: relative;
+			}
+		}
+
+		img {
+			width: 120px;
+		}
 	}
 
 	.department-content-wrap {

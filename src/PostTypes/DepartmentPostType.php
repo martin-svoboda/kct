@@ -19,7 +19,22 @@ class DepartmentPostType extends AbstractCustomPostType {
 	}
 
 	public function setup() {
+		$items = array(
+			array(
+				'type'  => 'attachment',
+				'id'    => 'logo',
+				'title' => __( 'Logo odboru', 'kct' ),
+			),
+		);
 
+		$this->wcf->create_metabox( array(
+			'id'         => 'data',
+			'title'      => __( 'Data odboru', 'kct' ),
+			'post_types' => array( $this->get_post_type_key() ),
+			'context'    => 'side',
+			'priority'   => 'default',
+			'items'      => $items
+		) );
 	}
 
 	public function get_post_type_key(): string {
