@@ -537,17 +537,23 @@ class Events {
 			return;
 		}
 
-		$event = $this->event_repository->get( $post_id );
+		$event       = $this->event_repository->get( $post_id );
+		$department  = $this->settings->get_option( 'id_code' );
+		$db_event_id = intval( $department * 10000 + $event->id );
 
 		if (
 			! $event->main_page_connection
 			|| ! $event->main_page_connection['connect']
 		) {
+			$db_event = $this->db_event_repository->get_by_db_id( $db_event_id );
+
+			if ( $db_event ) {
+				$this->db_event_repository->delete( $db_event );
+			}
+
 			return;
 		}
 
-		$department       = $this->settings->get_option( 'id_code' );
-		$db_event_id      = intval( $department * 10000 + $event->id );
 		$current_home_url = home_url();
 		$image_id         = $event->get_featured_image_id();
 		$organiser        = array( 'name' => '' );
