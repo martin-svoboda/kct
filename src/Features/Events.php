@@ -454,7 +454,20 @@ class Events {
 					$value = null;
 				}
 
-				$event[ $key ] = ! empty( $value ) ? $value : ( $event_db_data[ $key ] ?? null );
+				if ( empty( $value ) ) {
+					$new_value = $event_db_data[ $key ] ?? null;
+				} elseif ( is_array( $value ) && is_array( $event_db_data[ $key ] ) ) {
+					$new_value = $value;
+					foreach ( $event_db_data[ $key ] as $v_key => $item ) {
+						if ( isset( $value[ $v_key ] ) && empty( $value[ $v_key ] ) ) {
+							$new_value[ $v_key ] = $item;
+						}
+					}
+				} else {
+					$new_value = $value;
+				}
+
+				$event[ $key ] = $new_value;
 			}
 		} else {
 			$event = $post_data ?: $event_db_data;

@@ -1,6 +1,10 @@
 import React from 'react';
 
 const EventItem = ({item}) => {
+	const hasProposal = Array.isArray(item.proposal)
+		? item.proposal.some(proposal => proposal.url)
+		: item.proposal?.url;
+
 	return (
 		<li>
 			<a href={item.permalink} className="event"
@@ -49,7 +53,7 @@ const EventItem = ({item}) => {
 									height="30"
 								/>
 							))}
-					{item.proposal && item.proposal.url &&
+					{hasProposal &&
 						<div className="proposal-icon">
 							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 20 20">
 								<path fill="currentColor"

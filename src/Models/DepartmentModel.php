@@ -58,9 +58,9 @@ class DepartmentModel extends Post {
 
 	public function to_array( array $props = array(), array $recursive = array() ): array {
 		$data = parent::to_array( $props, $recursive );
-		if ( $this->featured_image ) {
+		if ( $this->logo ) {
 			$data['image'] = array(
-				'url' => get_the_post_thumbnail_url( $this->id ),
+				'url' => wp_get_attachment_url( $this->logo ),
 			);
 		}
 
