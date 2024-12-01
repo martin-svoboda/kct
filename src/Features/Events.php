@@ -561,7 +561,9 @@ class Events {
 			$db_event = $this->db_event_repository->get_by_db_id( $db_event_id );
 
 			if ( $db_event ) {
+				switch_to_blog( 1 );
 				$this->db_event_repository->delete( $db_event );
+				restore_current_blog();
 			}
 
 			return;
