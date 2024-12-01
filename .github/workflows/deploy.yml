@@ -56,8 +56,12 @@ jobs:
           chmod 700 ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
+          eval $(ssh-agent -s)
+          ssh-add -D || true
+          ssh-add ~/.ssh/id_rsa
           ssh-keyscan -t rsa $SSH_SERVER >> ~/.ssh/known_hosts || true
           chmod 644 ~/.ssh/known_hosts
+        shell: bash
 
       - name: Remove existing SSH keys
         run: |
