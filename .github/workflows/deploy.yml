@@ -50,30 +50,20 @@ jobs:
       - name: Build assets
         run: npm run build
 
-      - name: Prepare SSH
+      - name: Add private SSH key
         run: |
-          set -euxo pipefail
-
-          # Ladicí výstupy
-          echo "Testing SSH key..."
-          eval $(ssh-agent -s)
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -
-
-          # Testování připojení
-          echo "Creating .ssh folder..."
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -t rsa $SSH_SERVER >> ~/.ssh/known_hosts || true
+          chmod 644 ~/.ssh/known_hosts
 
-          echo "Adding host to known_hosts..."
-          ssh-keyscan -t rsa "$SSH_SERVER" >> ~/.ssh/known_hosts
+      - name: Remove existing SSH keys
+        run: |
+          ssh-add -D
+          ssh-add ~/.ssh/id_rsa
 
-          echo "Creating SSH config..."
-          echo -e "Host remote\n\tHostName $SSH_SERVER\n\tPort $SSH_PORT\n\tUser $SSH_USER\n" > ~/.ssh/config
-          chmod 600 ~/.ssh/config
-
-          echo "Testing SSH connection..."
-          ssh -T remote || { echo "SSH connection failed!"; exit 1; }
-  
       - name: Deploy to server
         run: |
           set -euxo pipefail
@@ -86,9 +76,19 @@ jobs:
             --exclude="*.sh" \
             --exclude="node_modules" \
             --exclude="tests" \
-            . remote:$SSH_PATH/wp-content/plugins/kct/
+            . root@$SSH_SERVER:$SSH_PATH/wp-content/plugins/kct/
 
-          ssh -T remote <<EOF
+          # Nastavení správných oprávnění po nasazení
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@$SSH_SERVER <<EOF
+          set -euxo pipefail
+          chown -R www-data:www-data $SSH_PATH/wp-content/plugins/kct/
+          find $SSH_PATH/wp-content/plugins/kct/ -type d -exec chmod 755 {} \;
+          find $SSH_PATH/wp-content/plugins/kct/ -type f -exec chmod 644 {} \;
+          EOF
+
+      - name: Post-deployment tasks
+        run: |
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@$SSH_SERVER <<EOF
           set -euxo pipefail
           cd $SSH_PATH
           $WP_CLI core update-db
