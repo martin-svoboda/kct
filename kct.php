@@ -1,12 +1,12 @@
 <?php
 /*
  * Plugin Name:       Kct
- * Description:       Plugin skeleton with theme by WPify
+ * Description:       Plugin se šablonou pro Obory a Oblasti KČT
  * Version:           KCT_VERSION
- * Requires PHP:      7.3.0
+ * Requires PHP:      8.0
  * Requires at least: 5.3.0
- * Author:            WPify
- * Author URI:        https://www.wpify.io/
+ * Author:            Martin Svoboda
+ * Author URI:        https://martin-svoboda.cz
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       kct

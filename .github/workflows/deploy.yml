@@ -67,7 +67,8 @@ jobs:
         run: |
           set -euxo pipefail
 
-          sed -i "s/KCT_VERSION/${{ env.PLUGIN_VERSION }}/g" "style.css"
+          sed -i "s/KCT_VERSION/${{ env.PLUGIN_VERSION }}/g" kct.php
+          sed -i "s/KCT_VERSION/${{ env.PLUGIN_VERSION }}/g" themes/kct/style.css
 
           rsync -av --delete \
             --exclude="/.*" \
