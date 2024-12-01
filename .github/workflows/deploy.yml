@@ -52,14 +52,28 @@ jobs:
 
       - name: Prepare SSH
         run: |
+          set -euxo pipefail
+
+          # Ladicí výstupy
+          echo "Testing SSH key..."
           eval $(ssh-agent -s)
           echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -
+
+          # Testování připojení
+          echo "Creating .ssh folder..."
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
+
+          echo "Adding host to known_hosts..."
           ssh-keyscan -t rsa "$SSH_SERVER" >> ~/.ssh/known_hosts
+
+          echo "Creating SSH config..."
           echo -e "Host remote\n\tHostName $SSH_SERVER\n\tPort $SSH_PORT\n\tUser $SSH_USER\n" > ~/.ssh/config
           chmod 600 ~/.ssh/config
 
+          echo "Testing SSH connection..."
+          ssh -T remote || { echo "SSH connection failed!"; exit 1; }
+  
       - name: Deploy to server
         run: |
           set -euxo pipefail
