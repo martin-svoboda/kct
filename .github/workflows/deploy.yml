@@ -63,11 +63,6 @@ jobs:
           chmod 644 ~/.ssh/known_hosts
         shell: bash
 
-      - name: Remove existing SSH keys
-        run: |
-          ssh-add -D
-          ssh-add ~/.ssh/id_rsa
-
       - name: Deploy to server
         run: |
           set -euxo pipefail
