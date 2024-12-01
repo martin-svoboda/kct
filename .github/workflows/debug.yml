@@ -13,8 +13,16 @@ jobs:
           nc -zv $SSH_SERVER $SSH_PORT || echo "Port $SSH_PORT is not accessible"
           echo "SSH port is accessible."
 
-      - name: Debug SSH keyscan
+      - name: Test SSH connection
         run: |
-          echo "Adding host to known_hosts..."
-          ssh-keyscan -t rsa $SSH_SERVER || echo "ssh-keyscan failed"
-          cat ~/.ssh/known_hosts
+          ssh -T root@37.235.102.5 "echo 'Connection successful'"
+
+      - name: Add server key to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "37.235.102.5 ${{ secrets.SSH_PRIVATE_KEY }}" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Verify known_hosts
+        run: cat ~/.ssh/known_hosts
