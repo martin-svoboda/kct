@@ -6,7 +6,21 @@ on:
 jobs:
   debug:
     runs-on: ubuntu-20.04
+    env:
+      SSH_SERVER: 37.235.102.5
+      SSH_PORT: 22
+
     steps:
+      - name: Add private SSH key
+        run: |
+          echo "Setting up SSH key..."
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -t rsa $SSH_SERVER >> ~/.ssh/known_hosts || true
+          chmod 644 ~/.ssh/known_hosts
+
       - name: Debug SSH connection
         run: |
           echo "Testing SSH port..."
@@ -15,14 +29,7 @@ jobs:
 
       - name: Test SSH connection
         run: |
-          ssh -T root@37.235.102.5 "echo 'Connection successful'"
-
-      - name: Add server key to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          echo "37.235.102.5 ${{ secrets.SSH_PRIVATE_KEY }}" >> ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -T root@$SSH_SERVER "echo 'Connection successful'"
 
       - name: Verify known_hosts
         run: cat ~/.ssh/known_hosts
