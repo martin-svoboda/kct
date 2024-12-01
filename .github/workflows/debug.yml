@@ -7,9 +7,14 @@ jobs:
   debug:
     runs-on: ubuntu-20.04
     steps:
-      - name: Test server connection
+      - name: Debug SSH connection
         run: |
-          echo "Pinging server..."
-          ping -c 4 37.235.102.5 || echo "Ping failed"
           echo "Testing SSH port..."
-          nc -zv 37.235.102.5 22 || echo "Port 22 is not accessible"
+          nc -zv $SSH_SERVER $SSH_PORT || echo "Port $SSH_PORT is not accessible"
+          echo "SSH port is accessible."
+
+      - name: Debug SSH keyscan
+        run: |
+          echo "Adding host to known_hosts..."
+          ssh-keyscan -t rsa $SSH_SERVER || echo "ssh-keyscan failed"
+          cat ~/.ssh/known_hosts
