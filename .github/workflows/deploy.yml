@@ -14,8 +14,8 @@ jobs:
       SSH_PORT: 22
       WP_CLI: wp --allow-root
       PLUGIN_VERSION: ${{ github.ref_name }}
-      DEPLOY_PATH_1: /www/hosting/sokct.cz/www
-      DEPLOY_PATH_2: /www/hosting/posazavskastezka.cz/www
+      SSH_PATH_1: /www/hosting/sokct.cz/www
+      SSH_PATH_2: /www/hosting/posazavskastezka.cz/www
 
     steps:
       - name: Checkout code
@@ -61,38 +61,61 @@ jobs:
           eval $(ssh-agent -s)
           ssh-add -D || true
           ssh-add ~/.ssh/id_rsa
-          ssh-keyscan -t rsa $SSH_SERVER >> ~/.ssh/known_hosts || true
+          ssh-keyscan -t rsa -p $SSH_PORT $SSH_SERVER >> ~/.ssh/known_hosts || true
           chmod 644 ~/.ssh/known_hosts
         shell: bash
 
-      - name: Deploy to servers
+      - name: Replace plugin version
         run: |
-          set -euxo pipefail
-
           sed -i "s/KCT_VERSION/${{ env.PLUGIN_VERSION }}/g" kct.php
           sed -i "s/KCT_VERSION/${{ env.PLUGIN_VERSION }}/g" themes/kct/style.css
 
-          for DEPLOY_PATH in $DEPLOY_PATH_1 $DEPLOY_PATH_2; do
-            rsync -av --delete \
-              --exclude="/.*" \
-              --exclude="*.scss" \
-              --exclude="*.sh" \
-              --exclude="node_modules" \
-              --exclude="tests" \
-              . root@$SSH_SERVER:$DEPLOY_PATH/wp-content/plugins/kct/
+      - name: Deploy to sokct.cz
+        run: |
+          rsync -av --delete \
+            --exclude="/.*" \
+            --exclude="*.scss" \
+            --exclude="*.sh" \
+            --exclude="node_modules" \
+            --exclude="tests" \
+            . root@$SSH_SERVER:$SSH_PATH_1/wp-content/plugins/kct/
 
-            ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@$SSH_SERVER <<EOF
-            set -euxo pipefail
-            chown -R www-data:www-data $DEPLOY_PATH/wp-content/plugins/kct/
-            find $DEPLOY_PATH/wp-content/plugins/kct/ -type d -exec chmod 755 {} \;
-            find $DEPLOY_PATH/wp-content/plugins/kct/ -type f -exec chmod 644 {} \;
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@$SSH_SERVER <<EOF
+          set -euxo pipefail
+          chown -R www-data:www-data $SSH_PATH_1/wp-content/plugins/kct/
+          find $SSH_PATH_1/wp-content/plugins/kct/ -type d -exec chmod 755 {} \;
+          find $SSH_PATH_1/wp-content/plugins/kct/ -type f -exec chmod 644 {} \;
 
-            cd $DEPLOY_PATH
-            $WP_CLI core update-db
-            $WP_CLI language core update
-            $WP_CLI language plugin update --all
-            $WP_CLI language theme update --all
-            $WP_CLI rewrite flush
-            $WP_CLI cache flush
-            EOF
-          done
+          cd $SSH_PATH_1
+          $WP_CLI core update-db
+          $WP_CLI language core update
+          $WP_CLI language plugin update --all
+          $WP_CLI language theme update --all
+          $WP_CLI rewrite flush
+          $WP_CLI cache flush
+          EOF
+
+      - name: Deploy to posazavskastezka.cz
+        run: |
+          rsync -av --delete \
+            --exclude="/.*" \
+            --exclude="*.scss" \
+            --exclude="*.sh" \
+            --exclude="node_modules" \
+            --exclude="tests" \
+            . root@$SSH_SERVER:$SSH_PATH_2/wp-content/plugins/kct/
+
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@$SSH_SERVER <<EOF
+          set -euxo pipefail
+          chown -R www-data:www-data $SSH_PATH_2/wp-content/plugins/kct/
+          find $SSH_PATH_2/wp-content/plugins/kct/ -type d -exec chmod 755 {} \;
+          find $SSH_PATH_2/wp-content/plugins/kct/ -type f -exec chmod 644 {} \;
+
+          cd $SSH_PATH_2
+          $WP_CLI core update-db
+          $WP_CLI language core update
+          $WP_CLI language plugin update --all
+          $WP_CLI language theme update --all
+          $WP_CLI rewrite flush
+          $WP_CLI cache flush
+          EOF
