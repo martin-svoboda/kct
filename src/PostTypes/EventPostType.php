@@ -241,9 +241,13 @@ class EventPostType extends AbstractCustomPostType {
 
 	public function get_post_type_options() {
 		// Načteme typy akcí z hlavního webu
-		switch_to_blog( 1 );
-		$event_types = get_option( 'event_types' );
-		restore_current_blog();
+		if ( is_multisite() ) {
+			switch_to_blog( 1 );
+			$event_types = get_option( 'event_types' );
+			restore_current_blog();
+		} else {
+			$event_types = get_option( 'event_types' );
+		}
 
 		if ( ! $event_types ) {
 			return [];

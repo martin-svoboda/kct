@@ -50,7 +50,15 @@ class DbEventRepository extends CustomTableRepository {
 	 * @throws \ReflectionException
 	 */
 	public function get_by_db_id( int $db_id ): ?DbEventModel {
-		switch_to_blog( 1 );
+		if ( ! is_multisite() ) {
+			return null;
+		}
+
+		$switched = false;
+		if ( is_multisite() && get_current_blog_id() !== 1 ) {
+			switch_to_blog( 1 );
+			$switched = true;
+		}
 
 		$args = array(
 			'where' => $this->db()->prepare( 'db_id = %d', $db_id ),
@@ -61,7 +69,10 @@ class DbEventRepository extends CustomTableRepository {
 		if ( ! empty( $items ) ) {
 			$event = $items[0];
 		}
-		restore_current_blog();
+
+		if ( $switched ) {
+			restore_current_blog();
+		}
 
 		return $event;
 	}
@@ -84,20 +95,28 @@ class DbEventRepository extends CustomTableRepository {
 		if ( ! $date_from ) {
 			$date_from = '2023-01-01';
 		}
-		switch_to_blog( 1 );
+
+		$switched = false;
+		if ( is_multisite() && get_current_blog_id() !== 1 ) {
+			switch_to_blog( 1 );
+			$switched = true;
+		}
 
 		$query = $this->db()->prepare( 'date >= %s', $date_from );
 
 		if ( $date_to ) {
 			$query .= $this->db()->prepare( ' AND date <= %s', $date_to );
 		}
+
 		if ( $type ) {
 			$query .= $this->db()->prepare( ' AND JSON_CONTAINS(details, JSON_OBJECT("detailid", %s))', $type );
 		}
 
 		$data = $this->find_all( [ 'where' => $query ] );
 
-		restore_current_blog();
+		if ( $switched ) {
+			restore_current_blog();
+		}
 
 		return $data;
 	}
