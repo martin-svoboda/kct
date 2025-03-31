@@ -17,7 +17,7 @@
 
 	.container {
 		justify-content: space-between;
-		gap: 0 2rem;
+		gap: 2rem;
 		display: grid;
 		grid-template-columns: 1fr;
 	}
@@ -30,10 +30,6 @@
 		.container.left {
 			grid-template-columns: 1fr 2fr;
 		}
-	}
-
-	.container.left {
-		grid-template-columns: 1fr 2fr;
 	}
 
 	.content {

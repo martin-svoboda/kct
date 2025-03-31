@@ -117,7 +117,7 @@ export default function App() {
                 </div>
             </div>
             <div className="container">
-                <main id="primary" className="site-main">
+                <main id="primary" className="site-main" style={{width:'100%'}}>
                     <div className="events">
                         {isLoading && <div id="loading"><div className={"spinner"} ></div> Načítám...</div>}
                         {!isLoading && displayedEvents.length === 0 && <div>k dispozici nejsou žádné akce.</div>}

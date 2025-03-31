@@ -22,7 +22,7 @@
 			<div class="entry-meta">
 				<?php
 				kct_posted_on();
-				kct_posted_by();
+				//kct_posted_by();
 
 				/* translators: used between list items, there is a space after the comma */
 				$categories_list = get_the_category_list( esc_html__( ', ', 'kct' ) );

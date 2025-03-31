@@ -1,73 +1,88 @@
 .events {
-  margin-top: 1rem;
+	margin-top: 1rem;
 
-  .events-list {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
+	.events-list {
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+	}
 
-  .event {
-    display: flex;
-    padding: 20px 0;
-    border-bottom: 1px solid $line-color;
-    color: $secondary-color;
-    text-decoration: none;
+	.event {
+		display: flex;
+		padding: 20px 0;
+		border-bottom: 1px solid $line-color;
+		color: $secondary-color;
+		text-decoration: none;
 
-    &:hover {
-      filter: none;
-      background: $light-gray-color;
-    }
+		&:hover {
+			filter: none;
+			background: $light-gray-color;
+		}
 
-    .date {
-      width: 80px;
+		.date {
+			width: 80px;
 
-      span {
-        display: block;
-        line-height: 1.3;
-      }
+			span {
+				display: block;
+				line-height: 1.3;
+			}
 
-      .date-number {
-        font-size: $heading-3;
-        font-family: $roboto-condensed;
-      }
-    }
+			.date-number {
+				font-size: $heading-3;
+				font-family: $roboto-condensed;
+			}
+		}
 
-    .icons {
-      width: 100px;
-      line-height: 1;
-      display: flex;
-      justify-content: end;
-      align-content: flex-start;
-      flex-wrap: wrap;
-
-		.proposal-icon {
-			width: 29px;
-			height: 29px;
-			margin-right: 1px;
-			margin-bottom: 1px;
-			border: 1px solid black;
-			color: $primary-color;
+		.content-box {
+			flex: 1;
 			display: flex;
 			flex-wrap: wrap;
-			justify-content: center;
-			align-content: center;
-			box-shadow: 1px 1px black;
+			flex-direction: column;
+			gap: 10px;
+
+			@media (min-width: $medium-screen) {
+				flex-direction: row;
+			}
 		}
-    }
 
-    .content {
-      flex: 1;
-    }
+		.content {
+			flex: 1;
+		}
 
-    & > img {
-      width: 100px;
-      object-fit: cover;
-      margin-right: 20px;
-    }
-  }
+		.icons {
+			width: 100%;
+			line-height: 1;
+			display: flex;
+			align-content: flex-start;
+			flex-wrap: wrap;
 
-  p {
-    margin-bottom: 0;
-  }
+			@media (min-width: $medium-screen) {
+				max-width: 93px;
+			}
+
+			.proposal-icon {
+				width: 29px;
+				height: 29px;
+				margin-right: 1px;
+				margin-bottom: 1px;
+				border: 1px solid black;
+				color: $primary-color;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				align-content: center;
+				box-shadow: 1px 1px black;
+			}
+		}
+
+		& > img {
+			width: 100px;
+			object-fit: cover;
+			margin-right: 20px;
+		}
+	}
+
+	p {
+		margin-bottom: 0;
+	}
 }
