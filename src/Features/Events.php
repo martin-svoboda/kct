@@ -473,10 +473,6 @@ class Events {
 			$event = $post_data ?: $event_db_data;
 		}
 
-//		foreach ( $event as $data ) {
-//			if ()
-//		}
-
 		return $event;
 	}
 

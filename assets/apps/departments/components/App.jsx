@@ -6,7 +6,7 @@ import cs from "date-fns/locale/cs";
 
 registerLocale("cs", cs);
 import DepartmentItem from "./DepartmentItem";
-import Map from "./Map";
+import Map from "../../Map";
 
 export default function App() {
 	const [displayedDepartments, setDisplayedDepartments] = useState([]);

@@ -43,12 +43,20 @@ class Frontend {
 
 		if ( is_post_type_archive( 'akce' ) ) {
 			$this->asset_factory->wp_script( $this->utils->get_plugin_path( 'build/events.js' ), array(
+				'variables'    => array(
+					'site_rl'    => site_url(),
+					'assets_url' => $this->utils->get_plugin_url( 'assets' ),
+				),
 				'script_after' => 'console.log("events app loaded")',
 				'in_footer'    => true,
 			) );
 		}
 		if ( is_post_type_archive( 'odbory' ) ) {
 			$this->asset_factory->wp_script( $this->utils->get_plugin_path( 'build/departments.js' ), array(
+				'variables'    => array(
+					'site_rl'    => site_url(),
+					'assets_url' => $this->utils->get_plugin_url( 'assets' ),
+				),
 				'script_after' => 'console.log("departments app loaded")',
 				'in_footer'    => true,
 			) );

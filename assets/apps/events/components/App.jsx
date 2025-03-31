@@ -6,7 +6,7 @@ import cs from "date-fns/locale/cs";
 
 registerLocale("cs", cs);
 import EventItem from "./EventItem";
-import Map from "./Map";
+import Map from "../../Map";
 
 export default function App() {
     const [displayedEvents, setDisplayedEvents] = useState([]);

@@ -17,9 +17,10 @@ if ( is_single() && has_post_thumbnail() ) {
 } elseif ( isset( $event['image'] ) && $event['image'] ) {
 	$image_url = $event['image']['url'];
 }
+$event_id = $db_event_id ?: get_the_ID();
 ?>
 
-<article id="post-<?php echo $db_event_id ?: get_the_ID(); ?>" class="event-post">
+<article id="post-<?php echo $event_id; ?>" class="event-post">
 	<header
 		class="entry-header full-width <?= $image_url ? 'large' : '' ?>" <?php if ( $image_url ) { ?> style="background-image: url('<?= $image_url ?>')" <?php } ?>>
 		<div class="container">
@@ -121,11 +122,46 @@ if ( is_single() && has_post_thumbnail() ) {
 			if ( isset( $event['note'] ) ) {
 				echo '<p>' . $event['note'] . '</p>';
 			}
-			if ( $event['lng'] && $event['lat'] ) { ?>
-				<div>
-					<iframe style="border:none"
-							src="https://frame.mapy.cz/?x=<?= $event['lng'] ?>&y=<?= $event['lat'] ?>&z=13"
-							width="800" height="400" frameborder="0"></iframe>
+			if ( $event['lng'] && $event['lat'] ) {
+				$lng     = $event['lng'];
+				$lat     = $event['lat'];
+				$lng_str = str_replace( '.', '', (string) round( $lng, 5 ) );
+				$lat_str = str_replace( '.', '', (string) round( $lat, 5 ) );
+
+				$file_name  = sprintf( 'map_%s_%s-%s.jpg', $event_id, $lng_str, $lat_str );
+				$upload_dir = wp_upload_dir();
+				$dir        = $upload_dir['basedir'] . '/maps/';
+				$url        = $upload_dir['baseurl'] . '/maps/';
+
+				if ( ! file_exists( $dir ) ) {
+					mkdir( $dir, 0755, true );
+				}
+
+				$full_path = $dir . $file_name;
+
+				if ( ! file_exists( $full_path ) ) {
+					$api_key = 'IVelrOn442cgk26I87WOwie-2jnq_fdhNT_o8qmT74o';
+					$map_url = sprintf(
+						'https://api.mapy.cz/v1/static/map?markers=color:red;size:normal;%s,%s&zoom=13&width=800&height=400&mapset=outdoor&apikey=%s',
+						$lng,
+						$lat,
+						$api_key
+					);
+
+					$image_data = file_get_contents( $map_url );
+
+					if ( $image_data && @getimagesizefromstring( $image_data ) ) {
+						file_put_contents( $full_path, $image_data );
+					}
+				}
+
+				?>
+				<div class="event-map">
+					<a href="https://mapy.cz/turisticka?source=coor&id=<?= $lng ?>%2C<?= $lat ?>&x=<?= $lng ?>&y=<?= $lat ?>"
+					   target="_blank">
+						<img src="<?= esc_url( $url . $file_name ) ?>" width="800" height="400"
+							 alt="Mapa k akci <?= esc_attr( $event['title'] ) ?>">
+					</a>
 				</div>
 			<?php }
 			if ( ! $db_event_id ) {
