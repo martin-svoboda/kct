@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     env:
       SSH_SERVER: 37.235.102.5
       SSH_USER: root
