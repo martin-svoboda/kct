@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "938ad0d07b0eafab7d1e43de608e72a1",
+    "content-hash": "f04029f9905c49fbaadbf1925e054cbf",
     "packages": [
         {
             "name": "laravel/serializable-closure",
-            "version": "v1.3.6",
+            "version": "v1.3.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "f865a58ea3a0107c336b7045104c75243fa59d96"
+                "reference": "4f48ade902b94323ca3be7646db16209ec76be3d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/f865a58ea3a0107c336b7045104c75243fa59d96",
-                "reference": "f865a58ea3a0107c336b7045104c75243fa59d96",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/4f48ade902b94323ca3be7646db16209ec76be3d",
+                "reference": "4f48ade902b94323ca3be7646db16209ec76be3d",
                 "shasum": ""
             },
             "require": {
@@ -65,7 +65,7 @@
                 "issues": "https://github.com/laravel/serializable-closure/issues",
                 "source": "https://github.com/laravel/serializable-closure"
             },
-            "time": "2024-11-11T17:06:04+00:00"
+            "time": "2024-11-14T18:34:49+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -171,16 +171,16 @@
         },
         {
             "name": "php-di/invoker",
-            "version": "2.3.4",
+            "version": "2.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-DI/Invoker.git",
-                "reference": "33234b32dafa8eb69202f950a1fc92055ed76a86"
+                "reference": "59f15608528d8a8838d69b422a919fd6b16aa576"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/33234b32dafa8eb69202f950a1fc92055ed76a86",
-                "reference": "33234b32dafa8eb69202f950a1fc92055ed76a86",
+                "url": "https://api.github.com/repos/PHP-DI/Invoker/zipball/59f15608528d8a8838d69b422a919fd6b16aa576",
+                "reference": "59f15608528d8a8838d69b422a919fd6b16aa576",
                 "shasum": ""
             },
             "require": {
@@ -214,7 +214,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-DI/Invoker/issues",
-                "source": "https://github.com/PHP-DI/Invoker/tree/2.3.4"
+                "source": "https://github.com/PHP-DI/Invoker/tree/2.3.6"
             },
             "funding": [
                 {
@@ -222,7 +222,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-08T09:24:21+00:00"
+            "time": "2025-01-17T12:49:27+00:00"
         },
         {
             "name": "php-di/php-di",
@@ -478,26 +478,32 @@
         },
         {
             "name": "wpify/custom-fields",
-            "version": "3.14.2",
+            "version": "4.0.56",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wpify/custom-fields.git",
-                "reference": "a04885848f045700cb1430becd41a82c9a711db2"
+                "reference": "4996539ebee4c594643769d030608272e973f306"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wpify/custom-fields/zipball/a04885848f045700cb1430becd41a82c9a711db2",
-                "reference": "a04885848f045700cb1430becd41a82c9a711db2",
+                "url": "https://api.github.com/repos/wpify/custom-fields/zipball/4996539ebee4c594643769d030608272e973f306",
+                "reference": "4996539ebee4c594643769d030608272e973f306",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "php": ">=7.4.33"
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
+                "phpcompatibility/phpcompatibility-wp": "*",
+                "squizlabs/php_codesniffer": "^3.10",
+                "wp-coding-standards/wpcs": "^3.0"
             },
             "type": "library",
             "autoload": {
                 "files": [
-                    "functions.php"
+                    "custom-fields.php"
                 ],
                 "psr-4": {
                     "Wpify\\CustomFields\\": "src/"
@@ -505,14 +511,14 @@
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
-                "GPL-2.0-or-later"
+                "GPL-3.0-or-later"
             ],
             "description": "WPify Custom Fields",
             "support": {
                 "issues": "https://github.com/wpify/custom-fields/issues",
-                "source": "https://github.com/wpify/custom-fields/tree/3.14.2"
+                "source": "https://github.com/wpify/custom-fields/tree/4.0.56"
             },
-            "time": "2024-08-30T16:32:57+00:00"
+            "time": "2025-05-07T20:53:27+00:00"
         },
         {
             "name": "wpify/log",
@@ -557,16 +563,16 @@
         },
         {
             "name": "wpify/model",
-            "version": "4.1.18",
+            "version": "4.1.24",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wpify/model.git",
-                "reference": "7d687968dbbf144a0aef393288945dd7e5de1ef8"
+                "reference": "ebcac0038014dd0a8d7af5b31e3ee1efa542e9ec"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wpify/model/zipball/7d687968dbbf144a0aef393288945dd7e5de1ef8",
-                "reference": "7d687968dbbf144a0aef393288945dd7e5de1ef8",
+                "url": "https://api.github.com/repos/wpify/model/zipball/ebcac0038014dd0a8d7af5b31e3ee1efa542e9ec",
+                "reference": "ebcac0038014dd0a8d7af5b31e3ee1efa542e9ec",
                 "shasum": ""
             },
             "require": {
@@ -591,9 +597,9 @@
             "description": "WPify Model",
             "support": {
                 "issues": "https://github.com/wpify/model/issues",
-                "source": "https://github.com/wpify/model/tree/4.1.18"
+                "source": "https://github.com/wpify/model/tree/4.1.24"
             },
-            "time": "2024-10-15T10:54:26+00:00"
+            "time": "2025-05-21T09:30:57+00:00"
         },
         {
             "name": "wpify/plugin-utils",
@@ -744,6 +750,7 @@
                 "issues": "https://github.com/wpify/taxonomy/issues",
                 "source": "https://github.com/wpify/taxonomy/tree/1.0.0"
             },
+            "abandoned": true,
             "time": "2021-09-08T12:44:19+00:00"
         },
         {
@@ -781,6 +788,7 @@
                 "issues": "https://github.com/wpify/template/issues",
                 "source": "https://github.com/wpify/template/tree/1.1.0"
             },
+            "abandoned": "wpify/templates",
             "time": "2023-11-07T10:51:57+00:00"
         }
     ],

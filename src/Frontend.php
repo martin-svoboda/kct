@@ -26,7 +26,18 @@ class Frontend {
 		add_filter( 'excerpt_length', function () {
 			return 20;
 		} );
+		add_filter( 'upload_mimes', array( $this, 'allow_gpx_upload' ) );
 		//$this->setup_assets();
+
+		add_filter('wp_check_filetype_and_ext', function($data, $file, $filename, $mimes) {
+			$ext = pathinfo($filename, PATHINFO_EXTENSION);
+			if (strtolower($ext) === 'gpx') {
+				$data['ext'] = 'gpx';
+				$data['type'] = 'application/gpx+xml';
+				$data['proper_filename'] = $filename;
+			}
+			return $data;
+		}, 10, 4);
 	}
 
 	public function setup() {
@@ -61,5 +72,11 @@ class Frontend {
 				'in_footer'    => true,
 			) );
 		}
+	}
+
+	public function allow_gpx_upload( $mimes ) {
+		$mimes['gpx'] = 'application/gpx+xml';
+
+		return $mimes;
 	}
 }
