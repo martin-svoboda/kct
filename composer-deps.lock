@@ -478,16 +478,16 @@
         },
         {
             "name": "wpify/custom-fields",
-            "version": "4.0.56",
+            "version": "4.0.61",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wpify/custom-fields.git",
-                "reference": "4996539ebee4c594643769d030608272e973f306"
+                "reference": "85f35d7317c3901846d1e28b55d69ff07c233e54"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wpify/custom-fields/zipball/4996539ebee4c594643769d030608272e973f306",
-                "reference": "4996539ebee4c594643769d030608272e973f306",
+                "url": "https://api.github.com/repos/wpify/custom-fields/zipball/85f35d7317c3901846d1e28b55d69ff07c233e54",
+                "reference": "85f35d7317c3901846d1e28b55d69ff07c233e54",
                 "shasum": ""
             },
             "require": {
@@ -516,22 +516,22 @@
             "description": "WPify Custom Fields",
             "support": {
                 "issues": "https://github.com/wpify/custom-fields/issues",
-                "source": "https://github.com/wpify/custom-fields/tree/4.0.56"
+                "source": "https://github.com/wpify/custom-fields/tree/4.0.61"
             },
-            "time": "2025-05-07T20:53:27+00:00"
+            "time": "2025-06-06T14:53:17+00:00"
         },
         {
             "name": "wpify/log",
-            "version": "1.0.10",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wpify/log.git",
-                "reference": "43bb35f12babe33b0343bb3d3f85239248c48701"
+                "reference": "5b856a623a574d3ba4f2138d5f4d94c0625329ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wpify/log/zipball/43bb35f12babe33b0343bb3d3f85239248c48701",
-                "reference": "43bb35f12babe33b0343bb3d3f85239248c48701",
+                "url": "https://api.github.com/repos/wpify/log/zipball/5b856a623a574d3ba4f2138d5f4d94c0625329ff",
+                "reference": "5b856a623a574d3ba4f2138d5f4d94c0625329ff",
                 "shasum": ""
             },
             "require": {
@@ -557,9 +557,9 @@
             "description": "WPify Log",
             "support": {
                 "issues": "https://github.com/wpify/log/issues",
-                "source": "https://github.com/wpify/log/tree/1.0.10"
+                "source": "https://github.com/wpify/log/tree/1.1.1"
             },
-            "time": "2022-11-15T20:50:07+00:00"
+            "time": "2025-06-04T15:03:26+00:00"
         },
         {
             "name": "wpify/model",

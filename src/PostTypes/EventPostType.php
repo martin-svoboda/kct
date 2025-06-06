@@ -205,6 +205,27 @@ class EventPostType extends AbstractCustomPostType {
 			'priority'   => 'high',
 			'items'      => $items
 		) );
+
+		$this->wcf->create_metabox( array(
+			'id'         => 'kct_page_layout',
+			'title'      => __( 'Nastavení stránky', 'kct' ),
+			'post_types' => array( $this->get_post_type_key() ),
+			'context'    => 'side',
+			'priority'   => 'high',
+			'items'      => array(
+				array(
+					'type'    => 'select',
+					'id'      => 'details_position',
+					'label'   => __( 'Pozice detailů akce', 'kct' ),
+					'options' => array(
+						'sidebar' => __( 'V bočním panelu', 'kct' ),
+						'footer'  => __( 'Nad patičkou', 'kct' ),
+						'hide'    => __( 'Nezobrazovat', 'kct' ),
+					)
+				),
+			),
+			'default'    => 'sidebar'
+		) );
 	}
 
 	public function get_post_type_key(): string {
