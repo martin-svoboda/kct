@@ -71,6 +71,12 @@ class ActionBlock {
 						)
 					),
 				),
+				array(
+					'type'    => 'toggle',
+					'id'      => 'gradient',
+					'title'   => __( 'S horním prolnutím', 'kct' ),
+					'default' => true,
+				),
 			),
 		) );
 	}

@@ -14,9 +14,11 @@ $image_position = $args['image_position'] ?: 'right';
 $title          = $args['title'];
 $text           = $args['text'];
 $link           = $args['link'];
+$gradient       = $args['gradient'] ?? true;
 
 ?>
-<div class="kct-block block-action full-width" <?php if ( $background ) { ?> style="background-image: url('<?= wp_get_attachment_url( $background ) ?>')" <?php } ?>>
+<div
+	class="kct-block block-action full-width <?= $gradient ? 'gradient' : '' ?>" <?php if ( $background ) { ?> style="background-image: url('<?= wp_get_attachment_url( $background ) ?>')" <?php } ?>>
 	<div class="container <?= $image_position ?>">
 		<div class="content">
 			<?php if ( ! empty( $title ) ): ?>
