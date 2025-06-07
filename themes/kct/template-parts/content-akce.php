@@ -42,21 +42,23 @@ $event_id = $db_event_id ?: get_the_ID();
 						  d="M50.04 12.432c-2.268 0-4.19.791-5.772 2.373c-1.53 1.529-2.295 3.4-2.295 5.615c0 2.214.791 4.112 2.373 5.693c1.581 1.582 3.479 2.371 5.693 2.371c2.214 0 4.086-.79 5.615-2.37c1.582-1.582 2.373-3.48 2.373-5.694s-.791-4.086-2.373-5.615c-1.529-1.582-3.4-2.373-5.615-2.373zm3.89 20.832c.246 0-.49.037-.72.109l-15.448 3.65c-.967.309-1.44 1.17-1.063 1.934l.582 1.174c.379.765 1.47 1.149 2.45.861c.969-.285 1.716-.394 2.15-.394c.4 0 .449.057.451.058l.059.037c-.115-.072.09.089.232.567c.576 5.733.336 7.126.336 13.492c0 1.765-.307 2.955-.402 3.115l-.02.037c-.236.429-.459.595-.682.694c.056-.025-1.063.228-2.792.228c-1.055 0-1.91.672-1.91 1.5V61.5c0 .828.855 1.5 1.91 1.5H61.52c1.055 0 1.909-.672 1.909-1.5v-1.174c0-.828-.854-1.5-1.909-1.5c-1.65 0-2.697-.228-2.785-.264c-.294-.137-.512-.325-.722-.666c-.08-.165-.35-1.363-.35-3.144V34.764c0-.829-.856-1.5-1.91-1.5H53.93z"/>
 				</svg>
 				<div class="content">
-					<h3>Pořadatel</h3>
-					<p><?php
-						$organiser = [];
-						if ( ! empty( $event['organiser']['name'] ) ) {
-							$organiser[] = $event['organiser']['name'];
-						}
-						//					if ( ! empty( $event['organiser']['street'] ) ) {
-						//						$organiser[] = $event['organiser']['street'];
-						//					}
-						//					if ( ! empty( $event['organiser']['zip'] ) || ! empty( $event['organiser']['town'] ) ) {
-						//						$organiser[] = ( $event['organiser']['zip'] ?? '' ) . ' ' . ( $event['organiser']['town'] ?? '' );
-						//					}
+					<?php
+					$organiser = [];
+					if ( ! empty( $event['organiser']['name'] ) ) {
+						$organiser[] = $event['organiser']['name'];
+						?>
+						<h3>Pořadatel</h3>
+						<p><?php
+							//					if ( ! empty( $event['organiser']['street'] ) ) {
+							//						$organiser[] = $event['organiser']['street'];
+							//					}
+							//					if ( ! empty( $event['organiser']['zip'] ) || ! empty( $event['organiser']['town'] ) ) {
+							//						$organiser[] = ( $event['organiser']['zip'] ?? '' ) . ' ' . ( $event['organiser']['town'] ?? '' );
+							//					}
 
-						echo implode( ', ', $organiser );
-						?></p>
+							echo implode( ', ', $organiser );
+							?></p>
+					<?php } ?>
 					<h3>Místo konání</h3>
 					<p><?php
 						$place = [];
