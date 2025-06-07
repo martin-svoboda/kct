@@ -15,11 +15,11 @@
 			padding-top: 0;
 			padding-bottom: 0;
 		}
-	}
 
-	.infoboxes {
-		z-index: 2;
-		margin-top: -3rem;
+		& + .infoboxes {
+			z-index: 2;
+			margin-top: -3rem;
+		}
 	}
 
 	.event-content-wrap {
