@@ -119,7 +119,7 @@ $event_id = $db_event_id ?: get_the_ID();
 	<div class="event-content-wrap">
 		<div class="entry-content">
 			<?php
-			echo $event['content'];
+			echo apply_filters( 'the_content', $event['content'] );
 			if ( isset( $event['note'] ) ) {
 				echo '<p>' . $event['note'] . '</p>';
 			}

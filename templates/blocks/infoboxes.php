@@ -10,7 +10,6 @@ if ( empty( ABSPATH ) ) {
 
 $boxes = $args['boxes'];
 
-
 ?>
 <div class="kct-block infoboxes">
 	<?php foreach ( $boxes
@@ -22,7 +21,7 @@ $boxes = $args['boxes'];
 	$link  = $box['link'];
 	$color = $box['color'] ?? '';
 	?>
-	<<?= $link['url'] ? 'a href="' . $link['url'] . '" target="' . $link['target'] . '"
+	<<?= !empty( $link['url'] ) ? 'a href="' . $link['url'] . '" target="' . $link['target'] . '"
 					   title="' . $link['label'] . '"' : 'div' ?> class="cart
 	shadow" <?= $color ? 'style="background-color: var( ' . $color . ')"' : '' ?>>
 	<?php if ( ! empty( $image ) ) {
@@ -36,6 +35,6 @@ $boxes = $args['boxes'];
 			<p><?php echo $text; ?></p>
 		<?php endif; ?>
 	</div>
-</<?= $link['url'] ? 'a' : 'div' ?>>
+</<?= !empty( $link['url'] ) ? 'a' : 'div' ?>>
 <?php endforeach; ?>
 </div>
