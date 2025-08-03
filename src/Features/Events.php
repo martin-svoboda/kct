@@ -525,6 +525,13 @@ class Events {
 		// Načtení meta hodnoty "start" pro aktualizovaný nebo nově vytvořený příspěvek
 		$start_data = get_post_meta( $post_id, 'start', true );
 
+		// Převod na pole, pokud je to objekt nebo není pole
+		if ( is_object( $start_data ) ) {
+			$start_data = (array) $start_data;
+		} elseif ( ! is_array( $start_data ) ) {
+			$start_data = array();
+		}
+
 		// Získání data začátku akce ze serializovaného pole
 		$start_date = isset( $start_data['date'] ) ? $start_data['date'] : '';
 
