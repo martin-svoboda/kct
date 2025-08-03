@@ -27,37 +27,92 @@ get_header();
 				if ( have_posts() ) :
 
 					if ( ( is_home() && ! is_front_page() ) || is_archive() ) :
+						$current_slug = '';
+						$current_cat = null;
+						$parent_cat = null;
+
+						if ( is_category() ) {
+							$current_cat  = get_queried_object();
+							$current_slug = $current_cat->slug;
+
+							// Pokud je aktuální kategorie podřazená, najdeme její rodiče
+							if ( $current_cat->parent > 0 ) {
+								$parent_cat = get_category( $current_cat->parent );
+							}
+						}
+
+						$title = get_the_title( get_option( 'page_for_posts', true ) ) ?? 'Všechny články';
+						if ( $parent_cat ) {
+							$title = $parent_cat->name . ' / ' . $current_cat->name;
+						} elseif ( $current_cat ) {
+							$title = $current_cat->name;
+						}
 						?>
 						<header>
-							<h1 class="entry-title"><?php echo get_the_title( get_option( 'page_for_posts', true ) ); ?></h1>
+							<h1 class="entry-title"><?php echo $title; ?></h1>
 
 							<?php
-							$categories = get_categories();
-							if ( $categories && count( $categories ) > 1 ) {
+							$top_categories = get_categories( array(
+								'parent'     => 0,
+								'hide_empty' => false
+							) );
+
+							if ( $top_categories && count( $top_categories ) > 0 ) {
 								/** @var \WP_Query $wp_query */
 								global $wp_query;
 
-								$current = 'all';
-								if ( is_archive() ) {
-									$query   = $wp_query->query;
-									$current = get_query_var( 'category_name' ) ?? $current;
+
+								// Určíme, která top kategorie je aktivní
+								$active_top_cat = null;
+								if ( $parent_cat ) {
+									$active_top_cat = $parent_cat;
+								} elseif ( $current_cat && $current_cat->parent == 0 ) {
+									$active_top_cat = $current_cat;
 								}
 								?>
 								<div class="category-menu">
 									<a href="<?php echo get_permalink( get_option( 'page_for_posts', true ) ) ?>"
-									   class="category-menu__item shadow<?php echo $current === 'all' ? ' active' : '' ?>"
-									>Všechny</a>
+									   class="category-menu__item shadow<?php echo ! $current_slug ? ' active' : '' ?>"
+									>Vše</a>
 									<?php
 									/** @var \WP_Term $category */
-									foreach ( $categories as $category ) {
+									foreach ( $top_categories as $category ) {
+										$is_active = ( $active_top_cat && $active_top_cat->term_id == $category->term_id );
 										?>
 										<a href="<?php echo get_term_link( $category ) ?>"
-										   class="category-menu__item shadow<?php echo $current === $category->slug ? ' active' : '' ?>"
+										   class="category-menu__item shadow<?php echo $is_active ? ' active' : '' ?>"
 										><?php echo $category->name ?></a>
 										<?php
 									}
 									?>
 								</div>
+
+								<?php
+								// Zobrazit podkategorie pouze pokud je nějaká top kategorie aktivní
+								if ( $active_top_cat ) {
+									$child_categories = get_categories( array(
+										'parent'     => $active_top_cat->term_id,
+										'hide_empty' => false
+									) );
+
+									if ( $child_categories && count( $child_categories ) > 0 ) {
+										?>
+										<div class="category-menu category-menu--sub">
+											<?php
+											foreach ( $child_categories as $child_category ) {
+												$is_active = ( $current_slug === $child_category->slug );
+												?>
+												<a href="<?php echo get_term_link( $child_category ) ?>"
+												   class="category-menu__item shadow<?php echo $is_active ? ' active' : '' ?>"
+												><?php echo $child_category->name ?></a>
+												<?php
+											}
+											?>
+										</div>
+										<?php
+									}
+								}
+								?>
 							<?php } ?>
 						</header>
 					<?php

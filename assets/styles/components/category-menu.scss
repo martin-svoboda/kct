@@ -1,5 +1,8 @@
 .category-menu {
 	margin-bottom: 2rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 7px;
 
 	&__item {
 		padding: .5rem 1rem;
