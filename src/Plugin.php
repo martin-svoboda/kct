@@ -2,6 +2,8 @@
 
 namespace Kct;
 
+use Kct\Facebook\ShareState;
+use Kct\Features\FacebookShare;
 use Kct\Managers\ApiManager;
 use Kct\Managers\BlocksManager;
 use Kct\Managers\FeaturesManager;
@@ -32,17 +34,172 @@ final class Plugin {
 	}
 
 	/**
-	 * @param bool $network_wide
+	 * Deaktivace pluginu — po sobě nezůstanou naplánované události ani provozní
+	 * data, která bez běžícího pluginu nemají význam.
+	 *
+	 * Nastavení ani stav odeslání příspěvků se nemažou: deaktivace je často jen
+	 * dočasná a po znovuzapnutí má web pokračovat tam, kde skončil. Od toho je
+	 * uninstall().
+	 *
+	 * @param bool $network_wide Deaktivuje se plugin pro celou síť?
 	 */
 	public function deactivate( bool $network_wide ) {
-		$timestamp = wp_next_scheduled( 'kct_update_events' );
-		wp_unschedule_event( $timestamp, 'kct_update_events' );
+		$this->for_each_site( $network_wide, array( $this, 'clear_runtime_data' ) );
 	}
 
 	/**
+	 * Odinstalace pluginu — smaže se i to, co deaktivace nechává být.
 	 *
+	 * Na multisite je odinstalace vždy síťová akce (jednotlivý web plugin
+	 * odinstalovat nemůže), takže se úklid pouští nad všemi weby sítě.
 	 */
 	public function uninstall() {
+		$this->for_each_site( true, function () {
+			$this->clear_runtime_data();
+			$this->delete_stored_data();
+		} );
+	}
+
+	/**
+	 * Zruší naplánované události a smaže provozní data aktuálního webu.
+	 *
+	 * Zámky odesílání i transienty s výsledky tlačítek mají krátkou životnost,
+	 * ale bez běžícího pluginu je nemá kdo uklidit — po deaktivaci uprostřed
+	 * odesílání by řádek se zámkem zůstal v options navždy.
+	 */
+	private function clear_runtime_data(): void {
+		wp_unschedule_hook( 'kct_update_events' );
+		wp_unschedule_hook( FacebookShare::CRON_HOOK );
+
+		delete_option( FacebookShare::TOKEN_ERROR_OPTION );
+
+		$this->delete_transients_by_prefix( FacebookShare::VERIFY_RESULT_PREFIX );
+		$this->delete_transients_by_prefix( FacebookShare::RETRY_RESULT_PREFIX );
+		$this->delete_options_by_prefix( ShareState::LOCK_PREFIX );
+	}
+
+	/**
+	 * Smaže data, která plugin uložil natrvalo: stav odeslání u příspěvků
+	 * a nastavení Facebooku.
+	 *
+	 * Maže se jen sekce Facebook, ne celá option `kct_options` — zbylá
+	 * nastavení (kód odboru) používá i zbytek webu a jejich smazání není
+	 * součástí této funkce.
+	 */
+	private function delete_stored_data(): void {
+		$meta_keys = array(
+			ShareState::META_SHARE,
+			ShareState::META_MESSAGE,
+			ShareState::META_POST_ID,
+			ShareState::META_TIME,
+			ShareState::META_ERROR,
+			ShareState::META_ATTEMPTS,
+		);
+
+		foreach ( $meta_keys as $meta_key ) {
+			delete_post_meta_by_key( $meta_key );
+		}
+
+		$options = get_option( Settings::KEY, array() );
+
+		if ( ! is_array( $options ) ) {
+			return;
+		}
+
+		$facebook_keys = array( 'fb_page_id', 'fb_page_token', 'fb_share_default', 'fb_default_image' );
+		$found         = array_intersect( $facebook_keys, array_keys( $options ) );
+
+		if ( ! $found ) {
+			return;
+		}
+
+		foreach ( $found as $key ) {
+			unset( $options[ $key ] );
+		}
+
+		update_option( Settings::KEY, $options );
+	}
+
+	/**
+	 * Smaže transienty začínající danou předponou.
+	 *
+	 * Transienty jsou vázané na uživatele, takže jejich přesné názvy dopředu
+	 * neznáme. Maže se přes delete_transient(), ne přímým DELETE — jinak by
+	 * hodnota zůstala v object cache.
+	 *
+	 * @param string $prefix Předpona názvu transientu (bez `_transient_`).
+	 */
+	private function delete_transients_by_prefix( string $prefix ): void {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- názvy transientů nejsou dopředu známé, viz docblock.
+		$names = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT `option_name` FROM `$wpdb->options` WHERE `option_name` LIKE %s",
+				$wpdb->esc_like( '_transient_' . $prefix ) . '%'
+			)
+		);
+
+		foreach ( $names as $name ) {
+			delete_transient( substr( (string) $name, strlen( '_transient_' ) ) );
+		}
+	}
+
+	/**
+	 * Smaže options začínající danou předponou.
+	 *
+	 * Používá se na zbylé zámky odesílání — ty vznikají a mizí mimo API
+	 * options, ale mazat je přes delete_option() je i tak správně: postará se
+	 * o object cache.
+	 *
+	 * @param string $prefix Předpona názvu option.
+	 */
+	private function delete_options_by_prefix( string $prefix ): void {
+		global $wpdb;
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- názvy zámků obsahují ID příspěvku, viz docblock.
+		$names = $wpdb->get_col(
+			$wpdb->prepare(
+				"SELECT `option_name` FROM `$wpdb->options` WHERE `option_name` LIKE %s",
+				$wpdb->esc_like( $prefix ) . '%'
+			)
+		);
+
+		foreach ( $names as $name ) {
+			delete_option( (string) $name );
+		}
+	}
+
+	/**
+	 * Pustí úklid nad jedním webem, nebo nad všemi weby sítě.
+	 *
+	 * Options i post meta jsou v multisite per-web, takže síťová deaktivace
+	 * nebo odinstalace musí projít weby jeden po druhém — jinak by se uklidil
+	 * jen ten, na kterém akce zrovna běží. Zbytek pluginu přepíná weby stejně
+	 * (switch_to_blog / restore_current_blog, viz Events a DbEventRepository).
+	 *
+	 * @param bool     $network_wide Týká se akce celé sítě?
+	 * @param callable $callback     Úklid, který se má nad webem provést.
+	 */
+	private function for_each_site( bool $network_wide, callable $callback ): void {
+		if ( ! $network_wide || ! is_multisite() ) {
+			$callback();
+
+			return;
+		}
+
+		$site_ids = get_sites( array(
+			'fields' => 'ids',
+			'number' => 0,
+		) );
+
+		foreach ( $site_ids as $site_id ) {
+			switch_to_blog( (int) $site_id );
+
+			$callback();
+
+			restore_current_blog();
+		}
 	}
 
 	/**

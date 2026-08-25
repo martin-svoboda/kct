@@ -151,14 +151,36 @@ add_action( 'widgets_init', 'kct_widgets_init' );
 /**
  * Enqueue scripts and styles.
  */
+/**
+ * Povolené skiny a bezpečné načtení aktivního skinu.
+ *
+ * @return string photo|magazine|cards
+ */
+function kct_active_skin() {
+	$allowed = array( 'photo', 'magazine', 'cards' );
+	$skin    = get_theme_mod( 'kct_skin', 'photo' );
+
+	return in_array( $skin, $allowed, true ) ? $skin : 'photo';
+}
+
+/**
+ * Verze assetu = čas poslední změny souboru (filemtime), aby se po buildu
+ * nezobrazovala stará verze z cache prohlížeče. Fallback na _S_VERSION.
+ */
+function kct_asset_ver( $relative ) {
+	$path = get_stylesheet_directory() . '/' . ltrim( $relative, '/' );
+
+	return file_exists( $path ) ? filemtime( $path ) : _S_VERSION;
+}
+
 function kct_scripts() {
-//	$asset_factory = kct_container()->get(\KctDeps\Wpify\Asset\AssetFactory::class);
-//	$asset_factory->wp_script( get_stylesheet_directory_uri() . '/theme.css' );
-	wp_enqueue_style( 'kct-style', get_stylesheet_uri(), array(), _S_VERSION );
-	wp_enqueue_style( 'kct-theme-style', get_stylesheet_directory_uri() . '/theme.css', array(), _S_VERSION );
-//	wp_style_add_data( 'kct-style', 'rtl', 'replace' );
-//
-//	wp_enqueue_script( 'kct-navigation', get_template_directory_uri() . '/js/navigation.js', array(), _S_VERSION, true );
+	$skin = kct_active_skin();
+
+	wp_enqueue_style( 'kct-style', get_stylesheet_uri(), array(), kct_asset_ver( 'style.css' ) ); // style.css (hlavička motivu)
+	wp_enqueue_style( 'kct-skin', get_stylesheet_directory_uri() . "/{$skin}.css", array( 'kct-style' ), kct_asset_ver( "{$skin}.css" ) );
+
+	// Chování hlavičky (průhledná → podbarvení při scrollu).
+	wp_enqueue_script( 'kct-header', get_stylesheet_directory_uri() . '/js/header.js', array(), kct_asset_ver( 'js/header.js' ), true );
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
@@ -167,22 +189,97 @@ function kct_scripts() {
 
 add_action( 'wp_enqueue_scripts', 'kct_scripts' );
 
-function kct_dynamic_styles() {
+/**
+ * Editovatelné override tokeny z Customizeru (nad rámec skinu).
+ * Skin dodává default v souboru; zde jen to, co admin ručně změnil.
+ * Malý inline blok = jediná dynamická (per-web) hodnota; skiny samotné inline nejsou.
+ */
+function kct_token_overrides() {
+	$overrides = array();
+
+	$primary = get_theme_mod( 'primary_color', '' );
+	if ( $primary ) {
+		$overrides['--primary'] = $primary;
+	}
+	// (sem lze přidat další vystavené tokeny)
+
+	if ( ! $overrides ) {
+		return;
+	}
+
+	echo '<style id="kct-token-overrides">:root{';
+	foreach ( $overrides as $var => $val ) {
+		echo esc_html( $var ) . ':' . esc_html( $val ) . ';';
+	}
+	echo '}</style>' . "\n";
+}
+
+add_action( 'wp_head', 'kct_token_overrides' );
+add_action( 'admin_head', 'kct_token_overrides' );
+
+// Body class se zvoleným skinem (frontend).
+add_filter( 'body_class', function ( $classes ) {
+	$classes[] = 'skin-' . kct_active_skin();
+
+	// Průhledné menu přes obsah — dle nastavení stránky/příspěvku.
+	if ( is_singular() && get_post_meta( get_queried_object_id(), '_kct_transparent_header', true ) === '1' ) {
+		$classes[] = 'header-transparent';
+	}
+
+	return $classes;
+} );
+
+/**
+ * Nastavení stránky/příspěvku — přepínač „Průhledné menu přes obsah".
+ * Default = vypnuto (netransparentní hlavička).
+ */
+add_action( 'add_meta_boxes', function () {
+	add_meta_box(
+		'kct_page_options',
+		__( 'Nastavení šablony KČT', 'kct' ),
+		'kct_page_options_metabox',
+		array( 'page', 'post' ),
+		'side',
+		'default'
+	);
+} );
+
+function kct_page_options_metabox( $post ) {
+	wp_nonce_field( 'kct_page_options', 'kct_page_options_nonce' );
+	$transparent = get_post_meta( $post->ID, '_kct_transparent_header', true );
 	?>
-    <style>
-        <?php
-		$primary_color   = get_theme_mod( 'primary_color', '#0178A3' );
-		$secondary_color = '#1E3842';
-		?>
-        :root {
-            --primary-color: <?= $primary_color ?>;
-            --secondary-color: <?= $secondary_color ?>;
-        }
-    </style>
+	<p>
+		<label>
+			<input type="checkbox" name="kct_transparent_header" value="1" <?php checked( $transparent, '1' ); ?>>
+			<?php esc_html_e( 'Průhledné menu přes obsah', 'kct' ); ?>
+		</label>
+	</p>
+	<p class="description"><?php esc_html_e( 'Hlavička je průhledná přes horní obsah (např. hero) a při scrollu se podbarví. Vhodné pro stránky s úvodním obrázkem nahoře.', 'kct' ); ?></p>
 	<?php
 }
-add_action( 'wp_head', 'kct_dynamic_styles' );
-add_action( 'admin_head', 'kct_dynamic_styles' );
+
+add_action( 'save_post', function ( $post_id ) {
+	if ( ! isset( $_POST['kct_page_options_nonce'] ) || ! wp_verify_nonce( $_POST['kct_page_options_nonce'], 'kct_page_options' ) ) {
+		return;
+	}
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+		return;
+	}
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		return;
+	}
+	update_post_meta( $post_id, '_kct_transparent_header', isset( $_POST['kct_transparent_header'] ) ? '1' : '' );
+} );
+
+// Editor: náhled bloků ve zvoleném skinu + opravy layoutu editoru (po skinu).
+add_action( 'after_setup_theme', function () {
+	add_editor_style( kct_active_skin() . '.css' );
+	add_editor_style( 'editor-style.css' );
+} );
+
+add_filter( 'admin_body_class', function ( $classes ) {
+	return $classes . ' skin-' . kct_active_skin();
+} );
 
 
 function kct_render( $slug, $name = '', $data = array() ) {

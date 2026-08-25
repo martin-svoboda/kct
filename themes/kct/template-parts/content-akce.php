@@ -32,6 +32,7 @@ $event_id = $db_event_id ?: get_the_ID();
 		</div>
 	</header><!-- .entry-header -->
 	<div class="kct-block infoboxes">
+		<div class="infoboxes__inner">
 		<?php if ( ( isset( $event['organiser']['name'] ) && ! empty( $event['organiser']['name'] ) ) || ( isset( $event['place'] ) && ! empty( $event['place'] ) ) ) : ?>
 			<div class="cart light shadow">
 				<svg xmlns="http://www.w3.org/2000/svg" width="74" height="74" viewBox="0 0 100 100">
@@ -117,6 +118,7 @@ $event_id = $db_event_id ?: get_the_ID();
 				</div>
 			</div>
 		<?php endif; ?>
+		</div><!-- .infoboxes__inner -->
 	</div>
 	<div class="event-content-wrap">
 		<div class="entry-content">

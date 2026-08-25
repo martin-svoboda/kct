@@ -20,6 +20,20 @@
 		} );
 	} );
 
+	// Skin / vzhled šablony — živý náhled (přepnutí stylesheetu + body class).
+	wp.customize( 'kct_skin', function( value ) {
+		value.bind( function( to ) {
+			if ( [ 'photo', 'magazine', 'cards' ].indexOf( to ) === -1 ) {
+				return;
+			}
+			var link = document.getElementById( 'kct-skin-css' );
+			if ( link ) {
+				link.href = link.href.replace( /\/(photo|magazine|cards)\.css/, '/' + to + '.css' );
+			}
+			document.body.className = document.body.className.replace( /\bskin-(photo|magazine|cards)\b/g, 'skin-' + to );
+		} );
+	} );
+
 	// Header text color.
 	wp.customize( 'header_textcolor', function( value ) {
 		value.bind( function( to ) {

@@ -1,0 +1,42 @@
+// Svislý rytmus obsahu — margin-BOTTOM na sekcích (dle zadání).
+//
+// Cílíme JEN na blokové sekce a nadpisy → běžné odstavce/prosa mají vlastní rytmus.
+//  • --section-gap  spodní mezera každé sekce v .entry-content (i full-width), mobil poloviční
+//  • --nested-gap   uvnitř sloupců (menší)
+//  • --heading-gap  pod nadpisem sekce
+//  • hero (block-cover) je bez spodní mezery
+
+$kct-sections: '.kct-block, .wp-block-columns, .wp-block-group';
+$kct-headings: 'h1, h2, h3, h4';
+
+.entry-content {
+  --section-gap: 80px;
+  --nested-gap: 24px;
+  --heading-gap: 20px;
+
+  @media (max-width: $medium-screen) {
+    --section-gap: 40px; // mobil = poloviční
+    --nested-gap: 16px;
+  }
+}
+
+// Spodní mezera každé sekce (blokové sekce, i full-width bloky)
+.entry-content > :is(#{$kct-sections}) {
+  margin-bottom: var(--section-gap);
+}
+
+// Hero bez spodní mezery POUZE pokud za ním následuje rozcestník (infoboxy);
+// jinak má normální spodní mezeru jako každá sekce.
+.entry-content > .block-cover:has(+ .infoboxes) {
+  margin-bottom: 0;
+}
+
+// Nadpis sekce — menší spodní mezera k obsahu
+.entry-content > :is(#{$kct-headings}) {
+  margin-bottom: var(--heading-gap);
+}
+
+// Uvnitř sloupců — menší mezera mezi vnořenými bloky/nadpisy
+.wp-block-column > :is(#{$kct-sections}, #{$kct-headings}) {
+  margin-bottom: var(--nested-gap);
+}

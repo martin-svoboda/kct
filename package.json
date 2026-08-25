@@ -13,7 +13,8 @@
   "node": ">=v14.17.6"
  },
  "sideEffects": [
-  "*.scss"
+  "*.scss",
+  "./assets/blocks/**/*.js"
  ],
  "browserslist": [
   "defaults",

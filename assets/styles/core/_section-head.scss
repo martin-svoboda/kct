@@ -1,0 +1,142 @@
+// core/_section-head.scss — sdílená hlavička sekce (eyebrow + trikolóra + číslo + titulek + odkaz)
+
+// ── Škála velikostí nadpisů (jeden zdroj pravdy) ──
+$fs-h1:      clamp(2rem, 5.5vw, 2.9rem);
+$fs-h2:      clamp(1.5rem, 3.2vw, 2rem);
+$fs-h3:      clamp(1.3rem, 2.6vw, 1.55rem);
+$fs-h4:      clamp(1.15rem, 2vw, 1.25rem);
+$fs-h5:      1.05rem;
+$fs-section: clamp(1.9rem, 5.5vw, var(--h2-size)); // velký sekční nadpis (homepage)
+
+// Nadpisy sekcí (core heading bloky v obsahu) — Oswald 700 UPPERCASE dle designu.
+// Barva se needí (aby fungovaly i na tmavých sekcích).
+.wp-block-heading {
+	font-family: var(--font-head);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: .01em;
+	line-height: 1.2;
+	margin-top: 0;
+}
+
+// Běžná obsahová hierarchie (H2 < H1 atd.)
+h1.wp-block-heading { font-size: $fs-h1; }
+h2.wp-block-heading { font-size: $fs-h2; }
+h3.wp-block-heading { font-size: $fs-h3; }
+h4.wp-block-heading { font-size: $fs-h4; }
+h5.wp-block-heading,
+h6.wp-block-heading { font-size: $fs-h5; }
+
+// Velký sekční nadpis DLE DESIGNU — jen když je nad ním předtitulek (homepage sekce)
+.kct-eyebrow + h1,
+.kct-eyebrow + h2,
+.kct-eyebrow + h3,
+.kct-eyebrow + .wp-block-heading {
+	font-size: $fs-section;
+}
+
+// Titulky widgetů v sidebaru = STEJNÁ velikost jako H3 (jedna proměnná → nedriftuje)
+#secondary,
+.widget-area,
+.event-sidebar {
+	.wp-block-heading,
+	.widget-title,
+	.widgettitle {
+		font-size: $fs-h3;
+		line-height: 1.25;
+		margin-bottom: .5rem;
+	}
+}
+
+// Bezprostředně po předtitulku patří nadpis těsněji (jsou jeden celek)
+.kct-eyebrow + .wp-block-heading,
+.kct-eyebrow + h1,
+.kct-eyebrow + h2,
+.kct-eyebrow + h3 {
+	margin-top: 0;
+}
+
+// Blok „Předtitulek" (kct/eyebrow) — trikolóra + malý uppercase text nad nadpisem
+.kct-eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	font-family: var(--font-body);
+	font-weight: 800;
+	font-size: 12.5px;
+	letter-spacing: .18em;
+	text-transform: uppercase;
+	color: var(--primary);
+	margin-bottom: 12px;
+}
+
+.kct-eyebrow__text {
+	display: inline-block;
+}
+
+// „Čtyřkolora" — 4 krátké pruhy: červená · modrá · zelená · žlutá.
+// Kresleno gradientem na jednom prvku (nezávislé na počtu vnitřních <span>),
+// aby se neměnil markup (statické bloky by jinak neprošly validací).
+.kct-tricolor {
+	display: inline-block;
+	width: 92px;
+	height: 5px;
+	background: linear-gradient(90deg,
+		var(--kct-red)    0    21%,
+		transparent       21%  26%,
+		var(--kct-blue)   26%  47%,
+		transparent       47%  52%,
+		var(--kct-green)  52%  73%,
+		transparent       73%  78%,
+		var(--kct-yellow) 78%  100%);
+
+	span { display: none; } // původní pruhy se nepoužívají, kreslí gradient
+}
+
+.section-head {
+	display: flex;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: 20px;
+	margin-bottom: 26px;
+
+	&__eyebrow {
+		display: inline-flex;
+		align-items: center;
+		gap: 12px;
+		font-weight: 800;
+		font-size: 12.5px;
+		letter-spacing: .18em;
+		text-transform: uppercase;
+		color: var(--primary);
+		margin-bottom: 12px;
+	}
+
+	&__num {
+		display: none; // zapne skin magazine
+		font-family: var(--font-head);
+		font-weight: 700;
+		color: var(--primary);
+	}
+
+	&__title {
+		font-family: var(--font-head);
+		font-weight: 700;
+		font-size: var(--h2-size);
+		text-transform: uppercase;
+		letter-spacing: .01em;
+		margin: 0;
+		color: var(--text);
+	}
+
+	&__link {
+		font-weight: 700;
+		font-size: 14px;
+		text-transform: uppercase;
+		letter-spacing: .04em;
+		color: var(--text);
+		border-bottom: 2px solid var(--text);
+		padding-bottom: 3px;
+		white-space: nowrap;
+	}
+}

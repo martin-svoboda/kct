@@ -1,0 +1,30 @@
+// Filtr akcí (archiv /akce/) — čistá světlá lišta pod mapou (ne černá, ne zaoblená)
+.events-filter {
+	background: var(--surface);
+	color: var(--text);
+	border-bottom: 1px solid var(--line);
+
+	.container {
+		gap: 1rem 1.5rem;
+		padding: 16px 20px;
+		align-items: center;
+	}
+
+	label {
+		font-weight: 700;
+		font-size: 12.5px;
+		text-transform: uppercase;
+		letter-spacing: .04em;
+		color: var(--text-muted);
+	}
+
+	.events-filter__field {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+	}
+
+	input, select {
+		margin-left: 0;
+	}
+}

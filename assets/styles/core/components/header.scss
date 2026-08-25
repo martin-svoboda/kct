@@ -1,0 +1,252 @@
+.site-header {
+	position: sticky;
+	top: 0;
+	z-index: 1100; // nad Leaflet mapou (její ovládání má z-index až 1000)
+	background: var(--surface);
+	box-shadow: 0 1px 0 var(--line), 0 6px 20px -18px rgba(11, 22, 34, .5);
+
+	// Barevný proužek nahoře: modrá full-width + trikolóra přes kontejner (jako rozcestník)
+	@include kct-strip;
+
+	.container {
+		display: flex;
+		align-items: center;
+		gap: 24px;
+		padding: 14px 20px;
+		flex-wrap: nowrap;
+
+		@media (max-width: $small-screen) {
+			padding: 12px 16px;
+		}
+	}
+
+	// ── Značka (logo + název) ──
+	.header-brand {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		flex: 0 0 auto;
+		min-width: 0;
+	}
+
+	.custom-logo-link img {
+		max-width: 56px;
+		max-height: 56px;
+		height: auto;
+		width: auto;
+		display: block;
+
+		@media (max-width: $small-screen) {
+			max-width: 44px;
+		}
+	}
+
+	.site-title {
+		font-family: var(--font-head);
+		font-weight: 600;
+		font-size: 22px;
+		line-height: 1.1;
+		letter-spacing: .03em;
+		text-transform: uppercase;
+		margin: 0;
+
+		@media (max-width: $large-screen) {
+			font-size: 18px;
+		}
+		@media (max-width: $small-screen) {
+			font-size: 15px;
+		}
+
+		a {
+			text-decoration: none;
+			color: var(--text);
+		}
+	}
+
+	.site-description {
+		font-size: 11px;
+		letter-spacing: .14em;
+		text-transform: uppercase;
+		font-weight: 700;
+		color: var(--text-muted);
+		margin: 2px 0 0;
+
+		@media (max-width: $large-screen) { display: none; }
+	}
+
+	.secondary-logo {
+		max-height: 46px;
+		width: auto;
+
+		@media (max-width: $large-screen) { display: none; }
+	}
+
+	// ── Navigace + CTA (desktop inline, mobil drawer) ──
+	.site-nav {
+		flex: 1 1 auto;
+		display: flex;
+		align-items: center;
+		gap: 24px;
+		min-width: 0;
+	}
+
+	.main-navigation {
+		flex: 1 1 auto;
+
+		#primary-menu {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			gap: 4px;
+		}
+	}
+
+	.site-header__cta {
+		flex: 0 0 auto;
+		white-space: nowrap;
+	}
+
+	// ── Hamburger (jen mobil) ──
+	.menu-toggle {
+		display: none;
+		align-items: center;
+		justify-content: center;
+		width: 44px;
+		height: 44px;
+		margin-left: auto;
+		padding: 0;
+		background: none;
+		border: 0;
+		border-radius: 8px;
+		color: var(--text);
+		cursor: pointer;
+		flex: 0 0 auto;
+		z-index: 1210;
+
+		&:hover { transform: none; filter: none; }
+
+		&__box {
+			position: relative;
+			width: 26px;
+			height: 18px;
+		}
+
+		&__inner {
+			top: 50%;
+			margin-top: -1px;
+
+			&, &::before, &::after {
+				position: absolute;
+				left: 0;
+				width: 26px;
+				height: 2px;
+				background: currentColor;
+				border-radius: 2px;
+				transition: transform .22s ease, opacity .15s ease;
+			}
+
+			&::before { content: ''; top: -8px; }
+			&::after { content: ''; top: 8px; }
+		}
+	}
+
+	.menu-backdrop { display: none; }
+}
+
+// ── Mobilní režim: hamburger + off-canvas drawer ──
+@media (max-width: $large-screen) {
+	.site-header {
+		.menu-toggle { display: flex; }
+
+		.site-nav {
+			position: fixed;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			width: min(340px, 86vw);
+			flex-direction: column;
+			align-items: stretch;
+			justify-content: flex-start;
+			gap: 0;
+			padding: 84px 24px 28px;
+			background: var(--surface);
+			box-shadow: -20px 0 60px -30px rgba(11, 22, 34, .6);
+			transform: translateX(100%);
+			transition: transform .3s ease;
+			overflow-y: auto;
+			z-index: 1200;
+		}
+
+		.main-navigation {
+			flex: 0 0 auto;
+			width: 100%;
+
+			#primary-menu {
+				flex-direction: column;
+				justify-content: flex-start;
+				align-items: stretch;
+				gap: 0;
+
+				& > li > a {
+					display: block;
+					padding: 14px 4px;
+					border-top: 0;
+					border-bottom: 1px solid var(--line);
+					font-size: 16px;
+					color: var(--text);
+				}
+
+				// vnořené menu jako plná šířka, ne dropdown
+				& > li > ul {
+					position: static !important;
+					left: auto !important;
+					width: 100% !important;
+					box-shadow: none;
+					padding: 0 0 0 12px;
+				}
+			}
+		}
+
+		.site-header__cta {
+			display: inline-flex;
+			justify-content: center;
+			width: 100%;
+			margin-top: 20px;
+		}
+
+		.menu-backdrop {
+			display: block;
+			position: fixed;
+			inset: 0;
+			background: rgba(9, 16, 26, .5);
+			opacity: 0;
+			visibility: hidden;
+			transition: opacity .3s ease, visibility .3s ease;
+			z-index: 1150;
+		}
+	}
+
+	// Otevřené menu
+	body.menu-open {
+		overflow: hidden; // zamknout scroll pod drawerem
+
+		.site-nav { transform: translateX(0); }
+
+		.menu-backdrop {
+			opacity: 1;
+			visibility: visible;
+		}
+
+		// Hamburger → X
+		.menu-toggle {
+			color: var(--text);
+
+			&__inner {
+				background: transparent;
+
+				&::before { transform: translateY(8px) rotate(45deg); }
+				&::after { transform: translateY(-8px) rotate(-45deg); }
+			}
+		}
+	}
+}

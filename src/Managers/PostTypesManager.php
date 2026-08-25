@@ -5,6 +5,7 @@ namespace Kct\Managers;
 use Kct\PostTypes\DepartmentPostType;
 use Kct\PostTypes\EventPostType;
 use Kct\PostTypes\PagePostType;
+use Kct\PostTypes\PlacePostType;
 use Kct\PostTypes\PostPostType;
 use Kct\PostTypes\RoadPostType;
 
@@ -14,7 +15,8 @@ final class PostTypesManager {
 		EventPostType $event_post_type,
 		PagePostType $page_post_type,
 		PostPostType $post_post_type,
-		RoadPostType $road_post_type
+		RoadPostType $road_post_type,
+		PlacePostType $place_post_type
 	) {
 	}
 }

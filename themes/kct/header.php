@@ -29,8 +29,8 @@
 
 	<header id="masthead" class="site-header">
 		<div class="container">
-			<?php the_custom_logo(); ?>
-			<div class="site-header-right">
+			<div class="header-brand">
+				<?php the_custom_logo(); ?>
 				<div class="site-branding">
 					<?php
 					if ( is_front_page() && is_home() ) :
@@ -62,14 +62,15 @@
 							 class="secondary-logo">
 					<?php endif; ?>
 				</div><!-- .site-branding -->
+			</div><!-- .header-brand -->
 
+			<button class="menu-toggle" aria-controls="site-nav" aria-expanded="false">
+				<span class="menu-toggle__box"><span class="menu-toggle__inner"></span></span>
+				<span class="screen-reader-text"><?php esc_html_e( 'Menu', 'kct' ); ?></span>
+			</button>
+
+			<div class="site-nav" id="site-nav">
 				<nav id="site-navigation" class="main-navigation">
-					<button class="menu-toggle" aria-controls="primary-menu"
-							aria-expanded="false">
-						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
-							<path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-								  stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-						</svg> <span><?php esc_html_e( 'Menu', 'kct' ); ?></span></button>
 					<?php
 					wp_nav_menu(
 						array(
@@ -79,6 +80,14 @@
 					);
 					?>
 				</nav><!-- #site-navigation -->
-			</div>
+
+				<?php
+				// Tlačítko „Stát se členem". URL lze změnit filtrem kct_membership_url.
+				$kct_membership_url = apply_filters( 'kct_membership_url', home_url( '/' ) );
+				?>
+				<a class="btn site-header__cta" href="<?= esc_url( $kct_membership_url ) ?>"><?php esc_html_e( 'Stát se členem', 'kct' ); ?></a>
+			</div><!-- .site-nav -->
+
+			<span class="menu-backdrop" hidden></span>
 		</div>
 	</header><!-- #masthead -->

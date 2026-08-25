@@ -1,0 +1,80 @@
+.block-cover {
+	position: relative;
+	// jen MINIMÁLNÍ výška — delší obsah hero roztáhne (žádná pevná výška)
+	min-height: 520px;
+	background: #0b1622 no-repeat center center;
+	background-size: cover;
+	display: flex;
+	align-items: center;
+	color: #fff;
+	// vnitřní vertikální padding hero (horizontální řeší .container)
+	padding: 40px 0;
+
+	@media (max-width: $medium-screen) {
+		min-height: 60vh;
+		padding: 20px 0;
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		// horní + spodní ztmavení (kontrast hlavičky) + diagonální (kontrast textu)
+		background:
+			linear-gradient(180deg, rgba(9, 18, 30, .55) 0%, rgba(9, 18, 30, 0) 24%, rgba(9, 18, 30, 0) 66%, rgba(9, 18, 30, .45) 100%),
+			linear-gradient(90deg, rgba(9, 18, 30, .86) 0%, rgba(9, 18, 30, .5) 46%, rgba(9, 18, 30, .12) 100%);
+	}
+
+	.container {
+		position: relative;
+		z-index: 2;
+		width: 100%;
+	}
+}
+
+.block-cover__content {
+	max-width: 740px;
+	text-align: var(--hero-align);
+}
+
+.block-cover__eyebrow {
+	margin-bottom: 18px;
+}
+
+.block-cover__title {
+	font-family: var(--font-head);
+	font-weight: 700;
+	font-size: clamp(2.25rem, 8vw, var(--hero-size));
+	line-height: 1.1;
+	text-transform: uppercase;
+	letter-spacing: .005em;
+	color: #fff;
+	margin: 0;
+	text-shadow: 0 4px 40px rgba(0, 0, 0, .5);
+	overflow-wrap: break-word;
+}
+
+.block-cover__lead {
+	font-size: 18px;
+	line-height: 1.55;
+	color: rgba(255, 255, 255, .9);
+	max-width: 470px;
+	margin: 24px 0 32px;
+}
+
+.block-cover__actions {
+	display: flex;
+	gap: 14px;
+	align-items: center;
+	flex-wrap: wrap;
+}
+
+// Transparentní (fixní) hlavička přes hero → větší horní odsazení,
+// aby obsah nezačínal pod hlavičkou.
+body.header-transparent .block-cover {
+	padding-top: 100px;
+
+	@media (max-width: $medium-screen) {
+		padding-top: 80px;
+	}
+}

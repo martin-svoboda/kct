@@ -32,16 +32,39 @@ function kct_customize_register( $wp_customize ) {
 		);
 	}
 
-	// Primary color
+	// Skin / vzhled šablony
+	$wp_customize->add_section( 'kct_appearance', array(
+		'title'    => __( 'Vzhled šablony', 'kct' ),
+		'priority' => 30,
+	) );
+	$wp_customize->add_setting( 'kct_skin', array(
+		'default'           => 'photo',
+		'transport'         => 'postMessage',
+		'sanitize_callback' => function ( $v ) {
+			return in_array( $v, array( 'photo', 'magazine', 'cards' ), true ) ? $v : 'photo';
+		},
+	) );
+	$wp_customize->add_control( 'kct_skin', array(
+		'section' => 'kct_appearance',
+		'label'   => __( 'Styl šablony', 'kct' ),
+		'type'    => 'radio',
+		'choices' => array(
+			'photo'    => __( 'Obrazový', 'kct' ),
+			'magazine' => __( 'Časopisový', 'kct' ),
+			'cards'    => __( 'Kartový', 'kct' ),
+		),
+	) );
+
+	// Primary color (prázdné = použij default zvoleného skinu)
 	$wp_customize->add_setting( 'primary_color', array(
-		'default'           => '#0178A3',
+		'default'           => '',
 		'transport'         => 'refresh',
 		'sanitize_callback' => 'sanitize_hex_color',
 	) );
 
 	$wp_customize->add_control( new WP_Customize_Color_Control( $wp_customize, 'primary_color', array(
 		'section' => 'colors',
-		'label'   => esc_html__( 'Primární barva', 'bs-core-theme' ),
+		'label'   => esc_html__( 'Primární barva', 'kct' ),
 	) ) );
 
 	// Secondary logo

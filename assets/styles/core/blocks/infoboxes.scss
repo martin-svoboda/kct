@@ -1,0 +1,144 @@
+// Rozcestník. Dva režimy:
+//  1) samostatná karta (kct/infobox-item mimo .infoboxes) → bílá karta s barevným proužkem
+//  2) panel (kct/infobox) → full-width bílý pruh bez zaoblení; nahoře modrý pruh přes celou
+//     šířku, nad boxy překrytý trikolórou
+
+// 1) Samostatná karta
+.cart {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  width: 100%;
+  padding: 24px 26px;
+  background: var(--surface);
+  color: var(--text);
+  border-top: 4px solid var(--cart-accent, var(--primary));
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  text-decoration: none;
+  transition: transform .2s ease, box-shadow .2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+
+  img, svg {
+    flex: 0 0 auto;
+    width: 50px;
+    height: 50px;
+    padding: 8px;
+    border-radius: 13px;
+    background: color-mix(in srgb, var(--primary) 10%, #fff);
+    object-fit: contain;
+  }
+
+  .content h3 {
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 18px;
+    text-transform: uppercase;
+    color: var(--text);
+    margin: 0 0 4px;
+  }
+
+  .content p {
+    color: var(--text-muted);
+    font-size: 15px;
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+// 2) Panel — vždy bez zaoblení, bílé pozadí, plný modrý pruh nahoře
+.infoboxes {
+  position: relative;
+  background: var(--surface);
+  border-radius: 0;
+  box-shadow: none;
+
+  // Modrý pruh přes CELOU šířku panelu
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    z-index: 2;
+    background: var(--primary);
+  }
+}
+
+// Vnitřní obal s boxy — nese trikolóru, která překryje modrý pruh v oblasti boxů
+.infoboxes__inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    z-index: 3;
+    background: linear-gradient(90deg,
+      var(--kct-red) 0 33.333%,
+      var(--kct-green) 33.333% 66.666%,
+      var(--kct-yellow) 66.666% 100%);
+  }
+
+  // Buňky = ploché, s pravým dělítkem
+  .cart {
+    align-items: center;
+    padding: 32px 34px 28px;
+    background: transparent;
+    border: 0;
+    border-right: 1px solid var(--line);
+    border-radius: 0;
+    box-shadow: none;
+
+    &:hover {
+      transform: none;
+      background: var(--surface-alt);
+    }
+
+    &:last-child {
+      border-right: 0;
+    }
+  }
+
+  @media (max-width: $medium-screen) {
+    grid-template-columns: 1fr;
+
+    .cart {
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+    }
+  }
+}
+
+// Top-level rozcestník (přímo v obsahu / v detailu akce): full-bleed pruh,
+// boxy v centrovaném kontejneru → modrý pruh pokračuje mimo boxy do stran.
+.entry-content > .infoboxes,
+.event-post > .infoboxes {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+
+  .infoboxes__inner {
+    max-width: $container-width;
+    margin: 0 auto;
+  }
+}
+
+// Hero + infoboxes na homepage → napojit těsně pod hero (bez horní mezery).
+// (Detail akce řeší překryv `.entry-header + .infoboxes { margin-top: -3rem }`
+//  v eventpost.scss — sem ho NEpřidávat, jinak se překryv zruší.)
+.entry-content > .block-cover + .infoboxes {
+  margin-top: 0;
+}

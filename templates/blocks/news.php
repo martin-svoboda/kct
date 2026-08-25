@@ -15,7 +15,7 @@ $posts  = get_posts( array(
 if ( $posts ) :
 	?>
     <div class="kct-block block-news">
-        <div class="articles_grid">
+        <div class="articles_grid news-grid">
 			<?php
 			/* Start the Loop */
 			/** @var WP_Post $post */

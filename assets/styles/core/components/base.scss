@@ -1,0 +1,177 @@
+// Reset or Normalize
+@import 'normalize'; // Or include a reset CSS if desired
+
+// Box model and general styles
+html {
+  box-sizing: border-box;
+  overflow-x: clip; // klipne horizontální přetečení (off-canvas menu), nerozbije sticky
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $primary-font;
+  font-size: $base-font-size;
+  line-height: 1.7;
+  background: var(--page-bg);
+  color: var(--text);
+  overflow-x: clip; // pojistka proti horizontálnímu přetečení (100vw full-width bloky)
+}
+
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  clear: both;
+  line-height: normal;
+}
+
+h1 {
+  font-size: $heading-1;
+  font-family: $roboto-condensed;
+  /* Any other styles for h1 */
+}
+
+h2 {
+  font-size: $heading-2;
+  font-family: $roboto-condensed;
+  /* Any other styles for h2 */
+}
+
+h3 {
+  font-size: $heading-3;
+  font-family: $roboto-condensed;
+  /* Any other styles for h3 */
+}
+
+h4 {
+  font-size: $heading-4;
+  font-family: $primary-font;
+  /* Any other styles for h4 */
+}
+
+h5 {
+  font-size: $heading-5;
+  font-family: $primary-font;
+  /* Any other styles for h5 */
+}
+
+h6 {
+  font-size: $heading-6;
+  font-family: $primary-font;
+  /* Any other styles for h6 */
+}
+
+.font-primary {
+  font-family: $primary-font;
+}
+
+.font-secondary {
+  font-family: $secondary-font;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+dfn,
+cite,
+em,
+i {
+  font-style: italic;
+}
+
+blockquote {
+  margin: 0 1.5em;
+}
+
+address {
+  margin: 0 0 1.5em;
+}
+
+/* Links */
+a {
+  text-decoration: none;
+  color: var(--primary);
+  transition: color 0.2s, opacity 0.2s;
+
+  &:focus {
+	outline: thin dotted;
+  }
+}
+
+// Hover jen pro TEXTOVÉ odkazy (prosa/widgety), NE pro odkazy obalující kartu/blok
+// (ty řeší jednotný hover své komponenty – karty se zvednou, řádky změní pozadí).
+.entry-content p a:hover,
+.entry-content li a:hover,
+.comment-content p a:hover,
+.widget a:hover {
+  opacity: .75;
+}
+
+// Podtržení jen u odkazů uvnitř odstavců/seznamů (skutečná prosa),
+// NE u odkazů, které obalují blok/kartu (a > p) nebo tlačítek.
+.entry-content p a,
+.entry-content li a,
+.comment-content p a,
+.comment-content li a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &.btn,
+  &.button {
+    text-decoration: none;
+  }
+}
+
+/* Lists */
+ul, ol {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding-left: 20px;
+}
+
+/* Elements */
+
+/* Make sure embeds and iframes fit their containers. */
+embed,
+iframe,
+object {
+  max-width: 100%;
+}
+
+img {
+  height: auto;
+  max-width: 100%;
+}
+
+figure {
+  margin: 1em 0;
+}
+
+/* TABLE */
+table {
+  margin: 0 0 1.5em;
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  border-top: 1px solid $line-color;
+
+  th, td {
+	text-align: left;
+	padding: 0.5rem 1rem;
+	border-bottom: 1px solid $line-color;
+  }
+
+  //tr:nth-child(odd) {
+	//background-color: $light-gray-color;
+  //}
+}

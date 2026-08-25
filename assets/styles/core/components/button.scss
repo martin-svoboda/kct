@@ -1,0 +1,45 @@
+// Tlačítka — token-driven (tvar dle --btn-radius: photo/cards pill, magazine hranaté)
+.btn, .button, .wp-element-button {
+	display: inline-flex;
+	align-items: center;
+	gap: .5em;
+	font-family: var(--font-body);
+	font-weight: 700;
+	font-size: 15px;
+	line-height: 1;
+	text-decoration: none;
+	cursor: pointer;
+	padding: 14px 28px;
+	border-radius: var(--btn-radius);
+	background-color: var(--primary);
+	color: var(--primary-contrast);
+	border: 1.5px solid transparent;
+	transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+
+	&:hover {
+		transform: translateY(-2px);
+		filter: brightness(.96);
+	}
+
+	&:focus {
+		outline: thin dotted;
+	}
+}
+
+// Průhledné / obrysové (na světlém pozadí)
+.btn--ghost {
+	background-color: transparent;
+	color: var(--text);
+	border-color: var(--line);
+}
+
+// Bílé tlačítko na tmavém pozadí (hero / cinematic band)
+.btn--on-dark, .button.white {
+	background-color: #fff;
+	color: var(--surface-invert);
+	border-color: transparent;
+}
+
+.wp-block-buttons {
+	row-gap: 1rem;
+}

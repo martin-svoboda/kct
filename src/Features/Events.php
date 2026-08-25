@@ -167,6 +167,7 @@ class Events {
 		}
 
 		$url = 'https://akcekct.kct-db.cz/export/' . ( $just_updated ? 'akceexport1' : 'akceexport1x' ) . '.php';
+
 		$xml = file_get_contents( $url );
 		$xml = mb_convert_encoding( $xml, 'UTF-8' );
 		$xml = json_decode( json_encode( simplexml_load_string( $xml ) ), true );
@@ -181,15 +182,19 @@ class Events {
 			return;
 		}
 
+		$imported_ids = [];
+		$progress = \WP_CLI\Utils\make_progress_bar( 'Import events', count( $xml['event']) );
 		$filter_by = $this->settings->code_type();
 		foreach ( $xml['event'] as $xml_event ) {
 			// Skip deleted events
 			if ( isset( $xml_event['deleted'] ) && $xml_event['deleted'] == 'Y' ) {
+				$progress->tick();
 				continue;
 			}
 
 			// Skip empty events
 			if ( ( empty( $xml_event['name'] ) ) && ( empty( $xml_event['start'] ) ) ) {
+				$progress->tick();
 				continue;
 			}
 
@@ -200,6 +205,7 @@ class Events {
 					( 'department' === $filter_by && $filter_val != $xml_event['department'] )
 				)
 			) {
+				$progress->tick();
 				continue;
 			}
 
@@ -258,8 +264,13 @@ class Events {
 			$db_event->image = $image;
 			// Save
 			$this->db_event_repository->save( $db_event );
+			$imported_ids[] = $db_event->db_id;
+			$progress->tick();
 		}
 
+		$progress->finish();
+		print_r( 'Import finished with ids: ' );
+		print_r( $imported_ids );
 		// import event types to options
 		$this->import_event_types( true );
 		exit();

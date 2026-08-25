@@ -20,15 +20,16 @@ $gradient       = $args['gradient'] ?? true;
 <div
 	class="kct-block block-action full-width <?= $gradient ? 'gradient' : '' ?>" <?php if ( $background ) { ?> style="background-image: url('<?= wp_get_attachment_url( $background ) ?>')" <?php } ?>>
 	<div class="container <?= $image_position ?>">
-		<div class="content">
+		<div class="content block-action__content">
+			<span class="kct-tricolor block-action__eyebrow" aria-hidden="true"><span></span><span></span><span></span></span>
 			<?php if ( ! empty( $title ) ): ?>
-				<h2><?php echo $title; ?></h2>
+				<h2 class="block-action__title"><?php echo $title; ?></h2>
 			<?php endif; ?>
 			<?php if ( ! empty( $text ) ): ?>
-				<p><?php echo $text; ?></p>
+				<p class="block-action__text"><?php echo $text; ?></p>
 			<?php endif; ?>
 			<?php if ( ! empty( $link ) ): ?>
-				<a class="button" href="<?= $link['url'] ?>" target="<?= $link['target'] ?>"
+				<a class="btn" href="<?= $link['url'] ?>" target="<?= $link['target'] ?>"
 				   title="<?= $link['label'] ?>"><?= $link['label'] ?></a>
 			<?php endif; ?>
 		</div>

@@ -1,0 +1,132 @@
+// Události — holý responzivní seznam jako PŘED redesignem.
+// Pokrývá blok homepage (.block-events / .event__*) i React archiv /akce/ (.events / .date / h3).
+// Responzivita (klíčová): .content-box je na mobilu SLOUPEC, na desktopu ŘÁDEK;
+// ikony jsou na mobilu na plnou šířku (pod obsahem), na desktopu vpravo (max 93px).
+.block-events,
+.events {
+	margin-top: 1rem;
+
+	.events-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.event {
+		display: flex;
+		padding: 20px 0;
+		border-bottom: 1px solid var(--line);
+		color: var(--text);
+		text-decoration: none;
+
+		&:hover {
+			filter: none;
+			background: var(--surface-alt);
+		}
+	}
+
+	// Datum (nové .event__date i staré .date)
+	.event__date,
+	.date {
+		width: 80px;
+		flex: 0 0 auto;
+
+		span {
+			display: block;
+			line-height: 1.3;
+		}
+	}
+
+	.event__date-day,
+	.date-number {
+		font-family: var(--font-head);
+		font-weight: 700;
+		font-size: 1.5rem;
+		color: var(--primary);
+	}
+
+	// V seznamu žádná fotka
+	.event__media { display: none; }
+
+	.content-box {
+		flex: 1;
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: column;
+		gap: 10px;
+
+		@media (min-width: $medium-screen) {
+			flex-direction: row;
+			align-items: flex-start;
+		}
+	}
+
+	.content {
+		flex: 1;
+		min-width: 0;
+	}
+
+	// Nadpis (nové .event__title i staré .content h3) — jako dřív, bez uppercase
+	.event__title,
+	.content h3 {
+		font-family: var(--font-head);
+		font-weight: 700;
+		font-size: 1.25rem;
+		text-transform: none;
+		margin: 0 0 4px;
+		color: var(--text);
+	}
+
+	.event__meta,
+	.event__tags,
+	.content p {
+		color: var(--text-muted);
+		margin: 0;
+	}
+
+	.icons {
+		width: 100%;
+		line-height: 1;
+		display: flex;
+		align-content: flex-start;
+		flex-wrap: wrap;
+		gap: 4px;
+
+		@media (min-width: $medium-screen) {
+			max-width: 93px;
+		}
+
+		img {
+			max-width: 30px;
+		}
+
+		.proposal-icon {
+			width: 29px;
+			height: 29px;
+			margin-right: 1px;
+			margin-bottom: 1px;
+			border: 1px solid black;
+			color: var(--primary);
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-content: center;
+			box-shadow: 1px 1px black;
+		}
+	}
+
+	.event__link {
+		color: var(--primary);
+		font-weight: 700;
+		white-space: nowrap;
+	}
+
+	.events-error {
+		color: var(--text-muted);
+		padding: 20px 0;
+	}
+
+	p {
+		margin-bottom: 0;
+	}
+}

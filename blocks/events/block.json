@@ -1,0 +1,20 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "kct/events",
+	"title": "Kalendář akcí",
+	"category": "kct",
+	"icon": "calendar",
+	"description": "Výpis akcí z databáze KČT (dynamický blok).",
+	"textdomain": "kct",
+	"supports": {
+		"html": false,
+		"customClassName": false,
+		"reusable": true
+	},
+	"attributes": {
+		"time_period": { "type": "string", "default": "future" },
+		"count": { "type": "number", "default": 5 },
+		"button": { "type": "string", "default": "" }
+	}
+}

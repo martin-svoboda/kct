@@ -1,0 +1,12 @@
+// _contract.scss — každý skin MUSÍ v :root nastavit tyto tokeny:
+//
+//   Plochy:      --page-bg  --surface  --surface-alt  --surface-invert
+//   Text:        --text  --text-muted  --text-faint
+//   Akcent:      --primary  --primary-contrast  --hero-eyebrow  --line
+//   Tvar:        --radius-container  --radius-card  --btn-radius  --chip-radius  --shadow-card
+//   Hero/nadpis: --hero-size  --hero-align  --h2-size
+//   Členství:    --members-bg  --members-text  --members-accent
+//
+// Fallbacky pro všechny jsou v core/_variables.scss (skin funguje i bez kompletní sady,
+// ale pro věrný vzhled nastav všechny). Trikolóra (--kct-red/-yellow/-green) je sdílená,
+// NEnastavuj ji ve skinu.

@@ -1,0 +1,26 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "kct/infobox",
+	"title": "Info boxy",
+	"category": "kct",
+	"icon": "info",
+	"description": "Mřížka karet s obrázkem, nadpisem, textem a odkazem.",
+	"textdomain": "kct",
+	"supports": {
+		"html": false,
+		"customClassName": false,
+		"reusable": true,
+		"inserter": false
+	},
+	"attributes": {
+		"boxes": {
+			"type": "array",
+			"default": [
+				{ "image": 0, "title": "", "text": "", "link": {} },
+				{ "image": 0, "title": "", "text": "", "link": {} },
+				{ "image": 0, "title": "", "text": "", "link": {} }
+			]
+		}
+	}
+}

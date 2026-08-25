@@ -1,0 +1,108 @@
+// core/_variables.scss
+// ── Sdílené (nezávislé na skinu) + fallbacky tokenů ──
+:root {
+	--font-head: 'Oswald', sans-serif;
+	--font-body: 'Plus Jakarta Sans', sans-serif;
+	--kct-red:    #E4032E;
+	--kct-blue:   #1466B0;
+	--kct-yellow: #FFCC00;
+	--kct-green:  #009640;
+
+	// Fallbacky tokenů (skin je přepíše; core díky nim funguje i „nahý")
+	--page-bg:         #dfe3e8;
+	--surface:         #ffffff;
+	--surface-alt:     #f4f6f9;
+	--surface-invert:  #0d1926;
+	--text:            #16202b;
+	--text-muted:      #7b8492;
+	--text-faint:      #9aa4b1;
+	--primary:         #1466B0;
+	--primary-contrast:#ffffff;
+	--hero-eyebrow:    #8fd0ff;
+	--line:            #eef1f5;
+	--radius-container:20px;
+	--radius-card:     16px;
+	--btn-radius:      999px;
+	--chip-radius:     999px;
+	--shadow-card:     0 22px 46px -30px rgba(11, 22, 34, .5);
+	--hero-size:       88px;
+	--hero-align:      left;
+	--h2-size:         44px;
+	--members-bg:      #f4f6f9;
+	--members-text:    #16202b;
+	--members-accent:  #009640;
+}
+
+// Fonty
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+// ── SCSS proměnné → tokeny (zpětná kompatibilita se stávajícími komponentami) ──
+$primary-color:    var(--primary);
+$secondary-color:  var(--text);
+$white-color:      #ffffff;
+$light-gray-color: var(--surface-alt);
+$text-color:       var(--text);
+$link-color:       var(--primary);
+$line-color:       var(--line);
+$red-color:    var(--kct-red);
+$blue-color:   #0A55A3;
+$green-color:  var(--kct-green);
+$yellow-color: var(--kct-yellow);
+$accent-color: var(--kct-yellow);
+
+$roboto-condensed: var(--font-head);
+$primary-font:     var(--font-body);
+$secondary-font:   'Times New Roman', serif;
+
+// Font sizes
+$base-font-size: 16px;
+$heading-1: 3rem;
+$heading-2: 2rem;
+$heading-3: 1.5rem;
+$heading-4: 1.2rem;
+$heading-5: 1rem;
+$heading-6: 0.8rem;
+
+// Breakpoints
+$small-screen: 576px;
+$medium-screen: 768px;
+$large-screen: 992px;
+$x-large-screen: 1200px;
+
+// Grid
+$columns: 12;
+$gutter: 20px;
+
+// Other values
+$border-radius: 5px;
+$container-width: 1440px;
+
+// Full-width barevný proužek: modrá přes celou šířku + trikolóra (červená/zelená/žlutá)
+// přes kontejner (stejně jako u rozcestníku). Prvek musí být positioned (relative/sticky/fixed).
+@mixin kct-strip($height: 4px) {
+	&::before { // modrá full-width
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: $height;
+		background: var(--kct-blue);
+		z-index: 1;
+	}
+
+	&::after { // trikolóra přes kontejner
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 50%;
+		transform: translateX(-50%);
+		width: min(100%, #{$container-width});
+		height: $height;
+		z-index: 2;
+		background: linear-gradient(90deg,
+			var(--kct-red) 0 33.333%,
+			var(--kct-green) 33.333% 66.666%,
+			var(--kct-yellow) 66.666% 100%);
+	}
+}

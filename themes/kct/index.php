@@ -54,7 +54,7 @@ get_header();
 							<?php
 							$top_categories = get_categories( array(
 								'parent'     => 0,
-								'hide_empty' => false
+								'hide_empty' => true
 							) );
 
 							if ( $top_categories && count( $top_categories ) > 0 ) {
@@ -92,7 +92,7 @@ get_header();
 								if ( $active_top_cat ) {
 									$child_categories = get_categories( array(
 										'parent'     => $active_top_cat->term_id,
-										'hide_empty' => false
+										'hide_empty' => true
 									) );
 
 									if ( $child_categories && count( $child_categories ) > 0 ) {

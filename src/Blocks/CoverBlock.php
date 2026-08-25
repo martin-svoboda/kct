@@ -2,59 +2,36 @@
 
 namespace Kct\Blocks;
 
-use Kct\Plugin;
-use KctDeps\Wpify\CustomFields\CustomFields;
+use KctDeps\Wpify\PluginUtils\PluginUtils;
 use KctDeps\Wpify\Template\WordPressTemplate;
 
 class CoverBlock {
-	private $wcf;
+	private $utils;
 	private $template;
 
-	public function __construct( CustomFields $wcf, WordPressTemplate $template ) {
-		$this->wcf      = $wcf;
+	public function __construct( PluginUtils $utils, WordPressTemplate $template ) {
+		$this->utils    = $utils;
 		$this->template = $template;
 
 		if ( ! kct_theme_is_active() ) {
 			return;
 		}
 
-		$this->setup();
+		add_action( 'init', array( $this, 'register' ) );
 	}
 
-	public function setup() {
-		$this->wcf->create_gutenberg_block( array(
-			'name'            => 'kct/cover',
-			'title'           => __( 'Úvodní obrázek', 'kct' ),
-			'category'        => 'kct',
-			'icon'            => 'cover-image',
-			'render_callback' => array( $this, 'render' ),
-			'items'           => array(
-				array(
-					'type'            => 'attachment',
-					'id'              => 'background',
-					'title'           => __( 'Obrázek na pozadí', 'kct' ),
-					'attachment_type' => 'image',
-				),
-				array(
-					'type'  => 'text',
-					'id'    => 'title',
-					'title' => __( 'Nadpis', 'kct' ),
-				),
-				array(
-					'type'  => 'textarea',
-					'id'    => 'text',
-					'title' => __( 'Text', 'kct' ),
-				),
-				array(
-					'type'  => 'link',
-					'id'    => 'link',
-					'title' => __( 'Odkaz tlačítka', 'kct' ),
-				),
-			),
-		) );
+	/**
+	 * Nativní registrace bloku z block.json. Atributy čte WP z block.json,
+	 * render zůstává na PHP (dynamický blok).
+	 */
+	public function register() {
+		register_block_type(
+			$this->utils->get_plugin_path( 'blocks/cover' ),
+			array( 'render_callback' => array( $this, 'render' ) )
+		);
 	}
 
-	public function render( array $block_attributes, string $content ) {
-		return $this->template->render( 'blocks/cover', null, $block_attributes );
+	public function render( array $attributes, string $content = '' ) {
+		return $this->template->render( 'blocks/cover', null, $attributes );
 	}
 }

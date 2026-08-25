@@ -1,0 +1,42 @@
+// SKIN: Kartový (1c)
+@import '../core/index';
+
+// Tokeny AŽ ZA core, aby přebily jeho fallbacky.
+:root {
+	--page-bg:#dfe3e8; --surface:#ffffff; --surface-alt:#f4f6f9; --surface-invert:#0d1926;
+	--text:#16202b; --text-muted:#7b8492; --text-faint:#9aa4b1;
+	--primary:#1466B0; --primary-contrast:#ffffff; --hero-eyebrow:#ffffff; --line:#eef1f5;
+	--radius-container:20px; --radius-card:16px; --btn-radius:999px; --chip-radius:999px;
+	--shadow-card:0 20px 50px -34px rgba(11,22,34,.5);
+	--hero-size:80px; --hero-align:center; --h2-size:42px;
+	--members-bg:#0f2233; --members-text:#ffffff; --members-accent:#009640;
+}
+
+// ── Layout modifikátory: Kartový ──
+// Hero centrovaný
+.block-cover .container { justify-content: center; }
+.block-cover__content {
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+}
+.block-cover__eyebrow { justify-content: center; }
+.block-cover__lead {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+// Události jako řádky v bílé kartě
+.block-events .events-list {
+	background: var(--surface);
+	border-radius: var(--radius-card);
+	box-shadow: var(--shadow-card);
+	overflow: hidden;
+}
+.block-events .event {
+	padding: 22px 26px;
+	transition: background .15s ease;
+
+	&:hover { background: var(--surface-alt); }
+}
+.block-events .event__media { display: none; }

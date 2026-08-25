@@ -1,36 +1,27 @@
-@import "components/variables";
-@import "components/base";
-@import "components/layout";
-@import "components/header";
-@import "components/navigation";
-@import "components/gallery";
-@import "components/button";
-@import "components/helpers";
-@import "components/accessibility";
-@import "components/gutenberg";
-@import "components/articles";
-@import "blocks/kct-block";
-@import "blocks/cover";
-@import "blocks/action";
-@import "blocks/image-content";
-@import "blocks/infoboxes";
-@import "blocks/events";
-@import "blocks/news";
+// Opravy layoutu POUZE pro editor Gutenbergu. Načítá se PŘES add_editor_style()
+// PO skinu, takže přepisuje. WP každý selektor automaticky scopuje pod
+// .editor-styles-wrapper — proto zde píšeme holé selektory (bez toho prefixu).
 
-
-.wp-block {
-  max-width: $container-width;
-}
-
-.wp-block[data-aligh=wide] {
-  max-width: $container-width;
-}
-
+// Full-width bloky (hero, band) ať v plátně editoru sedí na celou šířku plátna,
+// ne s max-width:1240px + display:flex (to je posouvalo mimo a přetékalo doprava).
+.block-cover,
+.block-action,
 .full-width {
-  width: 100%;
-  position: relative;
-  left: 0;
-  right: 0;
-  margin-left: 0;
-  margin-right: 0;
+	max-width: none !important;
+	width: 100% !important;
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+	left: 0 !important;
+	right: 0 !important;
+}
+
+// Hero v editoru nižší, ať nezabírá celou obrazovku
+.block-cover {
+	min-height: 340px;
+}
+
+// Bloková obálka editoru: full-width bloky nemají být omezené obsahovou šířkou
+.wp-block.block-cover,
+.wp-block.block-action {
+	max-width: none !important;
 }

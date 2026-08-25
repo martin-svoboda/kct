@@ -8,7 +8,10 @@
 
 const config = {
 	entry: {
-		'theme': ['./assets/scripts/theme.js', './assets/styles/theme.scss'],
+		'theme': ['./assets/scripts/theme.js'],
+		'photo': ['./assets/styles/skins/photo.scss'],
+		'magazine': ['./assets/styles/skins/magazine.scss'],
+		'cards': ['./assets/styles/skins/cards.scss'],
 		'plugin': ['./assets/scripts/plugin.js', './assets/styles/plugin.scss'],
 		'events': ['./assets/apps/events/app.jsx'],
 		'departments': ['./assets/apps/departments/app.jsx'],
@@ -20,7 +23,9 @@ const config = {
 	},
 	copy: [
 		{source: 'editor-style.css', destination: 'themes/kct/editor-style.css'},
-		{source: 'theme.css', destination: 'themes/kct/theme.css'},
+		{source: 'photo.css', destination: 'themes/kct/photo.css'},
+		{source: 'magazine.css', destination: 'themes/kct/magazine.css'},
+		{source: 'cards.css', destination: 'themes/kct/cards.css'},
 	],
 	sprite: {
 		input: 'assets/svgs/**/*.svg',
@@ -107,6 +112,8 @@ class CopyAfterCompilationWebpackPlugin {
 
 module.exports = {
 	...defaultConfig,
+	// Vypnutá filesystem cache — jinak se změny v SCSS partials občas neprojeví v buildu.
+	cache: false,
 	entry: resolvePathsRecursively(config.entry),
 	output: {
 		...defaultConfig.output,

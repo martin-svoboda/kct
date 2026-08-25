@@ -1,0 +1,65 @@
+// Průhledné menu přes obsah (per-stránka: body.header-transparent).
+// Hlavička je fixed (sticky – zůstává při scrollu), nahoře průhledná přes hero,
+// po odscrollování se podbarví (body.is-scrolled).
+$nav-desktop: $large-screen + 1; // ≥993px = desktop nav v liště
+
+body.header-transparent {
+	.site-header {
+		position: fixed;
+		inset: 0 0 auto 0;
+		z-index: 1100;
+		background: transparent;
+		box-shadow: none;
+		transition: background .25s ease, box-shadow .25s ease;
+
+		// Čtyřbarevný proužek zůstává vidět i u průhledné hlavičky (mění se jen pozadí).
+
+		// Značka + hamburger nad hero = bílé
+		.site-title a,
+		.site-description {
+			color: #fff;
+		}
+
+		.menu-toggle {
+			color: #fff;
+		}
+
+		// Odkazy nav bílé jen na desktopu (na mobilu jsou v drawru → tmavé)
+		@media (min-width: $nav-desktop) {
+			.main-navigation #primary-menu > li > a {
+				color: #fff;
+
+				&:hover { opacity: .7; }
+			}
+
+			.main-navigation .current-menu-item > a {
+				border-top-color: #fff;
+			}
+		}
+	}
+
+	// Obsah začíná pod fixní hlavičkou (hero je první blok a jde pod ni)
+	#page > .container {
+		padding-top: 0;
+	}
+
+	// Po odscrollování — podbarvení a normální barvy
+	&.is-scrolled .site-header {
+		background: var(--surface);
+		box-shadow: 0 1px 0 var(--line), 0 6px 20px -18px rgba(11, 22, 34, .5);
+
+		.site-title a { color: var(--text); }
+		.site-description { color: var(--text-muted); }
+		.menu-toggle { color: var(--text); }
+
+		@media (min-width: $nav-desktop) {
+			.main-navigation #primary-menu > li > a { color: var(--text); }
+			.main-navigation .current-menu-item > a { border-top-color: var(--primary); }
+		}
+	}
+
+	// Otevřené mobilní menu — hamburger (X) tmavý nad světlým drawerem
+	&.menu-open .site-header .menu-toggle {
+		color: var(--text);
+	}
+}

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import apiFetch from '@wordpress/api-fetch';
 import DatePicker, { registerLocale } from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import cs from "date-fns/locale/cs";
+import { apiGet } from "../../api";
 
 registerLocale("cs", cs);
 import EventItem from "./EventItem";
@@ -12,6 +12,8 @@ export default function App() {
     const [displayedEvents, setDisplayedEvents] = useState([]);
     const [eventTypes, setEventTypes] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(false);
+    const [reloadKey, setReloadKey] = useState(0);
 
     const today = new Date().toISOString().split('T')[0]; // Dnešní datum jako 'YYYY-MM-DD'
     const nextYear = new Date(new Date().setFullYear(new Date().getFullYear() + 1)).toISOString().split('T')[0]; // Datum za rok jako 'YYYY-MM-DD'
@@ -40,27 +42,36 @@ export default function App() {
     };
 
     useEffect(() => {
+        let ignore = false;
         setIsLoading(true);
+        setError(false);
+
         const fetchEvents = async () => {
             try {
-                console.info(`Call endpoint: /kct/v1/events?dateFrom=${formatDate(filterCriteria.dateFrom)}&dateTo=${formatDate(filterCriteria.dateTo)}&type=${filterCriteria.type}` )
-                const response = await apiFetch({ path: `/kct/v1/events?dateFrom=${formatDate(filterCriteria.dateFrom)}&dateTo=${formatDate(filterCriteria.dateTo)}&type=${filterCriteria.type}` });
+                const response = await apiGet(`/events?dateFrom=${formatDate(filterCriteria.dateFrom)}&dateTo=${formatDate(filterCriteria.dateTo)}&type=${filterCriteria.type}`);
+                if (ignore) return;
                 setDisplayedEvents(response);
-                setIsLoading(false);
             } catch (error) {
+                if (ignore) return;
                 console.error('Error fetching events:', error);
-                setIsLoading(false);
+                setError(true);
+            } finally {
+                if (!ignore) setIsLoading(false);
             }
         };
 
         fetchEvents();
-    }, [filterCriteria]);
+
+        return () => { ignore = true; };
+    }, [filterCriteria, reloadKey]);
 
     useEffect(() => {
+        let ignore = false;
+
         const fetchEventTypes = async () => {
             try {
-                console.info(`Call endpoint: /kct/v1/event-types` )
-                const response = await apiFetch({ path: `/kct/v1/event-types` });
+                const response = await apiGet(`/event-types`);
+                if (ignore) return;
                 const eventTypeArray = Object.values(response);
                 setEventTypes(eventTypeArray);
             } catch (error) {
@@ -69,9 +80,9 @@ export default function App() {
         };
 
         fetchEventTypes();
-    }, []);
 
-    console.log( displayedEvents )
+        return () => { ignore = true; };
+    }, []);
 
     return (
         <>
@@ -120,8 +131,14 @@ export default function App() {
                 <main id="primary" className="site-main" style={{width:'100%'}}>
                     <div className="events">
                         {isLoading && <div id="loading"><div className={"spinner"} ></div> Načítám...</div>}
-                        {!isLoading && displayedEvents.length === 0 && <div>k dispozici nejsou žádné akce.</div>}
-                        {!isLoading && displayedEvents.length > 0 &&
+                        {!isLoading && error &&
+                            <div className="events-error">
+                                Akce se nepodařilo načíst.{' '}
+                                <button type="button" onClick={() => setReloadKey(key => key + 1)}>Zkusit znovu</button>
+                            </div>
+                        }
+                        {!isLoading && !error && displayedEvents.length === 0 && <div>k dispozici nejsou žádné akce.</div>}
+                        {!isLoading && !error && displayedEvents.length > 0 &&
                             <ul className="events-list">
                                 {displayedEvents.map(item => <EventItem key={item.id} item={item} />)}
                             </ul>

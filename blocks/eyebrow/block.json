@@ -1,0 +1,18 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "kct/eyebrow",
+	"title": "Předtitulek",
+	"category": "kct",
+	"icon": "editor-textcolor",
+	"description": "Malý předtitulek s trikolórou – umísťuje se nad nadpis sekce.",
+	"textdomain": "kct",
+	"supports": {
+		"html": false,
+		"customClassName": false,
+		"reusable": false
+	},
+	"attributes": {
+		"text": { "type": "string", "default": "" }
+	}
+}

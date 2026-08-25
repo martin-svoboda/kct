@@ -1,0 +1,22 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "kct/infobox-item",
+	"title": "Info karta",
+	"category": "kct",
+	"icon": "index-card",
+	"description": "Jedna info karta – obrázek, nadpis, text, odkaz a barva. Ideální do sloupců.",
+	"textdomain": "kct",
+	"supports": {
+		"html": false,
+		"customClassName": false,
+		"reusable": false
+	},
+	"attributes": {
+		"image": { "type": "integer", "default": 0 },
+		"title": { "type": "string", "default": "" },
+		"text": { "type": "string", "default": "" },
+		"link": { "type": "object", "default": {} },
+		"color": { "type": "string", "default": "" }
+	}
+}

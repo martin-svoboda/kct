@@ -1,0 +1,133 @@
+// Nadpisy příspěvků (archiv, hledání, single) — Oswald, tmavý text, hover akcent
+.entry-title {
+  font-family: var(--font-head);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.15;
+  font-size: clamp(1.9rem, 6vw, 2.75rem);
+  overflow-wrap: break-word;
+
+  a {
+    color: var(--text);
+
+    &:hover {
+      color: var(--primary);
+      filter: none;
+    }
+  }
+}
+
+.entry-meta {
+  color: var(--text-faint);
+  font-size: 13px;
+  margin: 6px 0 12px;
+
+  a { color: var(--primary); }
+}
+
+.articles_grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 28px;
+
+  @media (min-width: $medium-screen) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (min-width: $large-screen) {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  // Jednotná karta příspěvku — stejná na homepage i v archivech/aktualitách.
+  article {
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    transition: transform .2s ease, box-shadow .2s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+    }
+
+    // Vnitřní odsazení pro vše kromě náhledu (ten je full-bleed nahoře).
+    > *:not(.post-thumbnail):not(.thumbnail-replacement) {
+      padding-left: 24px;
+      padding-right: 24px;
+    }
+
+    .entry-header { padding-top: 22px; }
+    .entry-footer { padding-bottom: 24px; margin-top: auto; }
+
+    .entry-title {
+      font-size: 20px;
+      margin: 8px 0 0;
+
+      a {
+        color: var(--text);
+        text-decoration: none;
+
+        &:hover { color: var(--primary); filter: none; }
+      }
+    }
+
+    .entry-meta {
+      font-size: 12.5px;
+      margin: 0 0 4px;
+      color: var(--text-faint);
+
+      a { color: var(--primary); }
+    }
+
+    .entry-content {
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.55;
+      margin-top: 10px;
+    }
+
+    .entry-footer a {
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      text-decoration: none;
+    }
+  }
+
+  .post-thumbnail {
+    display: block;
+    height: 200px;
+    margin-bottom: 0;
+
+    & > * {
+      height: 100%;
+    }
+
+    img {
+      width: 100%;
+      object-fit: cover;
+      max-height: 100%;
+
+      &.wp-post-image {
+        object-fit: cover;
+      }
+    }
+  }
+}
+
+.thumbnail-replacement {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $primary-color;
+  padding: 1rem;
+
+  img {
+    mix-blend-mode: color-burn;
+    filter: saturate(0);
+  }
+}

@@ -24,7 +24,7 @@ if ( $count ) {
 }
 
 ?>
-<div class="kct-block events">
+<div class="kct-block block-events">
 	<?php if ( empty( $events ) ) {
 		echo 'Je nám líto, ale nebyli nalezeny žádné akce.';
 	} else { ?>
@@ -33,20 +33,20 @@ if ( $count ) {
 			foreach ( $events as $event ) : ?>
 				<li>
 					<a href="<?= $event['permalink'] ?>" class="event">
-						<div class="date">
+						<div class="date event__date">
 							<?php if ( $event['date'] ) { ?>
 								<span class="day-name"><?= date_i18n( 'l', strtotime( $event['date'] ) ) ?></span>
-								<span class="date-number"><?= date( 'j. n.', strtotime( $event['date'] ) ) ?></span>
+								<span class="date-number event__date-day"><?= date( 'j. n.', strtotime( $event['date'] ) ) ?></span>
 								<span class="date-year"><?= date( 'Y', strtotime( $event['date'] ) ) ?></span>
 							<?php } ?>
 						</div>
 						<?php if ( ! empty( $event['image'] ) ) {
-							printf( '<img src="%s" title="%s">', $event['image']['url'], $event['title'] );
+							printf( '<div class="event__media"><img src="%s" title="%s"></div>', $event['image']['url'], $event['title'] );
 						} ?>
 						<div class="content-box">
 							<div class="content">
-								<h3><?= $event['year'] ? $event['year'] . '. ' : '' ?><?= $event['title'] ?></h3>
-								<p>
+								<h3 class="event__title"><?= $event['year'] ? $event['year'] . '. ' : '' ?><?= $event['title'] ?></h3>
+								<p class="event__meta">
 									<?php
 									$first_line = [];
 									if ( isset( $event['organiser'] ) && isset( $event['organiser']['name'] ) && ! empty( $event['organiser']['name'] ) ) {
@@ -67,7 +67,7 @@ if ( $count ) {
 									echo implode( ' – ', $first_line );
 									?>
 								</p>
-								<p>
+								<p class="event__tags">
 									<?php
 									$details = [];
 									if ( isset( $event['details'] ) && ! empty( $event['details'] ) ) {
