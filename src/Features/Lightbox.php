@@ -2,6 +2,7 @@
 
 namespace Kct\Features;
 
+use WP_Block;
 use WP_Theme_JSON_Data;
 
 /**
@@ -32,7 +33,8 @@ class Lightbox {
 
 	public function __construct() {
 		add_filter( 'wp_theme_json_data_theme', array( $this, 'enable_lightbox' ) );
-		add_filter( 'render_block_data', array( $this, 'unwrap_media_links' ) );
+		add_filter( 'render_block_data', array( $this, 'prepare_block' ), 10, 3 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 	}
 
 	/**
@@ -62,27 +64,41 @@ class Lightbox {
 	}
 
 	/**
-	 * Zruší u obrázků odkaz na vlastní soubor média, aby se místo něj použil
-	 * lightbox.
+	 * Vrátí tlačítko lupy do rohu náhledu v oříznuté galerii.
 	 *
-	 * Starší galerie mají odkaz na soubor uložený v obsahu — dřív to byla
-	 * podmínka, aby na ně dosáhl plugin Lightbox with PhotoSwipe. Jádro ale
-	 * lightbox nasazuje jen tam, kde obrázek žádný odkaz nemá (viz
-	 * `render_block_core_image()`), takže by se takové obrázky po vypnutí
-	 * PhotoSwipe otevíraly jako holý soubor v prázdném okně.
+	 * Jádro tlačítko umisťuje inline stylem a u obrázků se `scale` nastaveným
+	 * na `contain` počítá s tím, že se obrázek v náhledu nevyplňuje celý —
+	 * odsadí ho proto dovnitř, do místa, kde by končila fotografie. V oříznuté
+	 * galerii ale náhled vyplněný je (`is-cropped` mu dává `object-fit: cover`),
+	 * takže by tlačítko viselo uprostřed buňky.
+	 *
+	 * `!important` je tu nutnost, ne nedbalost: přebíjí se inline styl.
+	 *
+	 * @see Lightbox::keep_cropped_image_whole()
+	 */
+	public function enqueue_styles(): void {
+		wp_register_style( 'kct-lightbox', false, array(), null );
+		wp_enqueue_style( 'kct-lightbox' );
+		wp_add_inline_style(
+			'kct-lightbox',
+			'.wp-block-gallery.is-cropped .wp-lightbox-container > button{top:16px !important;right:16px !important}'
+		);
+	}
+
+	/**
+	 * Upraví blok před vykreslením tak, aby na něm lightbox fungoval.
 	 *
 	 * Řeší se to při vykreslování, ne přepsáním databáze: uložený obsah zůstane
 	 * beze změny, takže se z toho dá kdykoli couvnout a nehrozí, že by se
 	 * hromadnou úpravou rozbil obsah, který nikdo nekontroloval.
 	 *
-	 * Odkaz na stránku přílohy ani vlastní odkaz se nezahazují — na rozdíl od
-	 * odkazu na soubor jsou to skutečné cíle, kam měl návštěvník jít.
-	 *
-	 * @param array $parsed_block Blok před vykreslením.
+	 * @param array         $parsed_block Blok před vykreslením.
+	 * @param array         $source_block Blok před úpravami ostatních filtrů.
+	 * @param WP_Block|null $parent_block Nadřazený blok, u obrázku v galerii ta galerie.
 	 *
 	 * @return array
 	 */
-	public function unwrap_media_links( $parsed_block ) {
+	public function prepare_block( $parsed_block, $source_block = array(), $parent_block = null ) {
 		if ( ! is_array( $parsed_block ) || ! isset( $parsed_block['blockName'] ) ) {
 			return $parsed_block;
 		}
@@ -101,10 +117,20 @@ class Lightbox {
 			return $parsed_block;
 		}
 
+		$parsed_block = $this->keep_cropped_image_whole( $parsed_block, $parent_block );
+
 		if ( ! in_array( $parsed_block['attrs']['linkDestination'] ?? '', self::MEDIA_LINK_DESTINATIONS, true ) ) {
 			return $parsed_block;
 		}
 
+		// Starší galerie mají odkaz na soubor uložený v obsahu — dřív to byla
+		// podmínka, aby na ně dosáhl plugin Lightbox with PhotoSwipe. Jádro ale
+		// lightbox nasazuje jen tam, kde obrázek žádný odkaz nemá (viz
+		// `render_block_core_image()`), takže by se takové obrázky po vypnutí
+		// PhotoSwipe otevíraly jako holý soubor v prázdném okně.
+		//
+		// Odkaz na stránku přílohy ani vlastní odkaz se nezahazují — na rozdíl
+		// od odkazu na soubor jsou to skutečné cíle, kam měl návštěvník jít.
 		$parsed_block['attrs']['linkDestination'] = 'none';
 
 		// `href` a spol. se ukládají do HTML, ne do atributů bloku; tady jsou
@@ -127,6 +153,52 @@ class Lightbox {
 				}
 			}
 		}
+
+		return $parsed_block;
+	}
+
+	/**
+	 * Zajistí, že se obrázek z oříznuté galerie otevře v lightboxu celý.
+	 *
+	 * Volba „Oříznout obrázky na míru“ sjednotí náhledy v mřížce tím, že jim
+	 * dá `object-fit: cover` — obrázek na šířku se v buňce na výšku ořízne.
+	 * To je u náhledu žádoucí, po rozkliknutí ale ne.
+	 *
+	 * Jádro počítá velikost okna lightboxu z poměru stran *náhledu*, ne
+	 * fotografie (`setOverlayStyles()` ve `block-library/image/view.js`), a
+	 * protože na zvětšeninu pak natvrdo nasazuje `object-fit: cover`, ořízne
+	 * ji úplně stejně jako náhled. Výjimku má jen pro obrázky s `scale`
+	 * nastaveným na `contain` — u těch si rozměry přepočítá podle skutečné
+	 * fotografie a okno vyjde ve správném poměru.
+	 *
+	 * Atribut `scale` se u bloku obrázku na serveru nikde jinde nepoužívá než
+	 * právě pro tenhle výpočet (viz `block_core_image_render_lightbox()`),
+	 * takže nastavením nic dalšího nerozbijeme — náhled v mřížce zůstává
+	 * oříznutý, mění se jen chování zvětšeniny.
+	 *
+	 * @param array         $parsed_block Blok obrázku.
+	 * @param WP_Block|null $parent_block Nadřazený blok.
+	 *
+	 * @return array
+	 */
+	private function keep_cropped_image_whole( array $parsed_block, $parent_block ): array {
+		// Vlastní hodnotu od redaktora nepřebíjíme — ten výplň řeší záměrně,
+		// typicky spolu s pevným poměrem stran obrázku.
+		if ( isset( $parsed_block['attrs']['scale'] ) ) {
+			return $parsed_block;
+		}
+
+		if ( ! $parent_block instanceof WP_Block || 'core/gallery' !== $parent_block->name ) {
+			return $parsed_block;
+		}
+
+		// `imageCrop` je ve výchozím stavu zapnuté, takže galerie bez uloženého
+		// atributu je oříznutá.
+		if ( ! ( $parent_block->attributes['imageCrop'] ?? true ) ) {
+			return $parsed_block;
+		}
+
+		$parsed_block['attrs']['scale'] = 'contain';
 
 		return $parsed_block;
 	}
