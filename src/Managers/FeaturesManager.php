@@ -4,6 +4,7 @@ namespace Kct\Managers;
 
 use Kct\Features\Events;
 use Kct\Features\FacebookShare;
+use Kct\Features\Lightbox;
 use Kct\Features\OpenGraph;
 use Kct\Features\Roads;
 
@@ -12,7 +13,8 @@ final class FeaturesManager {
 		Events $events,
 		Roads $roads,
 		FacebookShare $facebook_share,
-		OpenGraph $open_graph
+		OpenGraph $open_graph,
+		Lightbox $lightbox
 	) {
 	}
 }
