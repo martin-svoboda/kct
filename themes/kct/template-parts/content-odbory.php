@@ -28,12 +28,14 @@ if ( is_single() && has_post_thumbnail() ) {
 			// components/breadcrumbs.scss pro výpočet kontrastu).
 			get_template_part( 'template-parts/breadcrumbs', null, array( 'muted' => ! $image_url ) );
 			?>
-			<?php if ( $department->logo ) {
-				echo wp_get_attachment_image( $department->logo, 'medium', array( "class" => "department-logo" ) );
-			} ?>
-			<div>
-				odbor č. <?php echo $department->department_id ?>
-				<h1 class="entry-title"><?= $department->title ?></h1>
+			<div class="department-head">
+				<?php if ( $department->logo ) {
+					echo wp_get_attachment_image( $department->logo, 'medium', array( "class" => "department-logo" ) );
+				} ?>
+				<div>
+					odbor č. <?php echo $department->department_id ?>
+					<h1 class="entry-title"><?= $department->title ?></h1>
+				</div>
 			</div>
 		</div>
 	</header><!-- .entry-header -->

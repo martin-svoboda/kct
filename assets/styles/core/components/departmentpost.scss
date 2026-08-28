@@ -2,12 +2,24 @@
 	width: 100%;
 
 	.entry-header {
+		// Kontejner je sloupec: nahoře drobečky přes celou šířku, pod nimi
+		// řádek s logem a titulkem. Dřív byl řádkem přímo kontejner, jenže na
+		// desktopu má `flex-wrap: nowrap` (aby logo zůstalo vedle titulku)
+		// a v takovém kontejneru se nedá nic zalomit na vlastní řádek — cokoli
+		// dalšího uvnitř se jen smrskne vedle. Proto má řádek vlastní obal.
 		.container {
 			position: relative;
+			flex-flow: column;
+			gap: 20px;
+			z-index: 1;
+		}
+
+		.department-head {
+			display: flex;
 			flex-flow: row;
 			flex-wrap: wrap;
 			gap: 20px;
-			z-index: 1;
+			position: relative;
 
 			@media (min-width: $medium-screen) {
 				flex-wrap: nowrap;
@@ -85,7 +97,7 @@
 
 		&:hover {
 			filter: none;
-			background: $light-gray-color;
+			background: var(--surface);
 		}
 
 		.content {

@@ -26,6 +26,11 @@ $event_id = $db_event_id ?: get_the_ID();
 // řetězec, kdyby se volaly zvlášť).
 $event_seo_data = kct_container()->get( \Kct\Seo\EventSeoData::class );
 $kct_past_date  = $event_seo_data->is_past( $event ) ? $event_seo_data->format_date( $event ) : '';
+
+// Odkaz na stránku odboru, který akci pořádá — prázdný řetězec, když se
+// nedá dohledat (bez pořadatele, nebo pořadatel bez vlastní stránky odboru).
+// Beze změny se pak jméno pořadatele vypíše jako holý text, viz použití níž.
+$kct_department_url = kct_container()->get( \Kct\Seo\DepartmentLink::class )->for_event( $event );
 ?>
 
 <article id="post-<?php echo $event_id; ?>" class="event-post">
@@ -81,8 +86,14 @@ $kct_past_date  = $event_seo_data->is_past( $event ) ? $event_seo_data->format_d
 							//						$organiser[] = ( $event['organiser']['zip'] ?? '' ) . ' ' . ( $event['organiser']['town'] ?? '' );
 							//					}
 
-							echo implode( ', ', $organiser );
-							?></p>
+						$kct_organiser_text = implode( ', ', $organiser );
+
+						if ( $kct_department_url ) {
+							printf( '<a href="%s">%s</a>', esc_url( $kct_department_url ), esc_html( $kct_organiser_text ) );
+						} else {
+							echo esc_html( $kct_organiser_text );
+						}
+						?></p>
 					<?php } ?>
 					<h3>Místo konání</h3>
 					<p><?php

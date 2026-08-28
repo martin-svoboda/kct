@@ -114,3 +114,36 @@ $container-width: 1440px;
 			var(--kct-yellow) 66.666% 100%);
 	}
 }
+
+// Ztmavovací pruh pod menu. Uplatní se jen u průhledné hlavičky (fixed přes
+// hero) — tam menu leží přímo na fotce a bez podkladu na světlém snímku zmizí.
+// Je to VRSTVA NAVÍC nad vlastním gradientem hero sekce, ten zůstává beze změny
+// a řeší čitelnost titulku, ne menu.
+//
+// Používá ::before, takže hero, které si ho už zabralo, musí sáhnout jinam.
+// $z se předává jen tam, kde jsou nad pozadím poziciované prvky (fotka v <img>);
+// bez něj se pruh řídí pořadím v DOM a schoval by se pod ně.
+@mixin kct-hero-menu-scrim($z: null) {
+	body.header-transparent &::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 240px;
+		pointer-events: none;
+
+		@if $z != null {
+			z-index: $z;
+		}
+
+		background: linear-gradient(180deg,
+			rgba(9, 18, 30, .62) 0%,
+			rgba(9, 18, 30, .28) 45%,
+			rgba(9, 18, 30, 0) 100%);
+
+		@media (max-width: $medium-screen) {
+			height: 170px;
+		}
+	}
+}

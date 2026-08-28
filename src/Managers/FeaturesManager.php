@@ -2,6 +2,7 @@
 
 namespace Kct\Managers;
 
+use Kct\Features\DepartmentSeo;
 use Kct\Features\Events;
 use Kct\Features\EventSeo;
 use Kct\Features\FacebookShare;
@@ -16,7 +17,8 @@ final class FeaturesManager {
 		FacebookShare $facebook_share,
 		OpenGraph $open_graph,
 		Lightbox $lightbox,
-		EventSeo $event_seo
+		EventSeo $event_seo,
+		DepartmentSeo $department_seo
 	) {
 	}
 }

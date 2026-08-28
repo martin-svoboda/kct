@@ -37,6 +37,15 @@ class Frontend {
 		// se chování nemění.
 		add_filter( 'blog_redirect_404', '__return_empty_string' );
 
+		// Ikona webu, když ji web nemá nastavenou. Jádro v takovém případě
+		// nevypíše nic (wp_site_icon() se ukončí hned na has_site_icon(), takže
+		// ani filtr site_icon_meta_tags neproběhne) a prohlížeč ukáže prázdnou
+		// ikonu, v administraci logo WordPressu. Odborové weby ikonu často
+		// nastavenou nemají, tak jim podstrčíme obecné logo KČT ze šablony.
+		add_action( 'wp_head', array( $this, 'fallback_site_icon' ) );
+		add_action( 'admin_head', array( $this, 'fallback_site_icon' ) );
+		add_action( 'login_head', array( $this, 'fallback_site_icon' ) );
+
 		add_action( 'wp_enqueue_scripts', array( $this, 'setup_assets' ) );
 		add_filter( 'excerpt_length', function () {
 			return 20;
@@ -91,6 +100,31 @@ class Frontend {
 				'in_footer' => true,
 			) );
 		}
+	}
+
+	/**
+	 * Záložní ikona webu, když ji web nemá nastavenou.
+	 *
+	 * Používá obecné logo KČT ze šablony ve dvou velikostech: malý soubor na
+	 * ikonu v panelu prohlížeče, velký na dlaždice a přidání na plochu. Jádro
+	 * si tyhle velikosti u nastavené ikony ořezává samo, tady jsou jako hotové
+	 * soubory — proto se pro každý rozměr vybírá ten bližší.
+	 *
+	 * Vypisuje se jen když ikona chybí, aby weby s vlastní ikonou zůstaly beze
+	 * změny; jádro svou verzi vypisuje na týchž hácích.
+	 */
+	public function fallback_site_icon(): void {
+		if ( has_site_icon() ) {
+			return;
+		}
+
+		$small = get_theme_file_uri( 'images/logo_kct.png' );
+		$large = get_theme_file_uri( 'images/kct_barva.png' );
+
+		printf( '<link rel="icon" href="%s" sizes="32x32" />' . "\n", esc_url( $small ) );
+		printf( '<link rel="icon" href="%s" sizes="192x192" />' . "\n", esc_url( $large ) );
+		printf( '<link rel="apple-touch-icon" href="%s" />' . "\n", esc_url( $large ) );
+		printf( '<meta name="msapplication-TileImage" content="%s" />' . "\n", esc_url( $large ) );
 	}
 
 	public function allow_gpx_upload( $mimes ) {

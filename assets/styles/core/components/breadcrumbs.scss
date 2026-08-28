@@ -53,6 +53,11 @@
 //   overlaye).
 .breadcrumbs {
 	display: block;
+	// Hero bloky vykreslují drobečky uvnitř `.container`, a ta je flex
+	// (`display: flex; flex-wrap: wrap`). Bez tohohle by se z drobečků stala
+	// položka flexu vedle titulku — tedy dva sloupce místo řádku nad nadpisem.
+	// `display: block` na to nestačí, flex kontejner vnitřní display přebíjí.
+	flex: 1 1 100%;
 	margin-bottom: 18px;
 	font-size: 11px;
 	font-weight: 600;

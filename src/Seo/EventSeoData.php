@@ -13,6 +13,9 @@ use DateTimeImmutable;
  */
 class EventSeoData {
 
+	/** Záložní obrázek pro sdílení, relativně ke složce šablony. */
+	const FALLBACK_IMAGE = 'images/kct_barva.png';
+
 	/** Popisek se nesmí protáhnout přes délku, kterou vyhledávače zobrazí. */
 	const DESCRIPTION_LIMIT = 155;
 
@@ -189,14 +192,13 @@ class EventSeoData {
 	/**
 	 * Obrázek pro OG/Twitter tagy: vlastní obrázek akce, jinak logo z tématu.
 	 *
-	 * Sdílí ho StandaloneOutput i RankMathOutput, ať se sémantika (vlastní
-	 * obrázek → fallback na custom_logo → prázdno) nepíše na dvou místech
-	 * zvlášť a nerozejde se. get_theme_mod() a wp_get_attachment_image_src()
-	 * jsou funkce jádra, ne hooky ani závislost na Rank Mathu — nejde proti
-	 * omezení třídy z hlavičky souboru.
+	 * Sdílí ho StandaloneOutput, RankMathOutput i DepartmentSeo, ať se sémantika
+	 * (vlastní obrázek → záloha → prázdno) nepíše na třech místech zvlášť
+	 * a nerozejde se. Použité funkce jsou z jádra, ne hooky ani závislost na
+	 * Rank Mathu — nejde proti omezení třídy z hlavičky souboru.
 	 *
-	 * Rozměry (width/height) umí vrátit jen u loga — je to lokální příloha.
-	 * U vlastní fotky akce je to vzdálená URL z importu KČT, rozměry
+	 * Rozměry (width/height) umí vrátit jen u zálohy — je to lokální soubor
+	 * šablony. U vlastní fotky akce je to vzdálená URL z importu KČT, rozměry
 	 * neznáme, proto 0/0.
 	 *
 	 * @param array $event Pole akce z Events::get_event().
@@ -214,29 +216,53 @@ class EventSeoData {
 			);
 		}
 
-		$logo = get_theme_mod( 'custom_logo' );
+		return $this->fallback_image();
+	}
 
-		if ( ! $logo ) {
-			return array(
-				'url'    => '',
-				'width'  => 0,
-				'height' => 0,
-			);
+	/**
+	 * Záložní obrázek pro sdílení — obecné logo KČT ze šablony.
+	 *
+	 * Záměrně ne `custom_logo` daného webu: na oblastním webu se vypisují akce
+	 * a odbory z celé oblasti, takže logo oblasti je u cizího odboru nemístné.
+	 * Obecné logo KČT sedí na obojí a je stejné napříč celou sítí.
+	 *
+	 * Soubor je součástí šablony, ne příloha, takže rozměry se čtou ze souboru.
+	 * Sdílené sítě je vyžadují: bez nich Facebook náhled při prvním sdílení
+	 * nevykreslí, dokud si obrázek sám nestáhne. Výsledek se drží ve statické
+	 * proměnné, ať se soubor nečte několikrát za request.
+	 */
+	private function fallback_image(): array {
+		static $cached = null;
+
+		if ( null !== $cached ) {
+			return $cached;
 		}
 
-		$image = wp_get_attachment_image_src( $logo, 'full' );
+		$empty = array(
+			'url'    => '',
+			'width'  => 0,
+			'height' => 0,
+		);
 
-		return $image
+		$path = get_theme_file_path( self::FALLBACK_IMAGE );
+
+		if ( ! is_readable( $path ) ) {
+			$cached = $empty;
+
+			return $cached;
+		}
+
+		$size = wp_getimagesize( $path );
+
+		$cached = $size
 			? array(
-				'url'    => (string) $image[0],
-				'width'  => (int) $image[1],
-				'height' => (int) $image[2],
+				'url'    => get_theme_file_uri( self::FALLBACK_IMAGE ),
+				'width'  => (int) $size[0],
+				'height' => (int) $size[1],
 			)
-			: array(
-				'url'    => '',
-				'width'  => 0,
-				'height' => 0,
-			);
+			: $empty;
+
+		return $cached;
 	}
 
 	/** Místo konání s GPS, když je k dispozici. */

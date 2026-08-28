@@ -19,11 +19,18 @@
 		content: '';
 		position: absolute;
 		inset: 0;
-		// horní + spodní ztmavení (kontrast hlavičky) + diagonální (kontrast textu)
+		// spodní ztmavení + diagonální (obojí kvůli kontrastu textu).
+		// Horní ztmavení tady schválně NENÍ — to řeší výhradně pruh pod menu
+		// níž, který se váže na průhlednou hlavičku. Bez ní menu přes hero
+		// neleží a horní hrana ztmavovat nemá co.
 		background:
-			linear-gradient(180deg, rgba(9, 18, 30, .55) 0%, rgba(9, 18, 30, 0) 24%, rgba(9, 18, 30, 0) 66%, rgba(9, 18, 30, .45) 100%),
+			linear-gradient(180deg, rgba(9, 18, 30, 0) 66%, rgba(9, 18, 30, .45) 100%),
 			linear-gradient(90deg, rgba(9, 18, 30, .86) 0%, rgba(9, 18, 30, .5) 46%, rgba(9, 18, 30, .12) 100%);
 	}
+
+	// Pruh pod menu navíc, jen u průhledné hlavičky. Bez z-indexu: v pořadí
+	// DOM je ::before před .container (z-index 2), takže obsah zůstane nad ním.
+	@include kct-hero-menu-scrim;
 
 	.container {
 		position: relative;

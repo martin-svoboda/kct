@@ -270,6 +270,40 @@ add_filter( 'body_class', function ( $classes ) {
 		}
 	}
 
+	// Ostatní hero sekce, na které se totéž nastavení z Customizeru vztahuje.
+	// Dřív platilo jen pro detail příspěvku, takže ho úvodní stránka i detaily
+	// akcí a odborů ignorovaly, přestože hero mají.
+	if ( get_theme_mod( 'kct_hero_transparent', false ) ) {
+		$kct_db_id = get_query_var( 'db_id' );
+
+		// Stránka, jejíž obsah ZAČÍNÁ blokem cover — typicky úvodní stránka.
+		// Testuje se začátek obsahu, ne jen přítomnost bloku (has_block):
+		// cover uprostřed stránky by pod průhledným menu nechal plavat text.
+		$kct_post = is_singular() ? get_post( get_queried_object_id() ) : null;
+
+		if ( $kct_post && str_starts_with( ltrim( $kct_post->post_content ), '<!-- wp:kct/cover' ) ) {
+			$classes[] = 'header-transparent';
+		}
+
+		// Detail akce nebo odboru s obrázkem — šablona mu dá celoplošné hero
+		// (.entry-header.full-width.large). Bez obrázku je hlavička plochá
+		// a menu přes ni nedává smysl, proto se testuje obrázek, ne typ.
+		if ( is_singular( array( 'akce', 'odbory' ) ) && has_post_thumbnail( get_queried_object_id() ) ) {
+			$classes[] = 'header-transparent';
+		}
+
+		// Virtuální detail akce (/akce-db/{id}) není singulární, obrázek má
+		// z importu. Bez tohohle by se stejně vypadající stránka chovala jinak
+		// než její protějšek na /akce/{slug}.
+		if ( $kct_db_id ) {
+			$kct_event = kct_container()->get( \Kct\Features\Events::class )->get_event( 0, $kct_db_id );
+
+			if ( ! empty( $kct_event['image']['url'] ) ) {
+				$classes[] = 'header-transparent';
+			}
+		}
+	}
+
 	return $classes;
 } );
 

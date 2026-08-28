@@ -140,8 +140,13 @@ class CanonicalSites {
 	 * department v datech KČT skutečně 0.0 (bez odboru), je 31 a mají klíč
 	 * přítomný; dotahovat k nim znovu z DB by bylo zbytečné a stejně by to
 	 * vrátilo tutéž nulu.
+	 *
+	 * Veřejná i pro DepartmentLink::for_event() — ten potřebuje kód pořádajícího
+	 * odboru pro odkaz na jeho stránku a bez týhle metody by musel tutéž
+	 * nekonzistenci (DB akce vs. CPT akce) řešit znovu, s rizikem, že se časem
+	 * rozejde s tím, jak podle pořadatele určuje kanonický web tahle třída.
 	 */
-	private function department_of( array $event ): string {
+	public function department_of( array $event ): string {
 		if ( array_key_exists( 'department', $event ) ) {
 			return $this->code( $event['department'] );
 		}
