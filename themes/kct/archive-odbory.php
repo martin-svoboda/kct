@@ -38,6 +38,7 @@ $kct_map_data = array_map( static function ( $d ) {
 <div class="container pt-0">
 	<main id="primary" class="site-main" style="width:100%">
 		<header class="archive-header">
+			<?php get_template_part( 'template-parts/breadcrumbs', null, array( 'muted' => true ) ); ?>
 			<h1 class="entry-title"><?php echo esc_html( get_theme_mod( 'kct_odbory_archive_title' ) ?: post_type_archive_title( '', false ) ); ?></h1>
 		</header>
 		<div class="departments">

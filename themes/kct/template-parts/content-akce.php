@@ -32,6 +32,12 @@ $kct_past_date  = $event_seo_data->is_past( $event ) ? $event_seo_data->format_d
 	<header
 		class="entry-header full-width <?= $image_url ? 'large' : '' ?>" <?php if ( $image_url ) { ?> style="background-image: url('<?= $image_url ?>')" <?php } ?>>
 		<div class="container">
+			<?php
+			// Tmavá varianta jen s fotkou (.large má vlastní color:#fff) —
+			// bez fotky je pozadí var(--line), tam musí být muted (viz
+			// components/breadcrumbs.scss pro výpočet kontrastu).
+			get_template_part( 'template-parts/breadcrumbs', null, array( 'muted' => ! $image_url ) );
+			?>
 			<?php if ( isset( $event['year'] ) && ! empty( $event['year'] ) ) {
 				echo $event['year'] . '. ročník';
 			} ?>
@@ -260,7 +266,7 @@ $kct_past_date  = $event_seo_data->is_past( $event ) ? $event_seo_data->format_d
 					$details = [];
 					foreach ( $event['details'] as $detail ) {
 						$text      = $detail['name'] . ( $detail['km'] ? ': ' . $detail['km'] : '' );
-						$details[] = sprintf( '<img src="%s" title="%s" width="30" height="30"> %s', $detail['icon'], $detail['name'], $text );
+						$details[] = sprintf( '<img src="%s" alt="%s" width="30" height="30"> %s', esc_url( $detail['icon'] ), esc_attr( $detail['name'] ), esc_html( $text ) );
 					}
 
 

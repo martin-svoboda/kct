@@ -15,6 +15,7 @@ get_header();
 			<?php if ( have_posts() ) : ?>
 
 				<header class="page-header">
+					<?php get_template_part( 'template-parts/breadcrumbs', null, array( 'muted' => true ) ); ?>
 					<h1 class="page-title">
 						<?php
 						/* translators: %s: search query. */

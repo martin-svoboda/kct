@@ -14,8 +14,6 @@ $kct_tags  = get_the_tags() ?: array();
 // Odhad doby čtení (~200 slov/min).
 $kct_words = str_word_count( wp_strip_all_tags( get_the_content() ) );
 $kct_read  = max( 1, (int) round( $kct_words / 200 ) );
-
-$kct_posts_page = (int) get_option( 'page_for_posts' );
 ?>
 <div class="post-hero<?php echo $kct_thumb ? '' : ' post-hero--noimg'; ?>">
 	<?php if ( $kct_thumb ) : ?>
@@ -24,13 +22,11 @@ $kct_posts_page = (int) get_option( 'page_for_posts' );
 	<span class="post-hero__overlay" aria-hidden="true"></span>
 
 	<div class="post-hero__inner">
-		<nav class="post-hero__crumbs" aria-label="<?php esc_attr_e( 'Drobečková navigace', 'kct' ); ?>">
-			<a href="<?php echo esc_url( home_url( '/' ) ); ?>"><?php esc_html_e( 'Úvod', 'kct' ); ?></a>
-			<?php if ( $kct_posts_page ) : ?>
-				<span aria-hidden="true">/</span>
-				<a href="<?php echo esc_url( get_permalink( $kct_posts_page ) ); ?>"><?php echo esc_html( get_the_title( $kct_posts_page ) ); ?></a>
-			<?php endif; ?>
-		</nav>
+		<?php
+		// Tmavá varianta (fotka na pozadí) — bez `muted`, plná opacita.
+		// Zdůvodnění rezervy kontrastu viz components/breadcrumbs.scss.
+		get_template_part( 'template-parts/breadcrumbs' );
+		?>
 
 		<?php if ( $kct_cat || $kct_tags ) : ?>
 			<div class="post-hero__chips">

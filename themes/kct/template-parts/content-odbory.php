@@ -22,6 +22,12 @@ if ( is_single() && has_post_thumbnail() ) {
 	<header
 		class="entry-header full-width <?= $image_url ? 'large' : '' ?>" <?php if ( $image_url ) { ?> style="background-image: url('<?= $image_url ?>')" <?php } ?>>
 		<div class="container">
+			<?php
+			// Tmavá varianta jen s fotkou (.large má vlastní color:#fff) —
+			// bez fotky je pozadí var(--line), tam musí být muted (viz
+			// components/breadcrumbs.scss pro výpočet kontrastu).
+			get_template_part( 'template-parts/breadcrumbs', null, array( 'muted' => ! $image_url ) );
+			?>
 			<?php if ( $department->logo ) {
 				echo wp_get_attachment_image( $department->logo, 'medium', array( "class" => "department-logo" ) );
 			} ?>

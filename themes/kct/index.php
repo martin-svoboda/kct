@@ -49,6 +49,7 @@ get_header();
 						}
 						?>
 						<header>
+							<?php get_template_part( 'template-parts/breadcrumbs', null, array( 'muted' => true ) ); ?>
 							<h1 class="entry-title"><?php echo $title; ?></h1>
 
 							<?php

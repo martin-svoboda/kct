@@ -1,0 +1,113 @@
+// core/components/breadcrumbs.scss — sdílená drobečková navigace (Rank Math).
+// Vykresluje ji jediná komponenta (template-parts/breadcrumbs.php), vždy
+// UVNITŘ hero/hlavičkového bloku dané šablony — nikdy jako samostatný pruh
+// nad hlavičkou. (Předchozí řešení dělalo přesně tohle: `.breadcrumb-bar`
+// mezi hlavičkou a hero rozřezávalo stránku a bylo to špatně — zrušeno.)
+//
+// Barva se DĚDÍ (currentColor) z obalového hero bloku, žádné dvě natvrdo
+// zadané sady barev pro tmavou/světlou variantu:
+//   - tmavé hero (.post-hero, .entry-header.full-width.large) mají na sobě
+//     `color: #fff` (post-hero__inner / layout.scss), drobečky ho zdědí.
+//   - světlé hero (.entry-header, .page-header, .archive-header,
+//     .events-archive__head, index.php <header>) nic nenastavují, dědí
+//     `body { color: var(--text) }`.
+// Aktuální položka (.last) se nevypisuje (viz komentář u pravidla níž),
+// takže v drobečcích zbývají samé odkazy a není co od čeho odlišovat —
+// proto bez podtržení, jen s podtržením při hoveru.
+//
+// Modifikátor `.breadcrumbs--muted` (viz breadcrumbs.php, $args['muted'])
+// ztlumí odkaz a oddělovač na opacity .7 kvůli vizuální hierarchii vůči
+// aktuální položce. Nasazuje se JEN tam, kde je na to podle výpočtu níž
+// prokazatelně rezerva (světlá varianta). Výchozí stav (bez modifikátoru,
+// plná opacita) je bezpečný default i tam, kde rezerva menší je (tmavá
+// varianta) — proto ho tmavé hero bloky vůbec nepoužívají.
+//
+// ── Kontrast, WCAG AA 4,5:1 (12px tučně nesplňuje práh pro "velký text",
+// ten je až od ~18,7px tučně) — spočteno reálně přes relativní luminanci: ──
+//
+// SVĚTLÁ varianta — currentColor = var(--text), pozadí var(--line)
+// (přísnější test než var(--surface): --line je ve všech skinech o něco
+// tmavší/šedší, tedy pro tmavý text horší případ; proti var(--surface)
+// vychází kontrast ve všech skinech ještě víc nad limitem):
+//   plná opacita (1.0):   photo 12,62:1 · cards 14,53:1 · magazine 13,46:1
+//   --muted (opacity .7): photo  5,35:1 · cards a magazine mají při plné
+//                         opacitě ještě větší rezervu než photo, takže po
+//                         zeslabení na .7 zůstávají nad photo hodnotou.
+//   Nejhorší číslo (photo, --muted) 5,35:1 pořád bezpečně nad 4,5:1.
+//
+// TMAVÁ varianta — currentColor = #fff, pozadí = tmavý gradient přes fotku
+// (.post-hero__overlay / .entry-header.full-width.large::after). Počítáno
+// proti REÁLNÉ barvě SLOŽENÉHO překryvu (overlay rgba(9,18,30,α) položený
+// na nejsvětlejší myslitelnou fotku, tedy bílou — to je nejhorší reálný
+// případ; proti fotce samotné to počítat nejde, ta je proměnná):
+//   u paty hero (α ≈ .94, kam obsah typicky sahá): ~16,4:1 — velká rezerva.
+//   výš, kde krátký obsah nechá drobečky blíž k 68% bodu gradientu
+//   (α ≈ .55): plná bílá (opacita 1) ~4,15:1 — těsně pod 4,5:1, ale JEN
+//   v tomhle krajním rohovém případě (velmi dlouhý, 3řádkový title +
+//   přeexponovaná bílá fotka současně). Proto tmavá varianta nepoužívá
+//   --muted (žádné další zeslabení) — to je zlepšení oproti předchozímu
+//   .post-hero__crumbs, který měl odkazy jen na opacitě .62 (řádově horší
+//   kontrast). Zbytkové riziko v tomhle rohovém případě je vlastnost
+//   existujícího přechodu (schválený vzor, `post-hero.php`), ne nové
+//   komponenty, a mimo rozsah týhle opravy (přesun drobečků, ne redesign
+//   overlaye).
+.breadcrumbs {
+	display: block;
+	margin-bottom: 18px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+	color: inherit;
+
+	p {
+		margin: 0;
+	}
+
+	// Aktuální stránka se nevypisuje — hned pod drobečky stojí <h1> se stejným
+	// textem a dvakrát po sobě totéž ruší. Skrývá se až v CSS, ne v PHP:
+	// Rank Math staví BreadcrumbList z vlastního seznamu, ne z vykresleného
+	// HTML, takže strukturovaná data si celou cestu včetně aktuální stránky
+	// podrží. Vyhledávač tedy vidí všechno, návštěvník nadpis jen jednou.
+	//
+	// Se skrytou poslední položkou zbývají v drobečcích samé odkazy, takže
+	// odpadá důvod pro podtržení (bylo tu jen proto, aby šel odkaz odlišit od
+	// aktuální položky, která měla stejnou barvu textu).
+	.last {
+		display: none;
+	}
+
+	// Oddělovač před skrytou položkou by zůstal viset na konci.
+	.separator:has(+ .last) {
+		display: none;
+	}
+
+	a {
+		color: currentColor;
+		text-decoration: none;
+
+		// Zpětná vazba při hoveru podtržením, ne změnou opacity — ta by
+		// u tmavé (neztlumené) varianty snížila kontrast pod výpočet výš.
+		&:hover {
+			text-decoration: underline;
+			text-decoration-color: currentColor;
+			text-underline-offset: 2px;
+		}
+	}
+
+	.separator {
+		opacity: 1;
+		margin: 0 2px;
+	}
+
+	&--muted {
+		a,
+		.separator {
+			opacity: .7;
+		}
+
+		a:hover {
+			opacity: 1;
+		}
+	}
+}

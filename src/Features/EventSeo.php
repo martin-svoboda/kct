@@ -20,6 +20,26 @@ use Kct\Settings;
  */
 class EventSeo {
 
+	/**
+	 * Pole akce pro filter_event_breadcrumb() — nastaví ho setup(), protože
+	 * Rank Math volá filtr `rank_math/frontend/breadcrumb/items` až při
+	 * skládání výstupu, ne hned při registraci.
+	 *
+	 * @var array
+	 */
+	private array $breadcrumb_event = array();
+
+	/**
+	 * Kanonická adresa akce pro filter_event_breadcrumb() — poslední
+	 * položka drobečku (aktuální stránka) v Rank Mathu nese svůj odkaz i
+	 * jako "current" prvek (get_breadcrumb() ho jen nevykreslí jako <a>);
+	 * schema builder (class-breadcrumbs.php v Rank Mathu) prázdný odkaz
+	 * naopak bere jako důvod celou položku ze BreadcrumbList vynechat.
+	 *
+	 * @var string
+	 */
+	private string $breadcrumb_canonical = '';
+
 	public function __construct(
 		private Events $events,
 		private EventSeoData $data,
@@ -218,11 +238,85 @@ class EventSeo {
 
 		list( $event, $canonical, $is_single ) = $context;
 
+		// Jen na virtuální stránce (index.php?db_id=…), ne na CPT příspěvku
+		// (/akce/{slug}/) — tam Rank Math trail skládá sám a správně, díky
+		// has_archive u EventPostType. class_exists(): filtr je specifický
+		// pro Rank Math, na webu bez něj (StandaloneOutput) by se nikdy
+		// nezavolal, ale netřeba ho tam vůbec registrovat.
+		if ( ! $is_single && class_exists( 'RankMath' ) ) {
+			$this->breadcrumb_event     = $event;
+			$this->breadcrumb_canonical = $canonical;
+			add_filter( 'rank_math/frontend/breadcrumb/items', array( $this, 'filter_event_breadcrumb' ) );
+		}
+
 		$output = $this->output();
 
 		if ( $output ) {
 			$output->render( $event, $canonical, $is_single );
 		}
+	}
+
+	/**
+	 * Nahradí drobečky na virtuální stránce akce.
+	 *
+	 * Rewrite pravidlo na index.php?db_id=… nemá vlastní typ požadavku —
+	 * WordPress ho vyhodnotí jako výpis blogu, takže by Rank Math sestavil
+	 * „Úvod / Aktuality a zprávy“. Pro detail akce to nedává smysl; trail má
+	 * být „Úvod / Akce / {název akce}“.
+	 *
+	 * @param array $crumbs Trail, jak ho sestavil Rank Math — pole trojic
+	 *                       [ název, odkaz, 'hide_in_schema' => bool ].
+	 *
+	 * @return array
+	 */
+	public function filter_event_breadcrumb( array $crumbs ): array {
+		$title = trim( (string) ( $this->breadcrumb_event['title'] ?? '' ) );
+
+		// Bez názvu akce (data v tabulce chybí) je bezpečnější ponechat, co
+		// spočítal Rank Math, než vrátit trail s prázdnou poslední položkou.
+		if ( '' === $title ) {
+			return $crumbs;
+		}
+
+		// První prvek, pokud existuje a vede na homepage, přebíráme beze
+		// změny — respektuje uživatelův label i odkaz z nastavení Rank
+		// Mathu (Úvod). Poznává se podle odkazu, ne podle nastavení
+		// breadcrumbs_home — ať sedí i kdyby ho Rank Math někdy vyhodnotil
+		// jinak, než čekáme.
+		$home_link = untrailingslashit( home_url( '/' ) );
+		$home      = ( $crumbs && untrailingslashit( (string) ( $crumbs[0][1] ?? '' ) ) === $home_link )
+			? array( $crumbs[0] )
+			: array();
+
+		$post_type    = $this->event_repository->post_type();
+		$type_object  = get_post_type_object( $post_type );
+		$archive_link = (string) get_post_type_archive_link( $post_type );
+
+		// Archiv jen s odkazem — bez něj by ho Rank Math vykreslil stylem
+		// aktuální stránky (get_breadcrumb() bere prázdný odkaz jako důvod
+		// nedělat z položky <a>, ne jen u opravdu poslední položky) a schema
+		// builder by ji z BreadcrumbList rovnou zahodil (stejné pravidlo,
+		// které jinde v týhle metodě využíváme pro aktuální stránku).
+		// get_post_type_archive_link() vrací false, když typ nemá archiv —
+		// u EventPostType (has_archive) dnes nenastane, ale radši bez
+		// vizuálně zavádějící položky navíc, než na to spoléhat.
+		$items = array();
+
+		if ( '' !== $archive_link ) {
+			$items[] = array(
+				$type_object->labels->name,
+				$archive_link,
+				'hide_in_schema' => false,
+			);
+		}
+
+		$items[] = array(
+			$title,
+			$this->breadcrumb_canonical,
+			'hide_in_schema' => false,
+		);
+
+		return array_merge( $home, $items );
 	}
 
 	/**

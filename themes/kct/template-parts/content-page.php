@@ -12,6 +12,7 @@
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 	<?php if ( ! get_post_meta( get_the_ID(), 'hide_title', true ) ) { ?>
 		<header class="entry-header">
+			<?php get_template_part( 'template-parts/breadcrumbs', null, array( 'muted' => true ) ); ?>
 			<?php the_title( '<h1 class="entry-title">', '</h1>' ); ?>
 		</header><!-- .entry-header -->
 	<?php } ?>

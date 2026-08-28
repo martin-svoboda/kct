@@ -47,6 +47,7 @@ if ( $kct_show_map ) :
 
 <div class="events-archive">
 	<header class="events-archive__head">
+		<?php get_template_part( 'template-parts/breadcrumbs', null, array( 'muted' => true ) ); ?>
 		<h1 class="entry-title"><?php echo esc_html( get_theme_mod( 'kct_akce_archive_title' ) ?: post_type_archive_title( '', false ) ); ?></h1>
 	</header>
 	<div class="events-archive__inner">

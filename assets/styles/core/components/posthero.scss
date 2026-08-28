@@ -38,32 +38,16 @@
 		max-width: $container-width;
 		margin: 0 auto;
 		padding: 140px 20px 46px;
+		// Ambientní barva pro text uvnitř hero — hlavně pro sdílenou
+		// komponentu drobečků (template-parts/breadcrumbs.php), která svou
+		// barvu záměrně nenastavuje, ať ji zdědí (viz components/breadcrumbs.scss).
+		// Ostatní prvky (title, meta, chipy) mají barvu nastavenou samy,
+		// takže se tímhle nemění.
+		color: #fff;
 
 		@media (max-width: $medium-screen) {
 			padding: 120px 16px 34px;
 		}
-	}
-
-	// Drobečky
-	&__crumbs {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 10px;
-		margin-bottom: 22px;
-		font-size: 12px;
-		font-weight: 700;
-		letter-spacing: .06em;
-		text-transform: uppercase;
-		color: rgba(255, 255, 255, .62);
-
-		a {
-			color: inherit;
-			&:hover { color: #fff; }
-		}
-
-		span[aria-hidden] { opacity: .5; }
-		&-current { color: #fff; }
 	}
 
 	// Kategorie + štítky

@@ -28,6 +28,46 @@
 		gap: 2rem;
 	}
 
+	// Rozcestník — sloupce s odkazy na obsah, který web reálně nabízí.
+	// Skládá se dynamicky (kct_footer_directory_columns()), takže na webech bez
+	// odpovídajícího obsahu (odborové weby sítě) chybí sloupec i celý blok.
+	.footer-directory {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1.75rem 3rem;
+		width: 100%;
+		padding-bottom: 1.75rem;
+		border-bottom: 1px solid rgba(255, 255, 255, .12);
+
+		&__column {
+			min-width: 200px;
+			flex: 1 1 200px;
+
+			h3 {
+				font-size: 14px;
+				letter-spacing: .03em;
+				margin: 0 0 .9em;
+			}
+
+			ul {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				flex-direction: column;
+				gap: .6em;
+			}
+
+			li {
+				line-height: 1.35;
+			}
+
+			a {
+				font-size: 14px;
+			}
+		}
+	}
+
 	.widget-area {
 		display: flex;
 		flex-wrap: wrap;

@@ -332,8 +332,48 @@ class Events {
 			}
 
 			switch_to_blog( $blog_id );
+
+			try {
+				$this->invalidate_sitemap_cache_here();
+			} catch ( \Throwable $e ) {
+				// Zneplatnění cache nesmí shodit import. Nejhorší následek je
+				// zastaralá sitemapa, což je nesrovnatelně menší škoda než
+				// přerušený import uprostřed zápisu akcí.
+			} finally {
+				restore_current_blog();
+			}
+		}
+	}
+
+	/**
+	 * Zahodí cache sitemapy akcí na aktuálním webu.
+	 *
+	 * Rank Math si na mazání souborů bere WP_Filesystem(), a ten se na hostingu
+	 * umí vyhodnotit jako 'ftpext' — v CLI a cronu ale nejsou FTP údaje, takže
+	 * spojení je null a delete() spadne na TypeError. Ověřeno na produkci: zabilo
+	 * to celý příkaz na webech, které nějaké soubory v cache měly (weby s prázdnou
+	 * cache prošly, protože se k mazání vůbec nedostaly).
+	 *
+	 * Pro tenhle jeden úkon si proto vynutíme přímý přístup k souborům. Když web
+	 * zapisovat nemůže, WP_Filesystem_Direct jen vrátí false — žádná fatální chyba.
+	 * Globální $wp_filesystem se přitom musí zahodit, protože WP_Filesystem() už
+	 * jednou vytvořenou instanci znovu nesestaví a filtr by přišel pozdě.
+	 */
+	private function invalidate_sitemap_cache_here(): void {
+		$force_direct = static function () {
+			return 'direct';
+		};
+
+		add_filter( 'filesystem_method', $force_direct, PHP_INT_MAX );
+
+		$previous                  = $GLOBALS['wp_filesystem'] ?? null;
+		$GLOBALS['wp_filesystem'] = null;
+
+		try {
 			\RankMath\Sitemap\Cache::invalidate_storage( \Kct\Seo\EventSitemapProvider::TYPE );
-			restore_current_blog();
+		} finally {
+			remove_filter( 'filesystem_method', $force_direct, PHP_INT_MAX );
+			$GLOBALS['wp_filesystem'] = $previous;
 		}
 	}
 
