@@ -55,6 +55,81 @@ function kct_customize_register( $wp_customize ) {
 		),
 	) );
 
+	// Průhledné menu přes hero (obecně) — detail příspěvku a další hero sekce
+	$wp_customize->add_setting( 'kct_hero_transparent', array(
+		'default'           => false,
+		'transport'         => 'refresh',
+		'sanitize_callback' => function ( $v ) { return (bool) $v; },
+	) );
+	$wp_customize->add_control( 'kct_hero_transparent', array(
+		'section'     => 'kct_appearance',
+		'label'       => __( 'Průhledné menu přes hero', 'kct' ),
+		'description' => __( 'Menu se u hero sekcí (detail příspěvku) překrývá přes obrázek. Při scrollu se podbarví.', 'kct' ),
+		'type'        => 'checkbox',
+	) );
+
+	// Nadpisy (H1) archivů — editovatelné per web. Prázdné = výchozí popisek CPT.
+	$wp_customize->add_setting( 'kct_akce_archive_title', array(
+		'default'           => '',
+		'transport'         => 'refresh',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'kct_akce_archive_title', array(
+		'section'     => 'kct_appearance',
+		'label'       => __( 'Nadpis stránky Akce', 'kct' ),
+		'description' => __( 'Nadpis (H1) na výpisu akcí. Prázdné = výchozí „Akce".', 'kct' ),
+		'type'        => 'text',
+	) );
+
+	$wp_customize->add_setting( 'kct_odbory_archive_title', array(
+		'default'           => '',
+		'transport'         => 'refresh',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'kct_odbory_archive_title', array(
+		'section'     => 'kct_appearance',
+		'label'       => __( 'Nadpis stránky Odbory', 'kct' ),
+		'description' => __( 'Nadpis (H1) na výpisu odborů. Prázdné = výchozí „Odbory".', 'kct' ),
+		'type'        => 'text',
+	) );
+
+	// Mapa ve výpisu akcí — některé odbory ji nechtějí (per-web nastavení).
+	$wp_customize->add_setting( 'kct_events_map', array(
+		'default'           => true,
+		'transport'         => 'refresh',
+		'sanitize_callback' => function ( $v ) { return (bool) $v; },
+	) );
+	$wp_customize->add_control( 'kct_events_map', array(
+		'section'     => 'kct_appearance',
+		'label'       => __( 'Zobrazit mapu ve výpisu akcí', 'kct' ),
+		'description' => __( 'Mapa s akcemi nad výpisem na stránce /akce/. Vypni, pokud ji odbor nechce.', 'kct' ),
+		'type'        => 'checkbox',
+	) );
+
+	// Tlačítko „Stát se členem" v hlavičce (prázdný odkaz = tlačítko se nezobrazí)
+	$wp_customize->add_setting( 'kct_membership_url', array(
+		'default'           => '',
+		'transport'         => 'refresh',
+		'sanitize_callback' => 'esc_url_raw',
+	) );
+	$wp_customize->add_control( 'kct_membership_url', array(
+		'section'     => 'kct_appearance',
+		'label'       => __( 'Odkaz tlačítka v hlavičce', 'kct' ),
+		'description' => __( 'Odkaz tlačítka „Stát se členem". Když zůstane prázdné, tlačítko se v hlavičce nezobrazí.', 'kct' ),
+		'type'        => 'url',
+	) );
+
+	$wp_customize->add_setting( 'kct_membership_label', array(
+		'default'           => __( 'Stát se členem', 'kct' ),
+		'transport'         => 'refresh',
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'kct_membership_label', array(
+		'section' => 'kct_appearance',
+		'label'   => __( 'Text tlačítka v hlavičce', 'kct' ),
+		'type'    => 'text',
+	) );
+
 	// Primary color (prázdné = použij default zvoleného skinu)
 	$wp_customize->add_setting( 'primary_color', array(
 		'default'           => '',

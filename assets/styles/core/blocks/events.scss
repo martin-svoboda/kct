@@ -14,6 +14,8 @@
 
 	.event {
 		display: flex;
+		align-items: flex-start;
+		gap: 16px;
 		padding: 20px 0;
 		border-bottom: 1px solid var(--line);
 		color: var(--text);
@@ -21,28 +23,79 @@
 
 		&:hover {
 			filter: none;
-			background: var(--surface-alt);
+			background: var(--surface);
+		}
+
+		& > img {
+			max-width: 100px;
+			flex: 0 0 auto;
+			border-radius: var(--radius-sm);
+			object-fit: cover;
 		}
 	}
 
-	// Datum (nové .event__date i staré .date)
-	.event__date,
-	.date {
-		width: 80px;
+	// Datum = kartička (modrá hlavička s dnem v týdnu / počtem dní, velké číslo, měsíc)
+	.event-date {
 		flex: 0 0 auto;
+		min-width: 74px;
+		text-align: center;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: var(--radius-card);
+		overflow: hidden;
+		box-shadow: var(--shadow-card);
 
-		span {
+		&__head {
 			display: block;
-			line-height: 1.3;
+			padding: 5px 6px;
+			background: var(--primary);
+			color: #fff;
+			font-family: var(--font-head);
+			font-weight: 700;
+			font-size: 13px;
+			letter-spacing: .03em;
+			line-height: 1.25;
+			text-transform: uppercase;
+			white-space: nowrap;
 		}
-	}
 
-	.event__date-day,
-	.date-number {
-		font-family: var(--font-head);
-		font-weight: 700;
-		font-size: 1.5rem;
-		color: var(--primary);
+		&__body {
+			display: flex;
+			align-items: baseline;
+			justify-content: center;
+			gap: 8px;
+			padding: 9px 8px 11px;
+		}
+
+		&__part {
+			display: block;
+			min-width: 26px;
+		}
+
+		&__num {
+			display: block;
+			font-family: var(--font-head);
+			font-weight: 700;
+			font-size: 2rem;
+			line-height: 1;
+			color: var(--text);
+		}
+
+		&__mon {
+			display: block;
+			margin-top: 3px;
+			font-size: 12px;
+			line-height: 1;
+			text-transform: lowercase;
+			color: var(--text-muted);
+		}
+
+		&__sep {
+			align-self: center;
+			font-size: 1.4rem;
+			font-weight: 400;
+			color: var(--text-muted);
+		}
 	}
 
 	// V seznamu žádná fotka
@@ -84,6 +137,13 @@
 		margin: 0;
 	}
 
+	// Jen meta (pořádající odbor + místo) menší; km detaily (.event__tags)
+	// jsou v podstatě description a zůstávají v původní velikosti.
+	.event__meta {
+		font-size: 13px;
+		line-height: 1.4;
+	}
+
 	.icons {
 		width: 100%;
 		line-height: 1;
@@ -93,7 +153,7 @@
 		gap: 4px;
 
 		@media (min-width: $medium-screen) {
-			max-width: 93px;
+			max-width: 133px;
 		}
 
 		img {
@@ -128,5 +188,16 @@
 
 	p {
 		margin-bottom: 0;
+	}
+}
+
+// V sidebaru (úzký sloupec) zalomit stejně jako na mobilu — obsah pod sebe,
+// ikony na plnou šířku (přebíjí desktopový řádkový režim).
+#secondary,
+.widget-area {
+	.block-events,
+	.events {
+		.content-box { flex-direction: column; }
+		.icons { max-width: none; width: 100%; }
 	}
 }

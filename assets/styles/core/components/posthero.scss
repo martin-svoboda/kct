@@ -1,0 +1,161 @@
+// Hero hlavička detailu příspěvku — obrázek na pozadí, průhledné menu přes něj,
+// breadcrumb + kategorie/štítky + velký titul + meta, dole trikolóra.
+.post-hero {
+	position: relative;
+	width: 100vw;
+	left: 50%;
+	margin-left: -50vw;
+	min-height: clamp(460px, 64vh, 640px);
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	background: var(--surface-invert);
+	overflow: hidden;
+
+	&__img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	// Ztmavení: nahoře kvůli čitelnosti menu, dole kvůli textu.
+	&__overlay {
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(180deg,
+			rgba(9, 18, 30, .78) 0%,
+			rgba(9, 18, 30, .28) 34%,
+			rgba(9, 18, 30, .55) 68%,
+			rgba(9, 18, 30, .94) 100%);
+	}
+
+	&__inner {
+		position: relative;
+		z-index: 3;
+		width: 100%;
+		max-width: $container-width;
+		margin: 0 auto;
+		padding: 140px 20px 46px;
+
+		@media (max-width: $medium-screen) {
+			padding: 120px 16px 34px;
+		}
+	}
+
+	// Drobečky
+	&__crumbs {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 10px;
+		margin-bottom: 22px;
+		font-size: 12px;
+		font-weight: 700;
+		letter-spacing: .06em;
+		text-transform: uppercase;
+		color: rgba(255, 255, 255, .62);
+
+		a {
+			color: inherit;
+			&:hover { color: #fff; }
+		}
+
+		span[aria-hidden] { opacity: .5; }
+		&-current { color: #fff; }
+	}
+
+	// Kategorie + štítky
+	&__chips {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 10px;
+		margin-bottom: 18px;
+	}
+
+	&__cat,
+	&__tag {
+		font-weight: 800;
+		font-size: 11px;
+		text-transform: uppercase;
+		letter-spacing: .06em;
+		padding: 6px 13px;
+		border-radius: var(--chip-radius);
+	}
+
+	&__cat {
+		background: var(--kct-red);
+		color: #fff;
+	}
+
+	&__tag {
+		background: rgba(255, 255, 255, .16);
+		color: #fff;
+		border: 1px solid rgba(255, 255, 255, .25);
+		backdrop-filter: blur(4px);
+		font-weight: 700;
+	}
+
+	// Titul
+	&__title {
+		font-family: var(--font-head);
+		font-weight: 700;
+		font-size: clamp(2.25rem, 6vw, 66px);
+		line-height: 1.02;
+		text-transform: uppercase;
+		letter-spacing: .005em;
+		color: #fff;
+		margin: 0;
+		max-width: 920px;
+		text-shadow: 0 4px 40px rgba(0, 0, 0, .5);
+	}
+
+	// Meta (datum · doba čtení)
+	&__meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 20px;
+		margin-top: 24px;
+		color: rgba(255, 255, 255, .88);
+		font-size: 13.5px;
+		font-weight: 600;
+	}
+
+	&__meta-item {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+
+		svg { color: rgba(255, 255, 255, .7); }
+	}
+
+	&__meta-sep {
+		width: 1px;
+		height: 16px;
+		background: rgba(255, 255, 255, .28);
+	}
+
+	// Trikolóra u spodní hrany (modrá full-width + trikolóra přes kontejner)
+	&__strip {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		height: 5px;
+		z-index: 4;
+		@include kct-strip(5px);
+	}
+}
+
+// Odsazení obsahu pod hero (ať text není nalepený na hero).
+// Margin (ne padding) — transparent-header nuluje container padding-top.
+.single-post-hero .single-body {
+	margin-top: 52px;
+
+	@media (max-width: $medium-screen) {
+		margin-top: 32px;
+	}
+}

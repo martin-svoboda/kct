@@ -53,6 +53,48 @@ function kct_container(): Container {
 	return $container;
 }
 
+/**
+ * Naformátuje datum akce pro výpis (karta data).
+ *
+ * @param string $date   Datum začátku (Y-m-d).
+ * @param string $finish Datum konce (Y-m-d), volitelné — u vícedenních akcí.
+ *
+ * @return array Pole s částmi data pro kartu i pro původní textový výpis.
+ */
+function kct_format_event_date( string $date, string $finish = '' ): array {
+	$start_ts   = strtotime( $date );
+	$finish_ts  = $finish ? strtotime( $finish ) : 0;
+	$start_day  = strtotime( date( 'Y-m-d', $start_ts ) );
+	$finish_day = $finish_ts ? strtotime( date( 'Y-m-d', $finish_ts ) ) : 0;
+	$is_range   = $finish_day && $finish_day > $start_day;
+
+	$data = array(
+		// Původní klíče (zpětná kompatibilita)
+		'day_name'   => date_i18n( 'l', $start_ts ),
+		'number'     => date_i18n( 'j. n.', $start_ts ),
+		'year'       => date_i18n( 'Y', $start_ts ),
+		// Karta data
+		'day_abbr'   => date_i18n( 'D', $start_ts ), // "So"
+		'day'        => date_i18n( 'j', $start_ts ),  // "29"
+		'month'      => date_i18n( 'M', $start_ts ),  // "srp"
+		'is_range'   => $is_range,
+		'end_day'    => '',
+		'end_month'  => '',
+		'days'       => 0,
+		'days_label' => '',
+	);
+
+	if ( $is_range ) {
+		$days               = (int) round( ( $finish_day - $start_day ) / DAY_IN_SECONDS ) + 1;
+		$data['end_day']    = date_i18n( 'j', $finish_ts );
+		$data['end_month']  = date_i18n( 'M', $finish_ts );
+		$data['days']       = $days;
+		$data['days_label'] = $days . ' ' . ( 1 === $days ? 'den' : ( $days <= 4 ? 'dny' : 'dní' ) );
+	}
+
+	return $data;
+}
+
 function kct_activate( $network_wide ) {
 	kct()->activate( $network_wide );
 }

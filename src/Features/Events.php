@@ -186,8 +186,15 @@ class Events {
 		$progress = \WP_CLI\Utils\make_progress_bar( 'Import events', count( $xml['event']) );
 		$filter_by = $this->settings->code_type();
 		foreach ( $xml['event'] as $xml_event ) {
-			// Skip deleted events
+			// Zrušené akce: feed je značí <deleted>Y</deleted> (jen id + deleted + changed).
+			// Dřív se jen přeskakovaly (`continue`), takže už jednou naimportovaná akce
+			// zůstala v tabulce navždy → zobrazovala se jako duplicita/duch. Nově řádek
+			// s daným db_id z tabulky odstraníme (řídíme se tím, co feed říká).
 			if ( isset( $xml_event['deleted'] ) && $xml_event['deleted'] == 'Y' ) {
+				$existing = $this->db_event_repository->get_by_db_id( intval( $xml_event['id'] ) );
+				if ( $existing ) {
+					$this->db_event_repository->delete( $existing );
+				}
 				$progress->tick();
 				continue;
 			}
@@ -273,7 +280,61 @@ class Events {
 		print_r( $imported_ids );
 		// import event types to options
 		$this->import_event_types( true );
+		$this->invalidate_sitemap_caches();
 		exit();
+	}
+
+	/**
+	 * Zneplatní cache sitemapy akcí (akce-db-sitemap.xml) na všech webech
+	 * v síti, které mají Rank Math.
+	 *
+	 * Import běží jen na hlavním webu (viz is_main_site() výš), ale nově
+	 * naimportované akce se objeví i v sitemapách odborových webů — Cache_Watcher
+	 * Rank Mathu maže cache jen podle uložení příspěvku daných post types,
+	 * 'akce-db' mezi nimi není a v souborovém módu cache navíc nemá žádnou
+	 * expiraci. Bez tohohle by se nové akce do sitemapy dostaly, až by někdo
+	 * ručně uložil nastavení nebo permalinky.
+	 *
+	 * Weby prochází stejným filtrem jako CanonicalSites::build_map() — jen
+	 * veřejné, nearchivované, nespamované, nesmazané weby — a u každého se
+	 * čte aktivace pluginu přes get_blog_option() bez přepnutí, stejným
+	 * způsobem jako tam. Přepíná se (switch_to_blog()) až na weby, kde je
+	 * Rank Math skutečně aktivní — Cache::invalidate_storage() maže adresář
+	 * podle wp_upload_dir() aktuálního webu, takže bez přepnutí by pořád
+	 * mazala jen cache hlavního webu.
+	 */
+	private function invalidate_sitemap_caches(): void {
+		if ( ! class_exists( 'RankMath' ) ) {
+			return;
+		}
+
+		$plugin         = 'seo-by-rank-math/rank-math.php';
+		$network_active = get_site_option( 'active_sitewide_plugins', array() );
+
+		$blog_ids = get_sites(
+			array(
+				'number'   => 0,
+				'public'   => 1,
+				'archived' => 0,
+				'spam'     => 0,
+				'deleted'  => 0,
+				'fields'   => 'ids',
+			)
+		);
+
+		foreach ( $blog_ids as $blog_id ) {
+			$blog_id = (int) $blog_id;
+			$active  = isset( $network_active[ $plugin ] )
+				|| in_array( $plugin, (array) get_blog_option( $blog_id, 'active_plugins', array() ), true );
+
+			if ( ! $active ) {
+				continue;
+			}
+
+			switch_to_blog( $blog_id );
+			\RankMath\Sitemap\Cache::invalidate_storage( \Kct\Seo\EventSitemapProvider::TYPE );
+			restore_current_blog();
+		}
 	}
 
 	/**
@@ -452,8 +513,14 @@ class Events {
 
 		// Získání dat z databázové akce pokud jsou
 		if ( $bd_id ) {
-			$event_db      = $this->db_event_repository->get_by_db_id( (int) $bd_id );
-			$event_db_data = $event_db->to_array();
+			$event_db = $this->db_event_repository->get_by_db_id( (int) $bd_id );
+
+			// Akce v tabulce být nemusí — buď je db_id z URL vymyšlené, nebo ji
+			// import smazal, protože ji feed označil jako zrušenou. Bez téhle
+			// pojistky spadne to_array() na null a stránka vrátí 500.
+			if ( $event_db ) {
+				$event_db_data = $event_db->to_array();
+			}
 		}
 
 

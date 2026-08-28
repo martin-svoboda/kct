@@ -18,7 +18,7 @@ select {
 	color: var(--text);
 	background: var(--surface);
 	border: 1px solid var(--line);
-	border-radius: min(var(--btn-radius), 10px);
+	border-radius: var(--radius-sm);
 	padding: 10px 14px;
 	font-family: var(--font-body);
 	font-size: 15px;
@@ -40,34 +40,8 @@ textarea {
 	width: 100%;
 }
 
-// Tlačítka formulářů (odeslat komentář, hledat…) = jako .btn
-button,
-input[type="button"],
-input[type="reset"],
-input[type="submit"],
-.wp-block-search__button {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: .5em;
-	font-family: var(--font-body);
-	font-weight: 700;
-	font-size: 15px;
-	line-height: 1;
-	cursor: pointer;
-	padding: 12px 24px;
-	border: 1.5px solid transparent;
-	border-radius: var(--btn-radius);
-	background: var(--primary);
-	color: var(--primary-contrast);
-	text-decoration: none;
-	transition: transform .16s ease, filter .16s ease;
-
-	&:hover {
-		transform: translateY(-2px);
-		filter: brightness(.96);
-	}
-}
+// Vzhled nativních tlačítek (odeslat komentář, hledat…) je sjednocený s .btn
+// v button.scss (jeden zdroj). Zde se tlačítka už nestylují.
 
 // Vyhledávací widget: pole + tlačítko vedle sebe
 .widget_search,

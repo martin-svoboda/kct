@@ -92,11 +92,7 @@ class EventModel extends Post {
 		}
 
 		if ( $data['date'] ) {
-			$data['formated_date'] = array(
-				'day_name' => date_i18n( 'l', strtotime( $data['date'] ) ),
-				'number'   => date_i18n( 'j. n.', strtotime( $data['date'] ) ),
-				'year'     => date_i18n( 'Y', strtotime( $data['date'] ) ),
-			);
+			$data['formated_date'] = kct_format_event_date( $data['date'], $data['finish']['date'] ?? '' );
 		}
 
 		return $data;

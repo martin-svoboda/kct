@@ -51,6 +51,20 @@ class KctApi extends WP_REST_Controller {
 			)
 		);
 
+		// Vyfiltrovaný výpis akcí jako HOTOVÉ HTML + data markerů pro mapu.
+		// Používá AJAX filtr na archivu /akce/ (progresivní vylepšení nad PHP výpisem).
+		register_rest_route(
+			$this->namespace,
+			'events-list',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_events_list' ),
+					'permission_callback' => '__return_true',
+				),
+			)
+		);
+
 		register_rest_route(
 			$this->namespace,
 			'departments',
@@ -86,6 +100,54 @@ class KctApi extends WP_REST_Controller {
 	 */
 	public function get_event_types(): WP_REST_Response {
 		return new WP_REST_Response( $this->events->get_event_types() );
+	}
+
+	/**
+	 * Vyfiltrovaný výpis akcí jako HTML (stejný markup jako PHP archiv) + markery.
+	 *
+	 * @return WP_REST_Response { html: string, markers: array }
+	 */
+	public function get_events_list( WP_REST_Request $request ): WP_REST_Response {
+		$date_from  = sanitize_text_field( (string) $request->get_param( 'date_from' ) );
+		$date_to    = sanitize_text_field( (string) $request->get_param( 'date_to' ) );
+		$type       = sanitize_text_field( (string) $request->get_param( 'type' ) );
+		$department = sanitize_text_field( (string) $request->get_param( 'department' ) );
+
+		$events = $this->events->get_events(
+			$date_from ?: null,
+			$date_to ?: null,
+			$type,
+			$department
+		);
+
+		ob_start();
+		if ( empty( $events ) ) {
+			echo '<div class="events-empty">Je nám líto, ale nebyly nalezeny žádné akce.</div>';
+		} else {
+			echo '<ul class="events-list">';
+			foreach ( $events as $event ) {
+				if ( function_exists( 'kct_render_event_item' ) ) {
+					kct_render_event_item( $event );
+				}
+			}
+			echo '</ul>';
+		}
+		$html = ob_get_clean();
+
+		$markers = array_map(
+			static function ( $e ) {
+				return array(
+					'title'         => $e['title'] ?? '',
+					'permalink'     => $e['permalink'] ?? '',
+					'lat'           => $e['lat'] ?? '',
+					'lng'           => $e['lng'] ?? '',
+					'formated_date' => $e['formated_date'] ?? null,
+				);
+			},
+			$events
+		);
+
+		return new WP_REST_Response( array( 'html' => $html, 'markers' => $markers ), 200 );
 	}
 
 	/**

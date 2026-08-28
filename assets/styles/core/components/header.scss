@@ -14,6 +14,7 @@
 		gap: 24px;
 		padding: 14px 20px;
 		flex-wrap: nowrap;
+    	justify-content: space-between;
 
 		@media (max-width: $small-screen) {
 			padding: 12px 16px;
@@ -30,14 +31,27 @@
 	}
 
 	.custom-logo-link img {
-		max-width: 56px;
-		max-height: 56px;
+		max-width: 96px;
+		max-height: 96px;
 		height: auto;
 		width: auto;
 		display: block;
+		transition: max-width .25s ease, max-height .25s ease;
+
+		@media (max-width: $small-screen) {
+			max-width: 60px;
+			max-height: 60px;
+		}
+	}
+
+	// Po odscrollování (body.is-scrolled) se logo zmenší na kompaktní velikost.
+	body.is-scrolled & .custom-logo-link img {
+		max-width: 56px;
+		max-height: 56px;
 
 		@media (max-width: $small-screen) {
 			max-width: 44px;
+			max-height: 44px;
 		}
 	}
 
@@ -83,7 +97,6 @@
 
 	// ── Navigace + CTA (desktop inline, mobil drawer) ──
 	.site-nav {
-		flex: 1 1 auto;
 		display: flex;
 		align-items: center;
 		gap: 24px;
@@ -91,7 +104,6 @@
 	}
 
 	.main-navigation {
-		flex: 1 1 auto;
 
 		#primary-menu {
 			display: flex;
@@ -99,6 +111,14 @@
 			justify-content: center;
 			gap: 4px;
 		}
+	}
+
+	// Pravý sloupec hlavičky (CTA tlačítko + druhé logo) na jednom řádku
+	.site-header__right-column {
+		flex: 0 0 auto;
+		display: flex;
+		align-items: center;
+		gap: 16px;
 	}
 
 	.site-header__cta {
@@ -117,7 +137,7 @@
 		padding: 0;
 		background: none;
 		border: 0;
-		border-radius: 8px;
+		border-radius: var(--radius-sm);
 		color: var(--text);
 		cursor: pointer;
 		flex: 0 0 auto;
@@ -151,6 +171,9 @@
 	}
 
 	.menu-backdrop { display: none; }
+}
+@media (min-width: $large-screen) {
+	.site-header .site-nav .site-header__cta { display: none; }
 }
 
 // ── Mobilní režim: hamburger + off-canvas drawer ──
@@ -223,6 +246,10 @@
 			visibility: hidden;
 			transition: opacity .3s ease, visibility .3s ease;
 			z-index: 1150;
+		}
+
+		.site-header__right-column {
+			display: none;
 		}
 	}
 

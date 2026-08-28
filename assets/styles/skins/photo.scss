@@ -5,8 +5,8 @@
 :root {
 	--page-bg:#f4f6f9; --surface:#ffffff; --surface-alt:#eef1f5; --surface-invert:#0d1926;
 	--text:#16202b; --text-muted:#7b8492; --text-faint:#9aa4b1;
-	--primary:#1466B0; --primary-contrast:#ffffff; --hero-eyebrow:#8fd0ff; --line:#eef1f5;
-	--radius-container:20px; --radius-card:16px; --btn-radius:999px; --chip-radius:999px;
+	--primary:#1466B0; --primary-contrast:#ffffff; --hero-eyebrow:#8fd0ff; --line:#dbe2eb;
+	--radius-container:var(--radius-lg); --radius-card:var(--radius-md); --btn-radius:var(--radius-md); --chip-radius:var(--radius-sm);
 	--shadow-card:0 22px 46px -30px rgba(11,22,34,.5);
 	--hero-size:88px; --hero-align:left; --h2-size:44px;
 	--members-bg:#f4f6f9; --members-text:#16202b; --members-accent:#009640;

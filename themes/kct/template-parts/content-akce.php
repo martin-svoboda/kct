@@ -19,6 +19,13 @@ if ( is_single() && has_post_thumbnail() ) {
 	$image_url = $event['image']['url'];
 }
 $event_id = $db_event_id ?: get_the_ID();
+
+// Poznámka o proběhlé akci — datum se počítá jen spolu s is_past(), ať se
+// nikdy nevypíše hláška s prázdným datem (finish.date v minulosti bez
+// platného date by is_past() vrátilo true, ale format_date() prázdný
+// řetězec, kdyby se volaly zvlášť).
+$event_seo_data = kct_container()->get( \Kct\Seo\EventSeoData::class );
+$kct_past_date  = $event_seo_data->is_past( $event ) ? $event_seo_data->format_date( $event ) : '';
 ?>
 
 <article id="post-<?php echo $event_id; ?>" class="event-post">
@@ -29,6 +36,17 @@ $event_id = $db_event_id ?: get_the_ID();
 				echo $event['year'] . '. ročník';
 			} ?>
 			<h1 class="entry-title"><?= $event['title'] ?></h1>
+			<?php if ( '' !== $kct_past_date ) : ?>
+				<p class="event-past-notice">
+					<?php
+					printf(
+						/* translators: %s: datum konání akce ve tvaru j. n. Y. */
+						esc_html__( 'Tato akce už proběhla %s.', 'kct' ),
+						esc_html( $kct_past_date )
+					);
+					?>
+				</p>
+			<?php endif; ?>
 		</div>
 	</header><!-- .entry-header -->
 	<div class="kct-block infoboxes">
@@ -169,6 +187,48 @@ $event_id = $db_event_id ?: get_the_ID();
 					</a>
 				</div>
 			<?php }
+
+			// ── Náhled PDF propozice na konci obsahu (pokud existuje) ──
+			$kct_proposals = array();
+			if ( ! empty( $event['proposal'] ) ) {
+				if ( ! empty( $event['proposal']['url'] ) ) {
+					$kct_proposals[] = $event['proposal'];
+				} else {
+					foreach ( (array) $event['proposal'] as $kct_p ) {
+						if ( is_array( $kct_p ) && ! empty( $kct_p['url'] ) ) {
+							$kct_proposals[] = $kct_p;
+						}
+					}
+				}
+			}
+			// Jen PDF přílohy.
+			$kct_proposals = array_values( array_filter( $kct_proposals, static function ( $p ) {
+				return ! empty( $p['url'] ) && preg_match( '/\.pdf(\?|#|$)/i', $p['url'] );
+			} ) );
+
+			if ( ! empty( $kct_proposals ) ) : ?>
+				<section class="event-proposal">
+					<h2 class="event-proposal__title">Propozice</h2>
+					<?php foreach ( $kct_proposals as $kct_p ) :
+						$kct_purl  = $kct_p['url'];
+						$kct_pname = ! empty( $kct_p['name'] ) ? $kct_p['name'] : 'Propozice (PDF)';
+						?>
+						<figure class="event-proposal__item">
+							<?php if ( count( $kct_proposals ) > 1 ) : ?>
+								<figcaption class="event-proposal__name"><?php echo esc_html( $kct_pname ); ?></figcaption>
+							<?php endif; ?>
+							<object class="event-proposal__frame" data="<?php echo esc_url( $kct_purl ); ?>#view=FitH" type="application/pdf">
+								<div class="event-proposal__fallback">
+									<p>Náhled PDF se nepodařilo zobrazit ve tvém prohlížeči.<br>
+										<a href="<?php echo esc_url( $kct_purl ); ?>" target="_blank" rel="noopener">Otevřít PDF ↗</a></p>
+								</div>
+							</object>
+							<a class="event-proposal__open" href="<?php echo esc_url( $kct_purl ); ?>" target="_blank" rel="noopener">Otevřít PDF v novém okně ↗</a>
+						</figure>
+					<?php endforeach; ?>
+				</section>
+			<?php endif;
+
 			if ( ! $db_event_id ) {
 				kct_entry_footer();
 			} else {

@@ -30,6 +30,10 @@
 		flex-wrap: wrap;
 		gap: 3rem;
 
+		@media (min-width: $large-screen) {
+			gap: 4rem;
+		}
+
 		.entry-content {
 			@media (min-width: $medium-screen) {
 				flex: 1;
@@ -38,7 +42,7 @@
 
 		.event-sidebar {
 			@media (min-width: $medium-screen) {
-				max-width: 31%;
+				width: 32%;
 				flex: 0 0 auto;
 				min-width: 250px;
 			}
@@ -52,6 +56,95 @@
 			list-style-type: none;
 			padding: 0;
 			margin: 0;
+
+			li {
+				margin-bottom: 0.5rem;
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+			}
 		}
 	}
+}
+
+// ── Náhled PDF propozice na konci obsahu detailu akce ──────────────────────
+.event-proposal {
+	margin-top: 2.5rem;
+	padding-top: 2rem;
+	border-top: 1px solid var(--line);
+
+	&__title {
+		font-family: var(--font-head);
+		margin: 0 0 1.25rem;
+	}
+
+	&__item {
+		margin: 0 0 2rem;
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	&__name {
+		font-weight: 700;
+		margin-bottom: .6rem;
+		color: var(--text);
+	}
+
+	&__frame {
+		display: block;
+		width: 100%;
+		height: min(80vh, 860px);
+		border: 1px solid var(--line);
+		border-radius: var(--radius-card);
+		box-shadow: var(--shadow-card);
+		background: var(--surface-alt);
+
+		@media (max-width: $medium-screen) {
+			height: 68vh;
+		}
+	}
+
+	&__fallback {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		padding: 2rem;
+		text-align: center;
+		color: var(--text-muted);
+	}
+
+	&__open {
+		display: inline-block;
+		margin-top: .85rem;
+		font-weight: 700;
+		color: var(--primary);
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}
+
+// ── Poznámka o proběhlé akci (pod hlavičkou detailu) ────────────────────────
+// Uvnitř .entry-header .container (viz eventpost.scss výše) — díky tomu
+// zůstane header bezprostředním sourozencem .infoboxes a nerozbije se jím
+// překryv `.entry-header + .infoboxes`. `width: 100%` je pojistka navíc,
+// kdyby se poznámka někdy ocitla v jiném (řádkovém) flex kontejneru, kde by
+// se jinak smrskla na šířku textu.
+.event-past-notice {
+	width: 100%;
+	margin: 1.25rem 0 0;
+	padding: .75rem 1rem;
+	border-left: 4px solid var(--primary);
+	background: var(--surface-alt);
+	font-weight: 600;
+	// Plná barva textu, ne --text-muted: ta na --surface-alt vychází 3,49:1,
+	// tedy pod hranicí WCAG AA (4,5:1). U poznámky, jejímž jediným úkolem je
+	// upozornit návštěvníka z vyhledávače, že se dívá na archiv, je ztlumená
+	// šeď navíc proti záměru.
+	color: var(--text);
 }

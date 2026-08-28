@@ -1,12 +1,6 @@
 // core/_section-head.scss — sdílená hlavička sekce (eyebrow + trikolóra + číslo + titulek + odkaz)
 
-// ── Škála velikostí nadpisů (jeden zdroj pravdy) ──
-$fs-h1:      clamp(2rem, 5.5vw, 2.9rem);
-$fs-h2:      clamp(1.5rem, 3.2vw, 2rem);
-$fs-h3:      clamp(1.3rem, 2.6vw, 1.55rem);
-$fs-h4:      clamp(1.15rem, 2vw, 1.25rem);
-$fs-h5:      1.05rem;
-$fs-section: clamp(1.9rem, 5.5vw, var(--h2-size)); // velký sekční nadpis (homepage)
+// Škála velikostí nadpisů ($fs-*) je jediný zdroj pravdy v _variables.scss.
 
 // Nadpisy sekcí (core heading bloky v obsahu) — Oswald 700 UPPERCASE dle designu.
 // Barva se needí (aby fungovaly i na tmavých sekcích).

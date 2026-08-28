@@ -36,7 +36,12 @@ get_header();
 				endwhile;
 				?>
 				</div><?php
-				the_posts_navigation();
+				the_posts_pagination( array(
+					'mid_size'           => 2,
+					'prev_text'          => '<span class="nav-arrow" aria-hidden="true">&lsaquo;</span><span class="screen-reader-text">' . esc_html__( 'Předchozí', 'kct' ) . '</span>',
+					'next_text'          => '<span class="nav-arrow" aria-hidden="true">&rsaquo;</span><span class="screen-reader-text">' . esc_html__( 'Další', 'kct' ) . '</span>',
+					'screen_reader_text' => esc_html__( 'Navigace v příspěvcích', 'kct' ),
+				) );
 
 			else :
 

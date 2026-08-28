@@ -49,6 +49,17 @@
   padding-bottom: 0;
 }
 
+// „Bez horního / spodního odsazení" (nastavení stránky) musí zrušit i okrajový
+// margin prvního/posledního bloku obsahu — jinak zůstane mezera, i když padding
+// kontejneru je 0 (typicky full-width bloky s margin-bottom).
+.pt-0 .entry-content > :first-child {
+  margin-top: 0;
+}
+
+.pb-0 .entry-content > :last-child {
+  margin-bottom: 0;
+}
+
 // Margin
 .mt-1 {
   margin-top: 1rem;

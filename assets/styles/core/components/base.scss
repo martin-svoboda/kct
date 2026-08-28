@@ -33,41 +33,14 @@ h1, h2, h3, h4, h5, h6 {
   line-height: normal;
 }
 
-h1 {
-  font-size: $heading-1;
-  font-family: $roboto-condensed;
-  /* Any other styles for h1 */
-}
-
-h2 {
-  font-size: $heading-2;
-  font-family: $roboto-condensed;
-  /* Any other styles for h2 */
-}
-
-h3 {
-  font-size: $heading-3;
-  font-family: $roboto-condensed;
-  /* Any other styles for h3 */
-}
-
-h4 {
-  font-size: $heading-4;
-  font-family: $primary-font;
-  /* Any other styles for h4 */
-}
-
-h5 {
-  font-size: $heading-5;
-  font-family: $primary-font;
-  /* Any other styles for h5 */
-}
-
-h6 {
-  font-size: $heading-6;
-  font-family: $primary-font;
-  /* Any other styles for h6 */
-}
+// Velikosti čtou z jednotné škály $fs-* (_variables.scss) — stejná škála jako
+// .wp-block-heading v _section-head.scss, takže syrové i blokové nadpisy sedí.
+h1 { font-size: $fs-h1; font-family: $roboto-condensed; }
+h2 { font-size: $fs-h2; font-family: $roboto-condensed; }
+h3 { font-size: $fs-h3; font-family: $roboto-condensed; }
+h4 { font-size: $fs-h4; font-family: $roboto-condensed; }
+h5 { font-size: $fs-h5; font-family: $roboto-condensed; }
+h6 { font-size: $fs-h5; font-family: $roboto-condensed; }
 
 .font-primary {
   font-family: $primary-font;
@@ -80,6 +53,12 @@ h6 {
 p {
   margin-top: 0;
   margin-bottom: 1rem;
+}
+
+p, ul, ol, dl, blockquote, pre, table, address {
+  & + h1, & + h2, & + h3, & + h4, & + h5, & + h6, & + .wp-block-heading {
+    margin-top: 2rem;
+  }
 }
 
 dfn,
@@ -111,7 +90,7 @@ a {
 // Hover jen pro TEXTOVÉ odkazy (prosa/widgety), NE pro odkazy obalující kartu/blok
 // (ty řeší jednotný hover své komponenty – karty se zvednou, řádky změní pozadí).
 .entry-content p a:hover,
-.entry-content li a:hover,
+.entry-content li a:not(.event):hover,
 .comment-content p a:hover,
 .widget a:hover {
   opacity: .75;

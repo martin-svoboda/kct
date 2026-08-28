@@ -149,6 +149,42 @@ function kct_widgets_init() {
 add_action( 'widgets_init', 'kct_widgets_init' );
 
 /**
+ * Přerenderuje blok „Nejnovější příspěvky" (core/latest-posts) do našeho vzoru:
+ * náhled + kategorie · datum + titul + „Číst dále". Respektuje počet z bloku.
+ */
+function kct_render_latest_posts( $content, $block ) {
+	if ( ( $block['blockName'] ?? '' ) !== 'core/latest-posts' ) {
+		return $content;
+	}
+
+	$num = isset( $block['attrs']['postsToShow'] ) ? (int) $block['attrs']['postsToShow'] : 5;
+	$q   = new WP_Query( array(
+		'post_type'           => 'post',
+		'posts_per_page'      => $num,
+		'ignore_sticky_posts' => true,
+		'no_found_rows'       => true,
+	) );
+
+	if ( ! $q->have_posts() ) {
+		return $content;
+	}
+
+	ob_start();
+	// Stejná karta jako ve výpisech (content-boxed), jen kompaktní horizontální varianta.
+	echo '<div class="articles_grid articles_grid--sidebar">';
+	while ( $q->have_posts() ) {
+		$q->the_post();
+		get_template_part( 'template-parts/content-boxed', get_post_type() );
+	}
+	echo '</div>';
+	wp_reset_postdata();
+
+	return ob_get_clean();
+}
+
+add_filter( 'render_block', 'kct_render_latest_posts', 10, 2 );
+
+/**
  * Enqueue scripts and styles.
  */
 /**
@@ -224,6 +260,14 @@ add_filter( 'body_class', function ( $classes ) {
 	// Průhledné menu přes obsah — dle nastavení stránky/příspěvku.
 	if ( is_singular() && get_post_meta( get_queried_object_id(), '_kct_transparent_header', true ) === '1' ) {
 		$classes[] = 'header-transparent';
+	}
+
+	// Detail příspěvku má hero; průhledné menu přes něj dle Customizeru.
+	if ( is_singular( 'post' ) ) {
+		$classes[] = 'single-post-hero';
+		if ( get_theme_mod( 'kct_hero_transparent', false ) ) {
+			$classes[] = 'header-transparent';
+		}
 	}
 
 	return $classes;

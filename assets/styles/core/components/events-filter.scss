@@ -1,13 +1,59 @@
-// Filtr akcí (archiv /akce/) — čistá světlá lišta pod mapou (ne černá, ne zaoblená)
+// Archiv akcí: rozvržení výpis + filtr.
+// Mobil: filtr = světlá lišta na plnou šířku pod mapou, nad výpisem.
+// Desktop (≥ $large-screen): filtr = sticky sidebar vpravo, výpis vlevo.
+
+.events-archive {
+	width: 100%;
+}
+
+// Nadpis stránky (H1) nad výpisem akcí — zarovnaný do kontejneru.
+.events-archive__head {
+	max-width: $container-width;
+	margin: 0 auto;
+	// Stejný rytmus jako ostatní archivy: 2rem nad nadpisem, 1.5rem pod ním.
+	padding: 2rem 20px 1.5rem;
+
+	@media (max-width: $medium-screen) {
+		padding: 2rem 16px 1.5rem;
+	}
+
+	.entry-title {
+		margin: 0;
+	}
+}
+
+.events-archive__inner {
+	width: 100%;
+	max-width: $container-width;
+	margin: 0 auto;
+	// Bez horního paddingu → filtrační lišta lícuje pod mapou (mobil).
+	padding: 0 20px 40px;
+
+	@media (max-width: $medium-screen) {
+		padding: 0 16px 24px;
+	}
+}
+
+// ── Filtr ──────────────────────────────────────────────────────────────────
 .events-filter {
 	background: var(--surface);
 	color: var(--text);
 	border-bottom: 1px solid var(--line);
 
-	.container {
+	// Full-width lišta pod mapou (breakout z contained __inner).
+	width: 100vw;
+	margin-left: 50%;
+	transform: translateX(-50%);
+	margin-bottom: 28px;
+
+	&__inner {
+		max-width: $container-width;
+		margin: 0 auto;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
 		gap: 1rem 1.5rem;
 		padding: 16px 20px;
-		align-items: center;
 	}
 
 	label {
@@ -18,13 +64,101 @@
 		color: var(--text-muted);
 	}
 
-	.events-filter__field {
+	&__field {
 		display: flex;
 		align-items: center;
 		gap: 8px;
 	}
 
-	input, select {
+	input,
+	select {
 		margin-left: 0;
+		padding: 8px 10px;
+		border: 1px solid var(--line);
+		border-radius: var(--radius-sm);
+		background: var(--surface);
+		color: var(--text);
+		font: inherit;
+		line-height: 1.2;
+	}
+
+	&__submit {
+		border: 0;
+		border-radius: var(--btn-radius);
+		background: var(--primary);
+		color: #fff;
+		font-weight: 700;
+		padding: 10px 18px;
+		cursor: pointer;
+	}
+}
+
+// Průběh AJAX filtrování — jemné ztlumení výpisu.
+.events-main .events.is-loading {
+	opacity: .55;
+	transition: opacity .12s ease;
+	pointer-events: none;
+}
+
+.events-empty {
+	color: var(--text-muted);
+	padding: 20px 0;
+}
+
+// ── Desktop: sticky sidebar vpravo ──────────────────────────────────────────
+@media (min-width: $large-screen) {
+	.events-archive__inner {
+		display: flex;
+		align-items: flex-start;
+		gap: 40px;
+		// Horní rozestup řeší .events-archive__head; tady jen dolní.
+		padding: 0 20px 40px;
+	}
+
+	.events-main {
+		order: 1;
+		flex: 1 1 0;
+		min-width: 0;
+	}
+
+	.events-filter {
+		order: 2;
+		flex: 0 0 300px;
+		align-self: flex-start;
+		position: sticky;
+		top: 100px; // pod stickovanou hlavičkou
+
+		// reset mobilního full-width breakoutu
+		width: auto;
+		margin: 0;
+		transform: none;
+
+		// vzhled jako ostatní boxy (karta)
+		border: 1px solid var(--line);
+		border-radius: var(--radius-card);
+		box-shadow: var(--shadow-card);
+		overflow: hidden;
+
+		&__inner {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 16px;
+			padding: 20px;
+			max-width: none;
+			margin: 0;
+		}
+
+		&__field {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 6px;
+		}
+
+		// vstupy na plnou šířku sidebaru
+		input,
+		select {
+			width: 100%;
+			box-sizing: border-box;
+		}
 	}
 }

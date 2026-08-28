@@ -7,6 +7,7 @@
 @import "section-head";       // sdílená komponenta hlavičky sekce
 @import "components/header";
 @import "components/navigation";
+@import "components/pagination";
 @import "components/footer";
 @import "components/gallery";
 @import "components/forms";
@@ -17,7 +18,12 @@
 @import "components/articles";
 @import "components/departmentpost";
 @import "components/eventpost";
+@import "components/posthero";
+@import "components/single-post";
+@import "components/widgets";
+@import "components/error-404";
 @import "components/events-filter";
+@import "components/map";
 @import "components/loading";
 @import "components/category-menu";
 @import "blocks/kct-block";

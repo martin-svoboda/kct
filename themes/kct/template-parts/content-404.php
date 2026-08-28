@@ -1,52 +1,65 @@
 <?php
 /**
- * The template for displaying 404 pages (not found)
+ * Obsah 404 stránky.
  *
- * @link    https://codex.wordpress.org/Creating_an_Error_404_Page
+ * Dřív se sem nikdy nedošlo doopravdy — NOBLOGREDIRECT (wp-config.php)
+ * přesměrovávalo úplně každou 404 na hlavním webu jinam (viz Frontend.php,
+ * kde je to teď zrušené). Teprve od téhle opravy stránku reálně vidí
+ * návštěvník, typicky ten, kdo přišel z vyhledávače na adresu zrušené nebo
+ * přejmenované akce — tomu je text přizpůsobený, ne obecné „chyba 404".
  *
  * @package kct
  */
 
+$kct_posts_page_id  = (int) get_option( 'page_for_posts' );
+$kct_posts_page_url = $kct_posts_page_id ? get_permalink( $kct_posts_page_id ) : false;
+
+$kct_events_archive_url      = get_post_type_archive_link( 'akce' );
+$kct_departments_archive_url = get_post_type_archive_link( 'odbory' );
 ?>
 	<section class="error-404 not-found">
 		<header class="page-header">
-			<h1 class="page-title"><?php esc_html_e( 'Oops! That page can&rsquo;t be found.', 'kct' ); ?></h1>
+			<h1 class="page-title"><?php esc_html_e( 'Tahle adresa už neplatí', 'kct' ); ?></h1>
 		</header><!-- .page-header -->
 
 		<div class="page-content">
-			<p><?php esc_html_e( 'It looks like nothing was found at this location. Maybe try one of the links below or a search?', 'kct' ); ?></p>
+			<p>
+				<?php esc_html_e( 'Stránka, kterou hledáte, byla pravděpodobně zrušena nebo přesunuta jinam — často jde o starou akci, na kterou už nevede platný odkaz. Zkuste ji najít přes vyhledávání, nebo pokračujte na některou z těchto stránek:', 'kct' ); ?>
+			</p>
 
-			<?php
-			get_search_form();
+			<?php get_search_form(); ?>
 
-			the_widget( 'WP_Widget_Recent_Posts' );
-			?>
+			<ul class="error-404__links">
+				<?php if ( $kct_events_archive_url ) : ?>
+				<li>
+					<a class="btn" href="<?php echo esc_url( $kct_events_archive_url ); ?>">
+						<?php esc_html_e( 'Přehled akcí', 'kct' ); ?>
+					</a>
+				</li>
+				<?php endif; ?>
 
-			<div class="widget widget_categories">
-				<h2 class="widget-title"><?php esc_html_e( 'Most Used Categories', 'kct' ); ?></h2>
-				<ul>
-					<?php
-					wp_list_categories(
-							array(
-									'orderby'    => 'count',
-									'order'      => 'DESC',
-									'show_count' => 1,
-									'title_li'   => '',
-									'number'     => 10,
-							)
-					);
-					?>
-				</ul>
-			</div><!-- .widget -->
+				<?php if ( $kct_departments_archive_url ) : ?>
+				<li>
+					<a class="btn btn--ghost" href="<?php echo esc_url( $kct_departments_archive_url ); ?>">
+						<?php esc_html_e( 'Odbory', 'kct' ); ?>
+					</a>
+				</li>
+				<?php endif; ?>
 
-			<?php
-			/* translators: %1$s: smiley */
-			$kct_archive_content = '<p>' . sprintf( esc_html__( 'Try looking in the monthly archives. %1$s', 'kct' ), convert_smilies( ':)' ) ) . '</p>';
-			the_widget( 'WP_Widget_Archives', 'dropdown=1', "after_title=</h2>$kct_archive_content" );
+				<?php if ( $kct_posts_page_url ) : ?>
+				<li>
+					<a class="btn btn--ghost" href="<?php echo esc_url( $kct_posts_page_url ); ?>">
+						<?php esc_html_e( 'Aktuality a zprávy', 'kct' ); ?>
+					</a>
+				</li>
+				<?php endif; ?>
 
-			the_widget( 'WP_Widget_Tag_Cloud' );
-			?>
-
+				<li>
+					<a class="btn btn--ghost" href="<?php echo esc_url( home_url( '/' ) ); ?>">
+						<?php esc_html_e( 'Domovská stránka', 'kct' ); ?>
+					</a>
+				</li>
+			</ul>
 		</div><!-- .page-content -->
 	</section><!-- .error-404 -->
 <?php

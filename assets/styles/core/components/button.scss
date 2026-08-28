@@ -1,7 +1,11 @@
-// Tlačítka — token-driven (tvar dle --btn-radius: photo/cards pill, magazine hranaté)
-.btn, .button, .wp-element-button {
+// Tlačítka — token-driven (tvar dle --btn-radius: photo/cards pill, magazine hranaté).
+// Jediný zdroj vzhledu tlačítek — třídy (.btn/.button) i nativní (button/submit/search).
+.btn, .button, .wp-element-button,
+button, input[type="button"], input[type="reset"], input[type="submit"],
+.wp-block-search__button {
 	display: inline-flex;
 	align-items: center;
+	justify-content: center;
 	gap: .5em;
 	font-family: var(--font-body);
 	font-weight: 700;

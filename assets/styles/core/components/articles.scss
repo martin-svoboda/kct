@@ -40,6 +40,7 @@
 
   // Jednotná karta příspěvku — stejná na homepage i v archivech/aktualitách.
   article {
+    position: relative; // kvůli stretched-link (::after přes celou kartu)
     background: var(--surface);
     border-radius: var(--radius-card);
     overflow: hidden;
@@ -58,27 +59,52 @@
       padding-right: 24px;
     }
 
-    .entry-header { padding-top: 22px; }
-    .entry-footer { padding-bottom: 24px; margin-top: auto; }
+    .entry-header { padding-top: 20px; }
+    .entry-content { padding-bottom: 24px; }
+
+    // Meta řádek: KATEGORIE / datum
+    .entry-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 0 0 10px;
+      font-size: 12.5px;
+    }
+
+    .cat-label {
+      font-family: var(--font-body);
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--primary);
+    }
+
+    .meta-sep { color: var(--line); }
+
+    .entry-date {
+      color: var(--text-faint);
+      font-weight: 600;
+    }
 
     .entry-title {
       font-size: 20px;
-      margin: 8px 0 0;
+      margin: 0;
 
       a {
         color: var(--text);
         text-decoration: none;
 
         &:hover { color: var(--primary); filter: none; }
+
+        // Stretched-link: klik kamkoli na kartu vede na příspěvek.
+        &::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          z-index: 1;
+        }
       }
-    }
-
-    .entry-meta {
-      font-size: 12.5px;
-      margin: 0 0 4px;
-      color: var(--text-faint);
-
-      a { color: var(--primary); }
     }
 
     .entry-content {
@@ -86,15 +112,6 @@
       font-size: 15px;
       line-height: 1.55;
       margin-top: 10px;
-    }
-
-    .entry-footer a {
-      color: var(--primary);
-      font-weight: 800;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: .04em;
-      text-decoration: none;
     }
   }
 

@@ -14,35 +14,24 @@
 	<?php kct_post_thumbnail(); ?>
 
     <header class="entry-header">
-		<?php
-
-		the_title( '<h3 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
-
-		if ( 'post' === get_post_type() ) :
+		<?php if ( 'post' === get_post_type() ) :
+			$kct_cats = get_the_category();
 			?>
             <div class="entry-meta">
-				<?php
-				kct_posted_on();
-
-				$categories_list = get_the_category_list( esc_html__( ', ', 'kct' ) );
-				if ( $categories_list ) {
-					/* translators: 1: list of categories. */
-					printf( '<span class="cat-links">' . esc_html__( ' | %1$s', 'kct' ) . '</span>', $categories_list ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-				}
-				?>
+				<?php if ( ! empty( $kct_cats ) ) : ?>
+                    <span class="cat-label"><?php echo esc_html( $kct_cats[0]->name ); ?></span>
+                    <span class="meta-sep" aria-hidden="true">/</span>
+				<?php endif; ?>
+                <time class="entry-date" datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>"><?php echo esc_html( get_the_date( 'j. n. Y' ) ); ?></time>
             </div><!-- .entry-meta -->
-		<?php endif; ?>
+		<?php endif;
+
+		// Celá karta je proklik na příspěvek (stretched-link přes ::after v CSS).
+		the_title( '<h3 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h3>' );
+		?>
     </header><!-- .entry-header -->
 
     <div class="entry-content">
-		<?php
-		the_excerpt();
-		?>
+		<?php the_excerpt(); ?>
     </div><!-- .entry-content -->
-
-    <footer class="entry-footer">
-		<?php
-		printf( '<a class="uppercase" href="%s" title="%s">%s</a>', get_permalink(), sprintf( __( 'Přečíst článek %s', 'kct' ), get_the_title() ), __( 'Ćíst dále', 'kct' ) )
-		?>
-    </footer><!-- .entry-footer -->
 </article><!-- #post-<?php the_ID(); ?> -->

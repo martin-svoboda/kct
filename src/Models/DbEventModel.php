@@ -86,11 +86,7 @@ class DbEventModel extends Model {
 		}
 
 		if ( $data['date'] ) {
-			$data['formated_date'] = array(
-				'day_name' => date_i18n( 'l', strtotime( $data['date'] ) ),
-				'number'   => date_i18n( 'j. n.', strtotime( $data['date'] ) ),
-				'year'     => date_i18n( 'Y', strtotime( $data['date'] ) ),
-			);
+			$data['formated_date'] = kct_format_event_date( $data['date'], $data['finish']['date'] ?? '' );
 		}
 
 		$event_types = get_option( 'event_types' );

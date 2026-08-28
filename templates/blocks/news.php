@@ -30,7 +30,10 @@ if ( $posts ) :
 			endforeach;
 			?>
         </div>
-	    <?php if ($button) { ?><a class="button mt-1" href="<?= get_post_type_archive_link('akce') ?>" title="<?= $button ?>"><?= $button ?></a><?php }; ?>
+	    <?php if ( $button ) {
+			// Odkaz na stránku s příspěvky (blog), ne na archiv akcí.
+			$news_url = get_permalink( (int) get_option( 'page_for_posts' ) ) ?: home_url( '/' );
+			?><a class="button mt-1" href="<?= esc_url( $news_url ) ?>" title="<?= esc_attr( $button ) ?>"><?= esc_html( $button ) ?></a><?php }; ?>
     </div>
 <?php
 endif;

@@ -9,6 +9,12 @@
  * @package kct
  */
 
+// Tlačítko „Stát se členem" — nastavitelné v Přizpůsobení → Vzhled šablony.
+// Prázdný odkaz => tlačítko se nezobrazí. Filtr kct_membership_url zůstává pro programové přepsání.
+$kct_membership_url   = apply_filters( 'kct_membership_url', get_theme_mod( 'kct_membership_url', '' ) );
+$kct_membership_label = get_theme_mod( 'kct_membership_label', __( 'Stát se členem', 'kct' ) );
+$secondary_logo = get_theme_mod( 'secondary_logo', '' );
+
 ?>
 <!doctype html>
 <html <?php language_attributes(); ?>>
@@ -53,13 +59,6 @@
 						?>
 						<p class="site-description"><?php echo $kct_description; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 							?></p>
-					<?php endif;
-					$secondary_logo = get_theme_mod( 'secondary_logo', '' );
-					if ( $secondary_logo ) :
-						$images = get_stylesheet_directory_uri() . '/images';
-						?>
-						<img src="<?php printf( '%s/logo_%s.png', $images, $secondary_logo ); ?>"
-							 class="secondary-logo">
 					<?php endif; ?>
 				</div><!-- .site-branding -->
 			</div><!-- .header-brand -->
@@ -81,12 +80,25 @@
 					?>
 				</nav><!-- #site-navigation -->
 
-				<?php
-				// Tlačítko „Stát se členem". URL lze změnit filtrem kct_membership_url.
-				$kct_membership_url = apply_filters( 'kct_membership_url', home_url( '/' ) );
-				?>
-				<a class="btn site-header__cta" href="<?= esc_url( $kct_membership_url ) ?>"><?php esc_html_e( 'Stát se členem', 'kct' ); ?></a>
+				<?php if ( $kct_membership_url ) : ?>
+					<a class="btn site-header__cta" href="<?= esc_url( $kct_membership_url ) ?>"><?= esc_html( $kct_membership_label ) ?></a>
+				<?php endif; ?>
 			</div><!-- .site-nav -->
+
+			<?php
+				if ( $kct_membership_url || $secondary_logo ) : ?>
+					<div class="site-header__right-column">
+						<?php if ( $kct_membership_url ) : ?>
+							<a class="btn site-header__cta" href="<?= esc_url( $kct_membership_url ) ?>"><?= esc_html( $kct_membership_label ) ?></a>
+						<?php endif; 
+						if ( $secondary_logo ) :
+								$images = get_stylesheet_directory_uri() . '/images';
+								?>
+								<img src="<?php printf( '%s/logo_%s.png', $images, $secondary_logo ); ?>"
+									class="secondary-logo">
+						<?php endif; ?>
+					</div>
+				<?php endif; ?>
 
 			<span class="menu-backdrop" hidden></span>
 		</div>

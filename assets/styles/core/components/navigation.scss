@@ -1,7 +1,7 @@
+// POZN.: Rozmístění navigace v hlavičce (flex, breakpointy, hamburger, drawer)
+// vlastní header.scss; barevný stav průhledné hlavičky vlastní _header-transparent.scss.
+// Tento soubor řeší JEN vzhled položek menu a dropdownů.
 .main-navigation {
-	display: block;
-	width: 100%;
-
 	#primary-menu {
 		gap: 4px;
 
@@ -15,64 +15,124 @@
 				letter-spacing: .06em;
 				text-transform: uppercase;
 				color: var(--text);
+				transition: color .14s ease, border-color .14s ease;
 			}
 
+			& > a:hover { color: var(--primary); }
+
+			// ── Dropdown (jen desktop; pod $large-screen je off-canvas drawer) ──
 			& > ul {
-				@media screen and (min-width: 37.5em) {
-					background-color: $white-color;
-					box-shadow: 0 5px 10px 0 rgba(0, 0, 0, .25);
-					float: left;
+				@media (min-width: $large-screen) {
 					position: absolute;
 					top: 100%;
-					left: -999em;
+					left: 0;
+					min-width: 240px;
+					margin-top: 12px;
+					padding: 8px;
+					background: var(--surface);
+					border: 1px solid var(--line);
+					border-radius: var(--radius-card);
+					box-shadow: 0 20px 44px -24px rgba(11, 22, 34, .55);
 					z-index: 99999;
-					width: 250px;
-					border-radius: 5px;
-					padding-top: 5px;
-					padding-bottom: 5px;
+
+					// skryté; plynulé zobrazení místo starého left:-999em
+					opacity: 0;
+					visibility: hidden;
+					transform: translateY(8px);
+					transition: opacity .16s ease, transform .16s ease, visibility .16s ease;
+
+					// neviditelný můstek přes mezeru, ať hover při přejezdu nepadá
+					&::before {
+						content: '';
+						position: absolute;
+						top: -14px;
+						left: 0;
+						right: 0;
+						height: 14px;
+					}
 				}
 
 				li a {
-					padding: 5px 10px;
-					line-height: 1.2;
+					padding: 9px 12px;
+					border-radius: var(--radius-sm);
+					font-size: 14px;
+					font-weight: 600;
+					line-height: 1.25;
+					letter-spacing: .01em;
+					text-transform: none;
+					color: var(--text);
+					transition: background .14s ease, color .14s ease;
+
+					&:hover {
+						background: var(--surface-alt);
+						color: var(--primary);
+					}
 				}
 
+				// další úroveň — odsazený seznam (bez šipky, není to flyout)
 				ul {
-					padding-left: 1rem;
-					padding-bottom: 5px;
+					padding-left: .75rem;
+					margin-top: 2px;
+				}
+
+				.menu-item-has-children > a::after { display: none; }
+			}
+
+			// otevření dropdownu (hover i klávesnice)
+			&:hover > ul,
+			&:focus-within > ul,
+			&.focus > ul {
+				@media (min-width: $large-screen) {
+					opacity: 1;
+					visibility: visible;
+					transform: translateY(0);
 				}
 			}
 
-			&:hover > ul,
-			&.focus > ul {
-				display: block;
-				left: auto;
+			// poslední položka: dropdown zarovnat doprava, ať nevyjede z obrazovky
+			&:last-child > ul {
+				@media (min-width: $large-screen) {
+					left: auto;
+					right: 0;
+				}
+			}
+
+			// aktivní top-level: aktuální položka i rodič aktivní podpoložky.
+			// Jen menu-based třídy (current-menu-*) — page-based (current_page_*)
+			// WordPress chybně přidává na blog/Aktuality i u archivů CPT (akce…).
+			&.current-menu-item > a,
+			&.current-menu-parent > a,
+			&.current-menu-ancestor > a {
+				color: var(--primary);
+				border-top-color: var(--primary);
 			}
 		}
 
-		.menu-item-has-children > a:after {
+		// šipka u položek s dětmi (top-level)
+		& > .menu-item-has-children > a::after {
 			content: '';
 			display: inline-block;
-			border-right: 2px solid $line-color;
-			border-bottom: 2px solid $line-color;
-			width: .5rem;
-			height: .5rem;
-			margin-left: .7rem;
-			transform: translatey(-2px) rotate(45deg);
+			border-right: 2px solid currentColor;
+			border-bottom: 2px solid currentColor;
+			width: .42rem;
+			height: .42rem;
+			margin-left: .55rem;
+			opacity: .55;
+			transform: translateY(-2px) rotate(45deg);
+			transition: transform .18s ease, opacity .14s ease;
+		}
+
+		& > li:hover > a::after,
+		& > li:focus-within > a::after {
+			opacity: 1;
+			transform: translateY(1px) rotate(-135deg);
 		}
 	}
-
 
 	ul {
 		list-style: none;
 		margin: 0;
 		padding-left: 0;
-
-		&.menu {
-			@media screen and (max-width: 37.5em) {
-				display: none;
-			}
-		}
 
 		li {
 			position: relative;
@@ -81,55 +141,23 @@
 				display: block;
 				text-decoration: none;
 				color: inherit;
-
-				&:hover {
-					color: $primary-color;
-					border-color: $line-color !important;
-				}
-			}
-		}
-
-		.current-menu-item {
-			a {
-				font-weight: bold;
-				border-color: $primary-color !important;
 			}
 		}
 	}
 
-	li:hover > ul,
-	li.focus > ul {
-		left: auto;
+	// Aktivní položka V DROPDOWNU — označí se SAMOSTATNĚ (dle vlastní stránky),
+	// ne podle nadřazené položky. (Dřív descendant selektor barvil celý submenu.)
+	#primary-menu ul {
+		.current-menu-item > a {
+			color: var(--primary);
+			background: var(--surface-alt);
+			font-weight: 700;
+		}
 	}
 
 	a {
 		display: block;
 		text-decoration: none;
-	}
-}
-
-/* Small menu. */
-.menu-toggle {
-	display: flex;
-	background: none;
-	padding: 10px;
-	justify-content: center;
-	align-items: center;
-	border: none;
-	color: $primary-color;
-
-	svg {
-		margin-right: 5px;
-	}
-}
-
-@media screen and (min-width: 37.5em) {
-	.menu-toggle {
-		display: none;
-	}
-
-	.main-navigation ul {
-		display: flex;
 	}
 }
 

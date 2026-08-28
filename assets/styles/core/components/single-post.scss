@@ -1,0 +1,228 @@
+// Sekce pod obsahem detailu příspěvku (prev/next, další aktuality).
+// Využívá existující vzory: full-width pruh s trikolórou (kct-strip) a
+// standardní karty výpisu (.articles_grid). Žádné vlastní designové prvky.
+
+// Perex (úvodní text z excerptu) — lead odstavec s modrým okrajem.
+.entry-perex {
+	margin: 0 0 30px;
+	padding-left: 22px;
+	border-left: 4px solid var(--primary);
+	font-size: 21px;
+	line-height: 1.62;
+	font-weight: 500;
+	color: var(--text);
+
+	@media (max-width: $medium-screen) {
+		font-size: 18px;
+		padding-left: 16px;
+	}
+}
+
+// Rozvržení obsah + sidebar: content roste (flex:1), sidebar pevná šířka
+// zarovnaná k pravému okraji kontejneru, větší mezera mezi nimi.
+.single-body {
+	gap: 56px;
+	align-items: flex-start;
+
+	.site-main {
+		flex: 1 1 0; // base 0 → vyplní zbytek po sidebaru (nezalomí se)
+		min-width: 0;
+	}
+
+	#secondary {
+		flex: 0 0 33.333%;
+		max-width: 33.333%;
+	}
+
+	@media (max-width: $medium-screen) {
+		gap: 2rem;
+
+		#secondary {
+			flex: 1 1 100%;
+			max-width: 100%;
+		}
+	}
+}
+
+.single-after {
+	display: block;
+	// Vertikální rytmus řeší sekce uvnitř (padding), ať je symetrický nezávisle
+	// na transparent-header pravidle (to jinak nuluje container padding-top).
+	padding-top: 0;
+	padding-bottom: 0;
+}
+
+// ── Prev / Next — full-width bílý pruh (jako infoboxy na HP) ──────────────
+.post-nav {
+	position: relative;
+	width: 100vw;
+	left: 50%;
+	margin-left: -50vw;
+	margin-top: 48px;
+	background: var(--surface);
+	@include kct-strip; // modrá full-width + trikolóra přes kontejner
+
+	&__inner {
+		max-width: $container-width;
+		margin: 0 auto;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+
+		@media (max-width: $medium-screen) { grid-template-columns: 1fr; }
+	}
+
+	&__item {
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		padding: 28px 34px;
+		text-decoration: none;
+		transition: background .15s ease;
+
+		&:hover { background: var(--surface-alt); }
+	}
+
+	&__item--next {
+		text-align: right;
+		align-items: flex-end;
+		border-left: 1px solid var(--line);
+
+		@media (max-width: $medium-screen) {
+			text-align: left;
+			align-items: flex-start;
+			border-left: 0;
+			border-top: 1px solid var(--line);
+		}
+	}
+
+	&__item--empty { pointer-events: none; }
+
+	&__dir {
+		font-size: 11.5px;
+		font-weight: 800;
+		letter-spacing: .1em;
+		text-transform: uppercase;
+		color: var(--text-faint);
+	}
+
+	&__title {
+		font-family: var(--font-head);
+		font-weight: 600;
+		font-size: 19px;
+		line-height: 1.15;
+		text-transform: uppercase;
+		color: var(--text);
+	}
+
+	&__arw { display: inline-block; transition: transform .2s ease; }
+	&__item--prev:hover .post-nav__arw { transform: translateX(-4px); }
+	&__item--next:hover .post-nav__arw { transform: translateX(4px); }
+}
+
+// ── Sdílení + tagy (patička článku, bez autora) ──────────────────────────
+.entry-footer {
+	// zruší případné dřívější odsazení, rytmus řeší .post-share
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.post-share {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 24px;
+	margin-top: 40px;
+	padding-top: 26px;
+	border-top: 1px solid var(--line);
+
+	&__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	&__tag {
+		border: 1px solid var(--line);
+		color: var(--text-muted);
+		font-weight: 700;
+		font-size: 12px;
+		padding: 7px 14px;
+		border-radius: var(--chip-radius);
+		text-decoration: none;
+		transition: background .15s ease, color .15s ease, border-color .15s ease;
+
+		&:hover {
+			background: var(--primary);
+			color: #fff;
+			border-color: var(--primary);
+		}
+	}
+
+	&__actions {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	&__label {
+		font-size: 11.5px;
+		font-weight: 800;
+		letter-spacing: .1em;
+		text-transform: uppercase;
+		color: var(--text-faint);
+	}
+
+	&__btn {
+		width: 38px;
+		height: 38px;
+		padding: 0; // přebít globální .btn (button dostává i .btn styly)
+		border-radius: 50%;
+		border: 1px solid var(--line);
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--text-muted);
+		background: var(--surface);
+		cursor: pointer;
+		text-decoration: none;
+		transition: transform .16s ease, background .16s ease, color .16s ease, border-color .16s ease;
+
+		&:hover {
+			transform: translateY(-2px);
+			background: var(--primary);
+			color: #fff;
+			border-color: var(--primary);
+		}
+	}
+
+	&__ico-check { display: none; }
+
+	.js-copy-link.is-copied {
+		background: var(--kct-green);
+		border-color: var(--kct-green);
+		color: #fff;
+
+		.post-share__ico-link { display: none; }
+		.post-share__ico-check { display: block; }
+	}
+}
+
+.post-edit-link {
+	margin-top: 16px;
+
+	a {
+		font-size: 12px;
+		color: var(--text-faint);
+		text-decoration: underline;
+	}
+}
+
+// ── Další aktuality — jen odsazení; karty jsou sdílené .articles_grid ─────
+// Symetrická mezera nahoře i dole (padding, ne margin → bez kolapsu).
+.post-related {
+	padding: 56px 0;
+
+	.wp-block-heading { margin: 0 0 24px; }
+}

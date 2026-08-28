@@ -36,6 +36,12 @@
 	}
 }
 
+.site > .container {
+	@media (min-width: $medium-screen) {
+		gap: 4rem;
+	}
+}
+
 .site-main {
 	min-width: 0; // umožní zmenšení, brání horizontálnímu přetečení
 
@@ -98,5 +104,16 @@
 .blog, .archive {
 	#primary > header {
 		padding-top: 2rem;
+	}
+}
+
+// Nadpis archivu (H1) uvnitř .container — např. archiv odborů.
+// Horní rozestup (2rem) dodává sdílené pravidlo `.archive #primary > header`,
+// takže je stejný jako u blogu/akcí; tady jen dolní odsazení k obsahu.
+.archive-header {
+	margin: 0 0 1.5rem;
+
+	.entry-title {
+		margin: 0;
 	}
 }

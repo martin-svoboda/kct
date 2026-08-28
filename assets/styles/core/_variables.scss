@@ -20,10 +20,15 @@
 	--primary-contrast:#ffffff;
 	--hero-eyebrow:    #8fd0ff;
 	--line:            #eef1f5;
-	--radius-container:20px;
-	--radius-card:     16px;
-	--btn-radius:      999px;
-	--chip-radius:     999px;
+	// Zaoblení — jedna decentní škála (sm/md/lg). Ostatní tokeny z ní vychází,
+	// ať je to konzistentní a spíš lehké než masivní.
+	--radius-sm:       6px;   // chipy, tagy, inputy, drobné ovládání
+	--radius-md:       10px;  // karty, boxy, dropdowny, tlačítka
+	--radius-lg:       12px;  // velké kontejnery / hero
+	--radius-container:var(--radius-lg);
+	--radius-card:     var(--radius-md);
+	--btn-radius:      var(--radius-md);
+	--chip-radius:     var(--radius-sm);
 	--shadow-card:     0 22px 46px -30px rgba(11, 22, 34, .5);
 	--hero-size:       88px;
 	--hero-align:      left;
@@ -56,12 +61,15 @@ $secondary-font:   'Times New Roman', serif;
 
 // Font sizes
 $base-font-size: 16px;
-$heading-1: 3rem;
-$heading-2: 2rem;
-$heading-3: 1.5rem;
-$heading-4: 1.2rem;
-$heading-5: 1rem;
-$heading-6: 0.8rem;
+
+// Škála nadpisů — JEDINÝ zdroj pravdy. Čte z ní base.scss (syrové h1–h6)
+// i _section-head.scss (.wp-block-heading), takže nemůžou driftovat.
+$fs-h1:      clamp(2rem, 5.5vw, 2.9rem);
+$fs-h2:      clamp(1.5rem, 3.2vw, 2rem);
+$fs-h3:      clamp(1.3rem, 2.6vw, 1.55rem);
+$fs-h4:      clamp(1.15rem, 2vw, 1.25rem);
+$fs-h5:      1.05rem;
+$fs-section: clamp(1.9rem, 5.5vw, var(--h2-size)); // velký sekční nadpis (homepage)
 
 // Breakpoints
 $small-screen: 576px;

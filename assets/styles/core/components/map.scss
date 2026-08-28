@@ -1,0 +1,21 @@
+// Mapa akcí / odborů (Leaflet, api.mapy.cz).
+// Dole zakončena stejným barevným pruhem (kct-strip) jako hlavička/patička.
+.kct-map {
+	position: relative;
+
+	#map {
+		width: 100%;
+		height: 500px;
+	}
+
+	// Trikolóra na spodní hraně mapy (přebít výchozí top:0 z mixinu na bottom).
+	@include kct-strip(5px);
+
+	&::before,
+	&::after {
+		top: auto;
+		bottom: 0;
+		// Nad dlaždicemi i ovládacími prvky Leafletu (ty jsou do ~z-index 1000).
+		z-index: 1001;
+	}
+}
