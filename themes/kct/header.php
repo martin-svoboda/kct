@@ -22,10 +22,13 @@ $secondary_logo = get_theme_mod( 'secondary_logo', '' );
 	<meta charset="<?php bloginfo( 'charset' ); ?>">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="profile" href="https://gmpg.org/xfn/11">
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
-	<script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js" integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
-
-	<?php wp_head(); ?>
+	<?php
+	// Leaflet se tu dřív načítal z unpkg.com natvrdo na každé stránce, i když
+	// mapu má jen archiv akcí a odborů. Mapa si ho dnes veze ve vlastním bundlu
+	// (build/map.js + build/map.css), který zařazuje Frontend::setup_assets()
+	// jen tam, kde je potřeba. Šablona tras si globální L načítá sama.
+	wp_head();
+	?>
 </head>
 
 <body <?php body_class(); ?>>
@@ -39,7 +42,13 @@ $secondary_logo = get_theme_mod( 'secondary_logo', '' );
 				<?php the_custom_logo(); ?>
 				<div class="site-branding">
 					<?php
-					if ( is_front_page() && is_home() ) :
+					// Na titulní straně nese název webu H1 — jinde ho má obsah
+					// (entry-title / archive-title). Původní podmínka žádala
+					// zároveň is_home(), což platí jen pro klasický výpis blogu;
+					// s nastavenou statickou titulní stránkou byla nesplnitelná
+					// a domovská stránka tak zůstávala bez jediného H1 (hero
+					// cover má titulek jako H2, viz templates/blocks/cover.php).
+					if ( is_front_page() ) :
 						?>
 						<h1 class="site-title">
 							<a href="<?php echo esc_url( home_url( '/' ) ); ?>"

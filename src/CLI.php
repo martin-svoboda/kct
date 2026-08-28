@@ -9,6 +9,7 @@ use Kct\Facebook\ShareState;
 use Kct\Features\Departments;
 use Kct\Features\Events;
 use Kct\Features\FacebookShare;
+use Kct\Images\MetadataCleaner;
 use WP_CLI;
 use WP_CLI_Command;
 
@@ -240,5 +241,266 @@ class CLI extends WP_CLI_Command {
 		}
 
 		WP_CLI::error( $message );
+	}
+
+	/**
+	 * Odstraní z obrázků v knihovně nepotřebná metadata.
+	 *
+	 * Zahazuje EXIF, XMP, IPTC a barevné profily, které pro zobrazení na webu
+	 * nemají význam. Obrazová data se nedekódují ani znovu nekomprimují, takže
+	 * úklid nesnižuje kvalitu — přepisuje se jen struktura souboru a výsledek
+	 * se před zápisem ověří načtením a porovnáním rozměrů.
+	 *
+	 * Soubory s barevným profilem, jehož odstranění by posunulo barvy
+	 * (Display P3, DCI-P3, Apple Wide Color, tiskové CMYK profily), se
+	 * přeskakují a vypíšou na konci. Jejich převod do sRGB je jiná operace.
+	 *
+	 * Bez přepínače --write se nic nezapisuje, jen se spočítá, co by úklid
+	 * udělal.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--write]
+	 * : Skutečně přepsat soubory. Bez něj běží příkaz nanečisto.
+	 *
+	 * [--path=<cesta>]
+	 * : Podadresář v uploads, jinak celá knihovna. Např. --path=2024/03
+	 *
+	 * [--limit=<pocet>]
+	 * : Zpracovat nejvýše tolik souborů.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp kct clean_image_meta
+	 *     wp kct clean_image_meta --path=2024/03
+	 *     wp kct clean_image_meta --write
+	 *
+	 * @when after_wp_load
+	 */
+	public function clean_image_meta( $args, $assoc_args ) {
+		$write = ! empty( $assoc_args['write'] );
+		$limit = isset( $assoc_args['limit'] ) ? (int) $assoc_args['limit'] : 0;
+
+		$uploads = wp_get_upload_dir();
+		$root    = untrailingslashit( $uploads['basedir'] );
+
+		if ( ! empty( $assoc_args['path'] ) ) {
+			$root .= '/' . trim( (string) $assoc_args['path'], '/' );
+		}
+
+		if ( ! is_dir( $root ) ) {
+			WP_CLI::error( sprintf( __( 'Adresář %s neexistuje.', 'kct' ), $root ) );
+		}
+
+		$cleaner = kct_container()->get( MetadataCleaner::class );
+		$files   = new \RecursiveIteratorIterator( new \RecursiveDirectoryIterator( $root, \FilesystemIterator::SKIP_DOTS ) );
+
+		$counts  = array( 'cleaned' => 0, 'unchanged' => 0, 'skipped' => 0, 'error' => 0 );
+		$before  = 0;
+		$after   = 0;
+		$done    = 0;
+		$top     = array();
+		$reasons = array();
+
+		WP_CLI::log( $write
+			? sprintf( __( 'Zapisuji do %s …', 'kct' ), $root )
+			: sprintf( __( 'Nanečisto nad %s (zápis zapneš přepínačem --write) …', 'kct' ), $root ) );
+
+		foreach ( $files as $file ) {
+			if ( ! $file->isFile() ) {
+				continue;
+			}
+
+			$ext = strtolower( $file->getExtension() );
+
+			if ( ! in_array( $ext, array( 'jpg', 'jpeg', 'png' ), true ) ) {
+				continue;
+			}
+
+			$path   = $file->getPathname();
+			$result = $cleaner->clean( $path, $write );
+
+			$counts[ $result['status'] ]++;
+
+			if ( 'cleaned' === $result['status'] ) {
+				$before += $result['before'];
+				$after  += $result['after'];
+				$top[]   = array( $result['before'] - $result['after'], str_replace( $root . '/', '', $path ) );
+			}
+
+			if ( 'skipped' === $result['status'] && $result['note'] ) {
+				$reasons[ $result['note'] ] = ( $reasons[ $result['note'] ] ?? 0 ) + 1;
+			}
+
+			$done++;
+
+			if ( $limit && $done >= $limit ) {
+				break;
+			}
+		}
+
+		usort( $top, static fn( $a, $b ) => $b[0] <=> $a[0] );
+
+		WP_CLI::log( '' );
+
+		foreach ( array_slice( $top, 0, 10 ) as $row ) {
+			WP_CLI::log( sprintf( '  %8s   %s', size_format( $row[0] ), $row[1] ) );
+		}
+
+		if ( $reasons ) {
+			WP_CLI::log( '' );
+			WP_CLI::log( __( 'Přeskočeno (potřebují převod barev, řeší se zvlášť):', 'kct' ) );
+
+			arsort( $reasons );
+
+			foreach ( $reasons as $reason => $count ) {
+				WP_CLI::log( sprintf( '  %5d×  %s', $count, $reason ) );
+			}
+		}
+
+		WP_CLI::log( '' );
+		WP_CLI::log( sprintf(
+			/* translators: 1: počet upravených, 2: beze změny, 3: přeskočených, 4: chyb. */
+			__( 'upraveno %1$d, beze změny %2$d, přeskočeno %3$d, chyb %4$d', 'kct' ),
+			$counts['cleaned'],
+			$counts['unchanged'],
+			$counts['skipped'],
+			$counts['error']
+		) );
+
+		$message = sprintf(
+			/* translators: 1: původní objem, 2: nový objem, 3: úspora, 4: procenta. */
+			__( 'Objem upravených souborů: %1$s → %2$s, úspora %3$s (%4$s).', 'kct' ),
+			size_format( $before, 1 ),
+			size_format( $after, 1 ),
+			size_format( $before - $after, 1 ),
+			$before ? round( ( $before - $after ) / $before * 100 ) . ' %' : '0 %'
+		);
+
+		if ( $write ) {
+			WP_CLI::success( $message );
+		} else {
+			WP_CLI::log( $message );
+			WP_CLI::log( __( 'Nic se nezapsalo. Spusť znovu s --write.', 'kct' ) );
+		}
+	}
+
+	/**
+	 * Smaže plné verze obrázků, které si jádro nechává vedle zmenšených.
+	 *
+	 * Když je nahraný snímek delší než strop rozměrů, WordPress vyrobí kopii
+	 * `…-scaled.…`, tu servíruje, a původní soubor nechá ležet na disku. Nikdo
+	 * ho nečte — jen zabírá místo a nafukuje zálohy. Nová nahrávání to řeší
+	 * sama (Features\ImageUploads), tenhle příkaz uklidí, co se nasbíralo dřív.
+	 *
+	 * Prochází všechny weby sítě. Bez přepínače --write jen spočítá, co by se
+	 * smazalo.
+	 *
+	 * POZOR: mazání je nevratné. Plné verze zpátky nedostaneš jinak než ze zálohy.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--write]
+	 * : Skutečně smazat. Bez něj běží příkaz nanečisto.
+	 *
+	 * [--site=<id>]
+	 * : Jen jeden web sítě podle ID, jinak všechny.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp kct drop_kept_originals
+	 *     wp kct drop_kept_originals --write
+	 *
+	 * @when after_wp_load
+	 */
+	public function drop_kept_originals( $args, $assoc_args ) {
+		global $wpdb;
+
+		$write   = ! empty( $assoc_args['write'] );
+		$only    = isset( $assoc_args['site'] ) ? (int) $assoc_args['site'] : 0;
+		$uploads = kct_container()->get( \Kct\Features\ImageUploads::class );
+		$sites   = $only ? array( $only ) : get_sites( array( 'number' => 0, 'fields' => 'ids' ) );
+
+		$total_n = 0;
+		$total_b = 0;
+		$missing = 0;
+
+		WP_CLI::log( $write
+			? __( 'Mažu ponechané originály …', 'kct' )
+			: __( 'Nanečisto (mazání zapneš přepínačem --write) …', 'kct' ) );
+
+		foreach ( $sites as $site_id ) {
+			switch_to_blog( $site_id );
+
+			$ids = $wpdb->get_col(
+				"SELECT post_id FROM {$wpdb->postmeta}
+				 WHERE meta_key = '_wp_attachment_metadata' AND meta_value LIKE '%original_image%'"
+			);
+
+			$n = 0;
+			$b = 0;
+
+			foreach ( $ids as $id ) {
+				$id       = (int) $id;
+				$metadata = wp_get_attachment_metadata( $id );
+
+				if ( ! is_array( $metadata ) || empty( $metadata['original_image'] ) ) {
+					continue;
+				}
+
+				$path = wp_get_original_image_path( $id );
+
+				if ( ! $path || ! file_exists( $path ) ) {
+					// Soubor už není, ale klíč na něj pořád ukazuje. Odkaz na
+					// originál v knihovně médií by na tohle vracel chybu.
+					$missing++;
+
+					if ( $write ) {
+						unset( $metadata['original_image'] );
+						wp_update_attachment_metadata( $id, $metadata );
+					}
+
+					continue;
+				}
+
+				$b += (int) filesize( $path );
+				$n++;
+
+				if ( $write ) {
+					wp_update_attachment_metadata( $id, $uploads->drop_original( $metadata, $id ) );
+				}
+			}
+
+			if ( $n ) {
+				WP_CLI::log( sprintf( '  %-30s %5d × %10s', parse_url( get_home_url( $site_id ), PHP_URL_HOST ), $n, size_format( $b, 1 ) ) );
+			}
+
+			$total_n += $n;
+			$total_b += $b;
+
+			restore_current_blog();
+		}
+
+		if ( $missing ) {
+			WP_CLI::log( sprintf(
+				/* translators: %d: počet příloh. */
+				__( 'U %d příloh odkaz na originál ukazoval na neexistující soubor.', 'kct' ),
+				$missing
+			) );
+		}
+
+		$message = sprintf(
+			/* translators: 1: počet souborů, 2: uvolněné místo. */
+			__( 'Originálů: %1$d, místo: %2$s.', 'kct' ),
+			$total_n,
+			size_format( $total_b, 1 )
+		);
+
+		if ( $write ) {
+			WP_CLI::success( $message );
+		} else {
+			WP_CLI::log( $message );
+			WP_CLI::log( __( 'Nic se nesmazalo. Spusť znovu s --write.', 'kct' ) );
+		}
 	}
 }

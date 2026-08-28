@@ -125,14 +125,24 @@ if ( ! function_exists( 'kct_post_thumbnail' ) ) :
 					?>
                     <div class="thumbnail-replacement">
                         <?php
+                        // Náhradní logo pro příspěvky bez vlastního obrázku.
+                        // Vejde se do stejné dlaždice jako náhled, takže stačí
+                        // 'medium' — v plné velikosti se sem tahalo logo
+                        // v tiskovém rozlišení.
                         $custom_logo_id = get_theme_mod( 'custom_logo' );
-                        echo wp_get_attachment_image( $custom_logo_id, 'full', false );
+                        echo wp_get_attachment_image( $custom_logo_id, 'medium', false );
                         ?>
                     </div>
 					<?php
 				} else {
+					// 'medium_large' = 768 px. Dřív tu byl název 'post-thumbnail',
+					// jenže takovou velikost nikdo neregistruje (set_post_thumbnail_size()
+					// se nikde nevolá) a jádro na neznámý název odpoví plnou velikostí.
+					// Do dlaždice vysoké 200 px se tak posílaly soubory o šířce
+					// 2560 px — u výpisu aktualit 6,23 MB místo 1,45 MB.
+					// Vizuálně se nemění nic: obrázek má v CSS object-fit: cover.
 					the_post_thumbnail(
-						'post-thumbnail',
+						'medium_large',
 						array(
 							'alt' => the_title_attribute(
 								array(

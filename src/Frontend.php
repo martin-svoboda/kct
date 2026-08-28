@@ -81,6 +81,12 @@ class Frontend {
 		$needs_map = is_post_type_archive( 'odbory' )
 			|| ( is_post_type_archive( 'akce' ) && get_theme_mod( 'kct_events_map', true ) );
 		if ( $needs_map ) {
+			// Styly Leafletu jsou součástí bundlu (assets/apps/map.js je importuje),
+			// webpack je vytáhne do build/map.css. Dokud se nenačítaly, držela mapu
+			// pohromadě jen kopie z unpkg.com v hlavičce šablony — na každé stránce
+			// webu, i tam, kde žádná mapa není.
+			$this->asset_factory->wp_script( $this->utils->get_plugin_path( 'build/map.css' ) );
+
 			$this->asset_factory->wp_script( $this->utils->get_plugin_path( 'build/map.js' ), array(
 				'variables' => array(
 					'site_rl'     => site_url(),

@@ -35,6 +35,14 @@ if ( is_single() && has_post_thumbnail() ) {
 	</header><!-- .entry-header -->
 
 	<?php if ( $gpx_url ) : ?>
+		<?php
+		// Leaflet dřív visel v hlavičce šablony, takže se stahoval i na stránkách
+		// bez mapy. Zůstal jen tady, kde ho inline skript níž potřebuje jako
+		// globální L — stejně jako doplňky pro GPX stopu a výškový profil.
+		// (Bundlovaný Leaflet z build/map.js je modul, globál nevystavuje.)
+		?>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
+		<script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js" integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/2.1.2/gpx.min.js" defer></script>
 		<link rel="stylesheet" href="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.css" />
 		<script src="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.js"></script>
