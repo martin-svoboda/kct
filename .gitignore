@@ -3,6 +3,9 @@
 /build/
 /deps/
 /dist/
+# pracovní adresář wpify/scoper — po instalaci se má uklidit sám,
+# jednou tu ale zůstal ležet i s absolutními cestami z vývojářského stroje
+/tmp-*/
 /node_modules/
 /vendor/
 /.php_cs.cache

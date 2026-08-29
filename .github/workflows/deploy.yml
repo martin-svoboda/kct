@@ -12,7 +12,6 @@ jobs:
       SSH_SERVER: 37.235.102.5
       SSH_USER: root
       SSH_PORT: 22
-      WP_CLI: wp --allow-root
       PLUGIN_VERSION: ${{ github.ref_name }}
       SSH_PATH_1: /www/hosting/sokct.cz/www
       SSH_PATH_2: /www/hosting/posazavskastezka.cz/www
@@ -20,15 +19,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
-          generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Composer cache
         uses: actions/cache@v3
@@ -79,52 +69,169 @@ jobs:
           sed -i "s/KCT_VERSION/${{ env.PLUGIN_VERSION }}/g" kct.php
           sed -i "s/KCT_VERSION/${{ env.PLUGIN_VERSION }}/g" themes/kct/style.css
 
-      - name: Deploy to sokct.cz
+      # Instalovatelný balíček pluginu pro weby mimo tenhle deploy. Obsah je
+      # záměrně totožný s tím, co rsync posílá na produkci — jen bez věcí, které
+      # na cizím webu nemají co dělat (dokumentace, konfigurace sestavení).
+      # Uvnitř archivu je jedna složka `kct/`, jinak by WordPress instalaci odmítl.
+      #
+      # Seznam výjimek je schválně stejný jako u rsyncu níž — balíček má být
+      # totožný s tím, co běží na produkci. Když se jeden mění, musí se i druhý.
+      - name: Build plugin ZIP
         run: |
-          rsync -av --delete \
+          set -euo pipefail
+
+          rm -rf dist
+          mkdir -p dist/kct
+
+          rsync -a \
             --exclude="/.*" \
             --exclude="*.scss" \
             --exclude="*.sh" \
             --exclude="node_modules" \
             --exclude="tests" \
-            . root@$SSH_SERVER:$SSH_PATH_1/wp-content/plugins/kct/
+            --exclude="dist" \
+            --exclude="docs" \
+            --exclude="tmp-*" \
+            --exclude="package.json" \
+            --exclude="package-lock.json" \
+            --exclude="webpack.config.js" \
+            --exclude="composer*.json" \
+            --exclude="composer*.lock" \
+            ./ dist/kct/
 
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@$SSH_SERVER <<EOF
-          set -euxo pipefail
-          chown -R www-data:www-data $SSH_PATH_1/wp-content/plugins/kct/
-          find $SSH_PATH_1/wp-content/plugins/kct/ -type d -exec chmod 755 {} \;
-          find $SSH_PATH_1/wp-content/plugins/kct/ -type f -exec chmod 644 {} \;
+          test -f dist/kct/kct.php
+          test -d dist/kct/blocks
+          test -d dist/kct/build
+          test -d dist/kct/vendor
 
-          cd $SSH_PATH_1
-          $WP_CLI core update-db
-          $WP_CLI language core update
-          $WP_CLI language plugin update --all
-          $WP_CLI language theme update --all
-          $WP_CLI rewrite flush
-          $WP_CLI cache flush
-          EOF
+          ZIP="$GITHUB_WORKSPACE/kct-$PLUGIN_VERSION.zip"
+          ( cd dist && zip -qr "$ZIP" kct )
 
-      - name: Deploy to posazavskastezka.cz
+          echo "kct-$PLUGIN_VERSION.zip — $(du -h "$ZIP" | cut -f1), $(unzip -l "$ZIP" | tail -1)"
+
+      # Release se vydává až tady, protože nese sestavený balíček. Dřív vznikal
+      # hned po checkoutu, tedy dřív, než bylo co přiložit.
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          generate_release_notes: true
+          files: kct-${{ github.ref_name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Oba weby se nasazují stejně, proto jeden krok se smyčkou. Dřív to byly dva
+      # samostatné kroky se shodným obsahem, což znamenalo udržovat každou změnu
+      # dvakrát.
+      #
+      # Vzdálený skript se posílá přes `bash -s` a heredoc v uvozovkách ('REMOTE'),
+      # takže se doručí doslova a proměnné se vyhodnotí až na serveru. Předchozí
+      # heredoc bez uvozovek expandoval lokálně, což znamenalo escapovat každý
+      # dolar a zpětný apostrof.
+      - name: Deploy
         run: |
-          rsync -av --delete \
-            --exclude="/.*" \
-            --exclude="*.scss" \
-            --exclude="*.sh" \
-            --exclude="node_modules" \
-            --exclude="tests" \
-            . root@$SSH_SERVER:$SSH_PATH_2/wp-content/plugins/kct/
+          set -euo pipefail
 
-          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no root@$SSH_SERVER <<EOF
-          set -euxo pipefail
-          chown -R www-data:www-data $SSH_PATH_2/wp-content/plugins/kct/
-          find $SSH_PATH_2/wp-content/plugins/kct/ -type d -exec chmod 755 {} \;
-          find $SSH_PATH_2/wp-content/plugins/kct/ -type f -exec chmod 644 {} \;
+          for SITE_PATH in "$SSH_PATH_1" "$SSH_PATH_2"; do
+            echo "::group::Nasazení $SITE_PATH"
 
-          cd $SSH_PATH_2
-          $WP_CLI core update-db
-          $WP_CLI language core update
-          $WP_CLI language plugin update --all
-          $WP_CLI language theme update --all
-          $WP_CLI rewrite flush
-          $WP_CLI cache flush
-          EOF
+            # dist/ a hotový archiv vznikly v předchozím kroku a na produkci
+            # nemají co dělat — bez těchhle dvou řádků by se tam poslala celá
+            # kopie pluginu navíc.
+            rsync -av --delete \
+              --exclude="/.*" \
+              --exclude="*.scss" \
+              --exclude="*.sh" \
+              --exclude="node_modules" \
+              --exclude="tests" \
+              --exclude="/dist" \
+              --exclude="/kct-*.zip" \
+              . "$SSH_USER@$SSH_SERVER:$SITE_PATH/wp-content/plugins/kct/"
+
+            ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
+              "$SSH_USER@$SSH_SERVER" bash -s -- "$SITE_PATH" <<'REMOTE'
+          set -euo pipefail
+
+          SITE="$1"
+          PLUGIN="$SITE/wp-content/plugins/kct"
+
+          # Rsync běží pod rootem, takže nasazené soubory patří rootovi.
+          chown -R www-data:www-data "$PLUGIN"
+          find "$PLUGIN" -type d -exec chmod 755 {} +
+          find "$PLUGIN" -type f -exec chmod 644 {} +
+
+          cd "$SITE"
+
+          # WP-CLI pod www-data, ne pod rootem. Příkazy pro překlady stahují soubory
+          # do wp-content/languages a jako root tam nechávaly soubory patřící rootovi,
+          # do kterých pak WordPress nemohl zapsat a aktualizace překladů tiše selhávaly.
+          WP_BIN="$(command -v wp)"
+
+          if command -v sudo >/dev/null 2>&1; then
+            wp_run() {
+              sudo -u www-data -H env WP_CLI_CACHE_DIR=/tmp/wp-cli-cache "$WP_BIN" "$@"
+            }
+          else
+            echo "sudo není k dispozici — WP-CLI poběží jako root, vlastnictví se srovná níže"
+            wp_run() { "$WP_BIN" --allow-root "$@"; }
+          fi
+
+          # Sokct je multisite, posazavskastezka samostatná instalace — a několik
+          # příkazů se v obou případech chová jinak. Zjistí se to jednou tady.
+          if wp_run core is-installed --network >/dev/null 2>&1; then
+            IS_NETWORK=1
+          else
+            IS_NETWORK=0
+          fi
+
+          # Bez --network aktualizuje update-db jen databázi hlavního webu sítě
+          # a podweby zůstanou na starém schématu.
+          if [ "$IS_NETWORK" = "1" ]; then
+            wp_run core update-db --network
+          else
+            wp_run core update-db
+          fi
+
+          wp_run language core update
+          wp_run language plugin update --all
+          wp_run language theme update --all
+
+          # Přepisovací pravidla si v multisite drží každý web zvlášť ve svých
+          # options. Změna typů obsahu platná pro celou síť (např. odregistrování
+          # CPT) se proto musí promítnout na všech webech, ne jen na hlavním.
+          if [ "$IS_NETWORK" = "1" ]; then
+            for SITE_URL in $(wp_run site list --field=url); do
+              wp_run --url="$SITE_URL" rewrite flush
+            done
+          else
+            wp_run rewrite flush
+          fi
+
+          wp_run cache flush
+
+          # Zkompilovaný kontejner PHP-DI je klíčovaný verzí pluginu (viz kct.php),
+          # takže po nasazení nové verze vznikne nový adresář a starý jen leží.
+          # Smazáním se vygeneruje znovu — a pod www-data, ne pod rootem.
+          rm -rf "$SITE/wp-content/cache/kct"
+
+          # Stránková cache WP-Optimize by po nasazení dál servírovala staré HTML,
+          # takže by se změny v šablonách návštěvníkům ani vyhledávačům neprojevily.
+          # Plugin nemá WP-CLI příkaz, maže se tedy obsah adresáře; konfigurace
+          # leží jinde (wp-content/wpo-cache), ta se nedotkne.
+          if [ -d "$SITE/wp-content/cache/wpo-cache" ]; then
+            find "$SITE/wp-content/cache/wpo-cache" -mindepth 1 -maxdepth 1 -exec rm -rf {} +
+          fi
+
+          # Poslední pojistka: cokoli, co v zapisovatelných adresářích zůstalo
+          # po rootovi, se vrátí www-data. Prochází se jen soubory s cizím
+          # vlastníkem, takže při čistém stavu se nic nemění.
+          for DIR in "$SITE/wp-content/cache" "$SITE/wp-content/languages" "$SITE/wp-content/uploads"; do
+            if [ -d "$DIR" ]; then
+              find "$DIR" ! -user www-data -exec chown www-data:www-data {} + || true
+            fi
+          done
+          REMOTE
+
+            echo "::endgroup::"
+          done
