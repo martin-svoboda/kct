@@ -55,7 +55,7 @@ if ( ! function_exists( 'kct_entry_footer' ) ) :
 			$tags_list = get_the_tag_list( '', esc_html_x( ', ', 'list item separator', 'kct' ) );
 			if ( $tags_list ) {
 				/* translators: 1: list of tags. */
-				printf( '<span class="tags-links">' . esc_html__( 'Tagged %1$s', 'kct' ) . '</span>', $tags_list ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				printf( '<span class="tags-links">' . esc_html__( 'Štítky: %1$s', 'kct' ) . '</span>', $tags_list ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			}
 		}
 
@@ -65,7 +65,7 @@ if ( ! function_exists( 'kct_entry_footer' ) ) :
 				sprintf(
 					wp_kses(
 					/* translators: %s: post title */
-						__( 'Leave a Comment<span class="screen-reader-text"> on %s</span>', 'kct' ),
+						__( 'Napsat komentář<span class="screen-reader-text"> k %s</span>', 'kct' ),
 						array(
 							'span' => array(
 								'class' => array(),
@@ -256,132 +256,6 @@ if ( ! function_exists( 'kct_render_event_item' ) ) :
 			</a>
 		</li>
 		<?php
-	}
-endif;
-
-if ( ! function_exists( 'kct_footer_directory_columns' ) ) :
-	/**
-	 * Sestaví sloupce rozcestníku v patičce z obsahu, který web reálně má.
-	 *
-	 * Odkazy se skládají dynamicky (podle slugu/ID, ne natvrdo napsanou adresou),
-	 * takže funkce přežije přejmenování stránek a funguje i na odborových webech
-	 * sítě, kde většina z nich neexistuje — chybějící odkaz i celý prázdný sloupec
-	 * se z výstupu prostě vypustí.
-	 *
-	 * @return array Pole sloupců ve tvaru array( array( 'title' => string, 'links' => array( array( 'label' => string, 'url' => string ) ) ) ).
-	 */
-	function kct_footer_directory_columns() {
-		/**
-		 * Odkaz na stránku podle (případně hierarchické) cesty, nebo null, pokud stránka na webu neexistuje.
-		 *
-		 * @param string $path  Slug, nebo cesta typu 'rodic/potomek'.
-		 * @param string $label Text odkazu.
-		 * @return array|null
-		 */
-		$kct_page_link = function ( $path, $label ) {
-			$page = get_page_by_path( $path );
-			if ( ! $page ) {
-				return null;
-			}
-			$url = get_permalink( $page );
-			if ( ! $url ) {
-				return null;
-			}
-			return array(
-				'label' => $label,
-				'url'   => $url,
-			);
-		};
-
-		/**
-		 * Odkaz na archiv daného typu obsahu, nebo null, pokud na webu archiv neexistuje.
-		 *
-		 * @param string $post_type Typ obsahu.
-		 * @param string $label     Text odkazu.
-		 * @return array|null
-		 */
-		$kct_archive_link = function ( $post_type, $label ) {
-			$url = get_post_type_archive_link( $post_type );
-			if ( ! $url ) {
-				return null;
-			}
-			return array(
-				'label' => $label,
-				'url'   => $url,
-			);
-		};
-
-		/**
-		 * Odkaz na stránku s výpisem příspěvků (Aktuality), nebo null, pokud není nastavená.
-		 *
-		 * @param string $label Text odkazu.
-		 * @return array|null
-		 */
-		$kct_posts_page_link = function ( $label ) {
-			$page_id = (int) get_option( 'page_for_posts' );
-			if ( ! $page_id ) {
-				return null;
-			}
-			$url = get_permalink( $page_id );
-			if ( ! $url ) {
-				return null;
-			}
-			return array(
-				'label' => $label,
-				'url'   => $url,
-			);
-		};
-
-		$columns = array(
-			array(
-				'title' => esc_html__( 'Turistika a značení', 'kct' ),
-				'links' => array_filter(
-					array(
-						$kct_page_link( 'turisticke-znaceni', esc_html__( 'Turistické značení', 'kct' ) ),
-						$kct_page_link( 'turisticke-znaceni/bezpecnost-na-turistickych-znacenych-trasach', esc_html__( 'Bezpečnost na turistických značených trasách', 'kct' ) ),
-						$kct_page_link( 'turisticke-odznaky-a-vykonnostni-turistika', esc_html__( 'Turistické odznaky a výkonnostní turistika', 'kct' ) ),
-						$kct_page_link( 'oto-a-tto-stredoceskeho-kraje', esc_html__( 'OTO a TTO Středočeského kraje', 'kct' ) ),
-						$kct_page_link( 'program-oblasti/turisticke-zavody', esc_html__( 'Turistické závody', 'kct' ) ),
-						$kct_page_link( 'turisticka-oblast-brdy-a-podbrdsko', esc_html__( 'Turistická oblast Brdy a Podbrdsko', 'kct' ) ),
-						$kct_page_link( 'vyznamne-turisticke-cesty-ve-stredoceske-oblasti', esc_html__( 'Významné turistické cesty ve Středočeské oblasti', 'kct' ) ),
-					)
-				),
-			),
-			array(
-				'title' => esc_html__( 'O oblasti', 'kct' ),
-				'links' => array_filter(
-					array(
-						$kct_page_link( 'o-oblasti', esc_html__( 'O oblasti', 'kct' ) ),
-						$kct_page_link( 'o-oblasti/sin-slavy', esc_html__( 'Síň slávy', 'kct' ) ),
-						$kct_page_link( 'osobnosti-a-odbory-uvedene-do-sine-slavy', esc_html__( 'Osobnosti a odbory uvedené do Síně slávy', 'kct' ) ),
-						$kct_page_link( 'sekretariat-a-vybor-stredoceske-oblasti', esc_html__( 'Vedení oblasti', 'kct' ) ),
-						$kct_page_link( 'o-oblasti/clenove-vyboru-a-aktiviste-oblasti', esc_html__( 'Členové výboru a kontakty', 'kct' ) ),
-						$kct_page_link( 'clensvi-v-kct', esc_html__( 'Členství v KČT', 'kct' ) ),
-						$kct_page_link( 'pojisteni-clenu-kct', esc_html__( 'Pojištění členů KČT', 'kct' ) ),
-					)
-				),
-			),
-			array(
-				'title' => esc_html__( 'Aktuální dění', 'kct' ),
-				'links' => array_filter(
-					array(
-						$kct_archive_link( 'akce', esc_html__( 'Kalendář akcí', 'kct' ) ),
-						$kct_posts_page_link( esc_html__( 'Aktuality a zprávy', 'kct' ) ),
-						$kct_archive_link( 'odbory', esc_html__( 'Odbory', 'kct' ) ),
-					)
-				),
-			),
-		);
-
-		// Vyřadit sloupce bez odkazů (typicky odborové weby, kde většina stránek neexistuje).
-		return array_values(
-			array_filter(
-				$columns,
-				function ( $column ) {
-					return ! empty( $column['links'] );
-				}
-			)
-		);
 	}
 endif;
 

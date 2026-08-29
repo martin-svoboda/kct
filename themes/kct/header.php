@@ -34,7 +34,7 @@ $secondary_logo = get_theme_mod( 'secondary_logo', '' );
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 <div id="page" class="site">
-	<a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Skip to content', 'kct' ); ?></a>
+	<a class="skip-link screen-reader-text" href="#primary"><?php esc_html_e( 'Přejít k obsahu', 'kct' ); ?></a>
 
 	<header id="masthead" class="site-header">
 		<div class="container">
@@ -88,6 +88,26 @@ $secondary_logo = get_theme_mod( 'secondary_logo', '' );
 					);
 					?>
 				</nav><!-- #site-navigation -->
+
+				<?php
+				// Vyhledávání — jen když je zapnuté v Customizeru (Vzhled šablony).
+				// Formulář je schovaný atributem hidden a odkrývá ho js/header.js;
+				// bez JS se dá hledat přes /?s=výraz, šablona search.php existuje.
+				if ( get_theme_mod( 'kct_header_search', false ) ) :
+					?>
+					<div class="header-search">
+						<button type="button" class="header-search__toggle" aria-expanded="false" aria-controls="header-search-form">
+							<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4.2-4.2"></path></svg>
+							<span class="screen-reader-text"><?php esc_html_e( 'Hledat', 'kct' ); ?></span>
+						</button>
+						<form role="search" method="get" id="header-search-form" class="header-search__form" action="<?php echo esc_url( home_url( '/' ) ); ?>" hidden>
+							<label class="screen-reader-text" for="header-search-field"><?php esc_html_e( 'Hledat', 'kct' ); ?></label>
+							<input type="search" id="header-search-field" class="header-search__field" name="s"
+								   value="<?php echo esc_attr( get_search_query() ); ?>"
+								   placeholder="<?php esc_attr_e( 'Hledat…', 'kct' ); ?>">
+						</form>
+					</div>
+				<?php endif; ?>
 
 				<?php if ( $kct_membership_url ) : ?>
 					<a class="btn site-header__cta" href="<?= esc_url( $kct_membership_url ) ?>"><?= esc_html( $kct_membership_label ) ?></a>

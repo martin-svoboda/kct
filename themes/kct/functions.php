@@ -49,7 +49,7 @@ function kct_setup() {
 	// This theme uses wp_nav_menu() in one location.
 	register_nav_menus(
 		array(
-			'menu-1' => esc_html__( 'Primary', 'kct' ),
+			'menu-1' => esc_html__( 'Hlavní menu', 'kct' ),
 		)
 	);
 
@@ -124,9 +124,9 @@ add_action( 'after_setup_theme', 'kct_content_width', 0 );
 function kct_widgets_init() {
 	register_sidebar(
 		array(
-			'name'          => esc_html__( 'Sidebar', 'kct' ),
+			'name'          => esc_html__( 'Postranní sloupec', 'kct' ),
 			'id'            => 'sidebar-1',
-			'description'   => esc_html__( 'Add widgets here.', 'kct' ),
+			'description'   => esc_html__( 'Sem se vkládají widgety.', 'kct' ),
 			'before_widget' => '<section id="%1$s" class="widget %2$s">',
 			'after_widget'  => '</section>',
 			'before_title'  => '<h2 class="widget-title">',
@@ -135,9 +135,9 @@ function kct_widgets_init() {
 	);
 	register_sidebar(
 		array(
-			'name'          => esc_html__( 'Footer', 'kct' ),
+			'name'          => esc_html__( 'Patička', 'kct' ),
 			'id'            => 'footer',
-			'description'   => esc_html__( 'Add widgets here.', 'kct' ),
+			'description'   => esc_html__( 'Sem se vkládají widgety.', 'kct' ),
 			'before_widget' => '<div id="%1$s" class="widget %2$s">',
 			'after_widget'  => '</div>',
 			'before_title'  => '<h3 class="widget-title">',

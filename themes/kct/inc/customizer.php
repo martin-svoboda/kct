@@ -106,6 +106,20 @@ function kct_customize_register( $wp_customize ) {
 		'type'        => 'checkbox',
 	) );
 
+	// Vyhledávání v hlavičce. Výchozí vypnuto — hlavička je na každém webu sítě
+	// jinak zaplněná, tak ať si ho zapne ten, komu se tam vejde.
+	$wp_customize->add_setting( 'kct_header_search', array(
+		'default'           => false,
+		'transport'         => 'refresh',
+		'sanitize_callback' => function ( $v ) { return (bool) $v; },
+	) );
+	$wp_customize->add_control( 'kct_header_search', array(
+		'section'     => 'kct_appearance',
+		'label'       => __( 'Vyhledávání v hlavičce', 'kct' ),
+		'description' => __( 'Ikona lupy vedle menu; po kliknutí se rozbalí vyhledávací pole. Bez ní se dá hledat jen přes adresu /?s=výraz.', 'kct' ),
+		'type'        => 'checkbox',
+	) );
+
 	// Tlačítko „Stát se členem" v hlavičce (prázdný odkaz = tlačítko se nezobrazí)
 	$wp_customize->add_setting( 'kct_membership_url', array(
 		'default'           => '',

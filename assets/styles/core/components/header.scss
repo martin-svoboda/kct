@@ -126,6 +126,60 @@
 		white-space: nowrap;
 	}
 
+	// ── Vyhledávání v hlavičce (volitelné, Customizer → Vzhled šablony) ──
+	// V řádku hlavičky zabírá místo pouze lupa. Pole se otevírá jako panel
+	// vysunutý pod ní (position: absolute), takže rozvržení hlavičky zůstává
+	// při otevření i zavření stejné — v toku by pole řádek roztáhlo a rozházelo
+	// menu i tlačítko vedle.
+	.header-search {
+		position: relative;
+		flex: 0 0 auto;
+		display: flex;
+		align-items: center;
+	}
+
+	.header-search__toggle {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		padding: 0;
+		border: 0;
+		border-radius: 50%;
+		background: transparent;
+		color: inherit;
+		cursor: pointer;
+
+		&:hover {
+			background: rgba(0, 0, 0, .06);
+		}
+	}
+
+	.header-search__form {
+		position: absolute;
+		top: calc(100% + 10px);
+		right: 0;
+		z-index: 1300;
+		padding: 10px;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: var(--radius-md);
+		box-shadow: 0 18px 40px -22px rgba(11, 22, 34, .55);
+	}
+
+	.header-search__field {
+		display: block;
+		width: min(260px, 70vw);
+		padding: 8px 12px;
+		font-size: 14px;
+		line-height: 1.3;
+		border: 1px solid var(--line);
+		border-radius: var(--btn-radius);
+		background: var(--surface);
+		color: var(--text);
+	}
+
 	// ── Hamburger (jen mobil) ──
 	.menu-toggle {
 		display: none;
@@ -228,6 +282,31 @@
 					padding: 0 0 0 12px;
 				}
 			}
+		}
+
+		// V drawru se hlavička nemá čím rozbít — je to svislý sloupec, tak tu
+		// pole zůstává v toku na celou šířku a panel se nevysouvá.
+		// Lupa zůstává i tady: kdyby ji CSS schovalo a formulář odkrylo natvrdo,
+		// rozešel by se vzhled s tím, co hlásí aria-expanded odečítači obrazovky.
+		.header-search {
+			order: 3;
+			width: 100%;
+			margin-top: 16px;
+			flex-wrap: wrap;
+		}
+
+		.header-search__form {
+			position: static;
+			width: 100%;
+			margin-top: 10px;
+			padding: 0;
+			background: none;
+			border: 0;
+			box-shadow: none;
+		}
+
+		.header-search__field {
+			width: 100%;
 		}
 
 		.site-header__cta {

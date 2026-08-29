@@ -2,6 +2,7 @@
  * Hlavička KČT:
  *  1) Průhledné menu: při scrollu přidá body.is-scrolled (podbarvení).
  *  2) Mobilní menu: hamburger otevírá/zavírá off-canvas drawer.
+ *  3) Vyhledávání v hlavičce: lupa rozbaluje pole (volitelné, viz Customizer).
  */
 ( function () {
 	var body = document.body;
@@ -109,3 +110,53 @@
 		}, { passive: true } );
 	}
 }() );
+	// ── 3) Vyhledávání v hlavičce ──
+	// Vykresluje se jen při zapnutém nastavení kct_header_search, takže když
+	// prvek na stránce není, celá tahle část se přeskočí.
+	var search = document.querySelector( '.header-search' );
+
+	if ( search ) {
+		var searchToggle = search.querySelector( '.header-search__toggle' );
+		var searchForm   = search.querySelector( '.header-search__form' );
+		var searchField  = search.querySelector( '.header-search__field' );
+
+		if ( searchToggle && searchForm && searchField ) {
+			var setSearchOpen = function ( open ) {
+				search.classList.toggle( 'is-open', open );
+				searchToggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+				searchForm.hidden = ! open;
+
+				if ( open ) {
+					searchField.focus();
+				}
+			};
+
+			searchToggle.addEventListener( 'click', function () {
+				setSearchOpen( ! search.classList.contains( 'is-open' ) );
+			} );
+
+			// Escape zavře a vrátí ohnisko na lupu, aby se dalo pokračovat klávesnicí.
+			search.addEventListener( 'keydown', function ( e ) {
+				if ( 'Escape' === e.key ) {
+					setSearchOpen( false );
+					searchToggle.focus();
+				}
+			} );
+
+			// Kliknutí mimo zavře — jen na desktopu, kde pole hlavičku roztahuje.
+			document.addEventListener( 'click', function ( e ) {
+				if ( search.classList.contains( 'is-open' ) && ! search.contains( e.target ) ) {
+					setSearchOpen( false );
+				}
+			} );
+
+			// Prázdné hledání neodesílat, jen vrátit ohnisko do pole.
+			searchForm.addEventListener( 'submit', function ( e ) {
+				if ( ! searchField.value.trim() ) {
+					e.preventDefault();
+					searchField.focus();
+				}
+			} );
+		}
+	}
+
