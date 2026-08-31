@@ -2,6 +2,7 @@
 
 namespace Kct\Facebook;
 
+use Kct\PostTypes\EventPostType;
 use Kct\Repositories\SettingsRepository;
 
 /**
@@ -47,17 +48,27 @@ class Credentials {
 	}
 
 	/**
-	 * Výchozí stav přepínače "Sdílet na Facebook" u nového příspěvku.
+	 * Výchozí stav přepínače „Sdílet na Facebook" u nového příspěvku.
+	 *
+	 * Aktuality a akce mají vlastní nastavení — jsou to jiné druhy obsahu
+	 * a redakce u nich může chtít jiné chování.
+	 *
+	 * @param string $post_type Typ obsahu, kterého se dotaz týká.
 	 */
-	public function share_by_default(): bool {
-		return (bool) $this->settings->get_option( 'fb_share_default' );
-	}
+	public function share_default_for( string $post_type ): bool {
+		$key     = EventPostType::KEY === $post_type ? 'fb_share_default_akce' : 'fb_share_default_post';
+		$options = $this->settings->get_options();
 
-	/**
-	 * ID přílohy s výchozím OG obrázkem.
-	 */
-	public function default_image_id(): int {
-		return (int) $this->scalar_option( 'fb_default_image' );
+		if ( array_key_exists( $key, $options ) ) {
+			return (bool) $options[ $key ];
+		}
+
+		// Dokud nová nastavení nikdo neuložil, platí staré společné. Bez toho
+		// by web, kde bylo sdílení zapnuté, po nasazení tiše přestal sdílet.
+		//
+		// array_key_exists(), ne get_option(): ta vrací false i pro nenastavený
+		// klíč, takže by nešlo rozlišit „neuloženo" od „uloženo vypnuté".
+		return (bool) ( $options['fb_share_default'] ?? false );
 	}
 
 	/**

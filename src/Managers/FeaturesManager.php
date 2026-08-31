@@ -9,6 +9,7 @@ use Kct\Features\FacebookShare;
 use Kct\Features\ImageMetadata;
 use Kct\Features\ImageUploads;
 use Kct\Features\Lightbox;
+use Kct\Features\OgImages;
 use Kct\Features\OpenGraph;
 
 final class FeaturesManager {
@@ -22,7 +23,8 @@ final class FeaturesManager {
 		EventSeo $event_seo,
 		ImageMetadata $image_metadata,
 		ImageUploads $image_uploads,
-		DepartmentSeo $department_seo
+		DepartmentSeo $department_seo,
+		OgImages $og_images
 	) {
 	}
 }

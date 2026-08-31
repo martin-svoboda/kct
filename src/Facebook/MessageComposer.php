@@ -30,8 +30,36 @@ class MessageComposer {
 
 	/**
 	 * Text příspěvku. Vlastní text redaktora má vždy přednost.
+	 *
+	 * Odkaz se připojuje na konec, protože se sdílí fotkou — u fotopříspěvku
+	 * není klikací náhledová karta a adresa v textu je jediné místo, odkud se
+	 * dá na web dostat. Krátké aktuality odkaz nemají (nemají detail, na který
+	 * by vedl), takže u nich text zůstává, jak byl.
 	 */
 	public function compose( WP_Post $post ): string {
+		return $this->body( $post );
+	}
+
+	/**
+	 * Text i s odkazem na konci — pro sdílení fotkou.
+	 *
+	 * U fotopříspěvku není klikací náhledová karta, takže adresa v textu je
+	 * jediné místo, odkud se dá na web dostat.
+	 *
+	 * Musí to být samostatná metoda, ne chování compose(): záložní cesta
+	 * posílá odkaz zvlášť v poli `link` a Facebook z něj skládá náhledovou
+	 * kartu. Kdyby ho compose() přidávala i tam, byl by na příspěvku dvakrát —
+	 * jednou jako text, jednou jako karta.
+	 */
+	public function compose_with_link( WP_Post $post ): string {
+		$body = $this->body( $post );
+		$link = $this->link( $post );
+
+		return null === $link ? $body : $body . "\n\n" . $link;
+	}
+
+	/** Samotný text bez odkazu. */
+	private function body( WP_Post $post ): string {
 		$custom = get_post_meta( $post->ID, ShareState::META_MESSAGE, true );
 
 		if ( ! empty( $custom ) ) {

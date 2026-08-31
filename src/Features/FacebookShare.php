@@ -6,6 +6,7 @@ use Kct\Facebook\Credentials;
 use Kct\Facebook\GraphClient;
 use Kct\Facebook\MessageComposer;
 use Kct\Facebook\ShareMetabox;
+use Kct\Facebook\ShareSchedule;
 use Kct\Facebook\ShareState;
 use Kct\PostTypes\EventPostType;
 use Kct\PostTypes\PostPostType;
@@ -24,6 +25,15 @@ class FacebookShare {
 
 	/** Odstupy opakovaných pokusů v sekundách: 5 min, 30 min, 2 h. */
 	const RETRY_DELAYS = array( 300, 1800, 7200 );
+
+	/**
+	 * O kolik sekund musí být vypočtený čas odeslání v budoucnu, aby se
+	 * přeplánovalo.
+	 *
+	 * Bez tolerance by se běh, kterému vyjde cíl o pár sekund dopředu, ještě
+	 * jednou přeplánoval a odeslání by se zbytečně odložilo o další minutu.
+	 */
+	const SCHEDULE_TOLERANCE = 120;
 
 	/** Option, do které se ukládá chyba tokenu pro upozornění v administraci. */
 	const TOKEN_ERROR_OPTION = 'kct_fb_token_error';
@@ -59,9 +69,12 @@ class FacebookShare {
 	 * jiného vlastníka než add_action() uvnitř svého konstruktoru a její
 	 * životnost by závisela na tom, co se s háčkem stane.
 	 *
-	 * @var ShareMetabox
+	 * Zůstane null, když sdílení není nastavené — metabox se pak vůbec
+	 * netvoří, viz konstruktor.
+	 *
+	 * @var ShareMetabox|null
 	 */
-	private ShareMetabox $metabox;
+	private ?ShareMetabox $metabox = null;
 
 	/**
 	 * @param CustomFields    $wcf         Knihovna pro metabox s poli redaktora.
@@ -75,9 +88,17 @@ class FacebookShare {
 		private Credentials $credentials,
 		private GraphClient $client,
 		private MessageComposer $composer,
-		private ShareState $state
+		private ShareState $state,
+		private OgImages $og_images,
+		private ShareSchedule $schedule,
+		private Events $events
 	) {
 		add_action( 'transition_post_status', array( $this, 'maybe_schedule' ), 10, 3 );
+
+		// Termín akce se může po publikaci posunout. Naplánované odeslání se
+		// proto zruší a rozhodne se znovu — priorita 20, ať jsou metadata
+		// s novým datem už uložená.
+		add_action( 'save_post_' . EventPostType::KEY, array( $this, 'reschedule' ), 20, 2 );
 		add_action( self::CRON_HOOK, array( $this, 'share' ) );
 		add_action( 'init', array( $this, 'register_meta' ) );
 		add_filter( 'is_protected_meta', array( $this, 'protect_meta' ), 10, 2 );
@@ -87,12 +108,27 @@ class FacebookShare {
 		add_action( 'admin_notices', array( $this, 'verify_notice' ) );
 		add_action( 'admin_notices', array( $this, 'retry_notice' ) );
 
+		// Oba metaboxy se registrují jen tam, kde je sdílení nastavené. Bez ID
+		// stránky a tokenu se stejně nic neodešle, takže přepínač „Sdílet na
+		// Facebook" i pole pro text a časování jen slibují něco, co se nestane
+		// — a redakci to mate víc, než by jí pomohlo.
+		//
+		// Kontrola je tady, ne uvnitř jednotlivých metaboxů: je to jedna
+		// podmínka na jednom místě a obojí má stejný důvod k existenci.
+		if ( ! $this->credentials->is_configured() ) {
+			return;
+		}
+
 		$this->register_metabox();
 
 		// ShareMetabox se tvoří přímo, ne přes kontejner: potřebuje seznam
 		// typů příspěvků, který je definovaný tady ve feature, takže by ho
 		// kontejner stejně nedokázal sestavit bez další konfigurace.
-		$this->metabox = new ShareMetabox( $this->state, $this->post_types() );
+		$this->metabox = new ShareMetabox(
+			$this->state,
+			$this->post_types(),
+			fn( WP_Post $post ): string => $this->schedule_note( $post )
+		);
 	}
 
 	/**
@@ -187,8 +223,33 @@ class FacebookShare {
 			return;
 		}
 
-		if ( ! $this->state->should_share( $post->ID, $this->credentials->share_by_default() ) ) {
+		if ( ! $this->state->should_share( $post->ID, $this->credentials->share_default_for( $post->post_type ) ) ) {
 			return;
+		}
+
+		// Akce se neodesílají hned po publikaci, ale s odstupem před začátkem.
+		//
+		// Rozhoduje se až tady, ne v maybe_schedule(): transition_post_status
+		// běží uvnitř wp_insert_post(), tedy dřív, než metaboxy uloží svoje
+		// metadata — datum akce tam ještě nemusí být. Proto má tenhle běh
+		// zpoždění DELAY, viz komentář u té konstanty.
+		if ( EventPostType::KEY === $post->post_type ) {
+			$target = $this->schedule->target_for_event(
+				$this->events->get_event( $post->ID, '' ),
+				$this->lead_override( (int) $post->ID )
+			);
+
+			if ( null === $target ) {
+				// Proběhlá akce. Pozvánka na loňský pochod je horší než
+				// žádný příspěvek.
+				return;
+			}
+
+			if ( $target > time() + self::SCHEDULE_TOLERANCE ) {
+				wp_schedule_single_event( $target, self::CRON_HOOK, array( (int) $post->ID ) );
+
+				return;
+			}
 		}
 
 		// Zámek se zabírá až po všech kontrolách — běh, který stejně nic
@@ -204,12 +265,30 @@ class FacebookShare {
 				return;
 			}
 
-			$result = $this->client->publish(
-				$this->credentials->page_id(),
-				$this->credentials->token(),
-				$this->composer->compose( $post ),
-				$this->composer->link( $post )
-			);
+			$image  = $this->social_image( $post );
+			$result = null;
+
+			if ( null !== $image ) {
+				$result = $this->client->publish_photo(
+					$this->credentials->page_id(),
+					$this->credentials->token(),
+					$this->composer->compose_with_link( $post ),
+					$image
+				);
+
+				if ( ! $this->keep_photo_result( $result ) ) {
+					$result = null;
+				}
+			}
+
+			if ( null === $result ) {
+				$result = $this->client->publish(
+					$this->credentials->page_id(),
+					$this->credentials->token(),
+					$this->composer->compose( $post ),
+					$this->composer->link( $post )
+				);
+			}
 
 			if ( ! empty( $result['ok'] ) ) {
 				$this->state->mark_shared( $post->ID, (string) $result['id'] );
@@ -432,7 +511,7 @@ class FacebookShare {
 			return __( 'V nastavení chybí ID Facebook stránky nebo token.', 'kct' );
 		}
 
-		if ( ! $this->state->should_share( $post_id, $this->credentials->share_by_default() ) ) {
+		if ( ! $this->state->should_share( $post_id, $this->credentials->share_default_for( (string) get_post_type( $post_id ) ) ) ) {
 			return __( 'Sdílení je u tohoto příspěvku vypnuté přepínačem v metaboxu Facebook.', 'kct' );
 		}
 
@@ -720,27 +799,58 @@ class FacebookShare {
 	 * Sdílení by pak nikdy nic neodeslalo.
 	 */
 	private function register_metabox(): void {
-		$this->wcf->create_metabox( array(
-			'id'         => 'kct_facebook',
-			'title'      => __( 'Facebook', 'kct' ),
-			'post_types' => $this->post_types(),
-			'context'    => 'side',
-			'priority'   => 'default',
-			'items'      => array(
-				array(
-					'type'    => 'toggle',
-					'id'      => ShareState::META_SHARE,
-					'label'   => __( 'Sdílet na Facebook', 'kct' ),
-					'default' => $this->credentials->share_by_default(),
-				),
-				array(
-					'type'  => 'textarea',
-					'id'    => ShareState::META_MESSAGE,
-					'label' => __( 'Text příspěvku', 'kct' ),
-					'desc'  => __( 'Necháte-li prázdné, použije se automaticky složený text.', 'kct' ),
-				),
+		// Dva metaboxy místo jednoho: liší se výchozí hodnota přepínače
+		// (jiné nastavení pro aktuality a pro akce) i skladba polí (počet dní
+		// jen u akcí), a to jedním voláním create_metabox() nejde.
+		foreach ( $this->post_types() as $post_type ) {
+			$this->wcf->create_metabox( array(
+				'id'         => 'kct_facebook_' . $post_type,
+				'title'      => __( 'Facebook', 'kct' ),
+				'post_types' => array( $post_type ),
+				'context'    => 'side',
+				'priority'   => 'default',
+				'items'      => $this->metabox_items( $post_type ),
+			) );
+		}
+	}
+
+	/**
+	 * Pole metaboxu pro daný typ obsahu.
+	 *
+	 * @return array<int, array<string, mixed>>
+	 */
+	private function metabox_items( string $post_type ): array {
+		$items = array(
+			array(
+				'type'    => 'toggle',
+				'id'      => ShareState::META_SHARE,
+				'label'   => __( 'Sdílet na Facebook', 'kct' ),
+				'default' => $this->credentials->share_default_for( $post_type ),
 			),
-		) );
+			array(
+				'type'  => 'textarea',
+				'id'    => ShareState::META_MESSAGE,
+				'label' => __( 'Text příspěvku', 'kct' ),
+				'desc'  => __( 'Necháte-li prázdné, použije se automaticky složený text.', 'kct' ),
+			),
+		);
+
+		if ( EventPostType::KEY === $post_type ) {
+			$items[] = array(
+				'type'  => 'number',
+				'id'    => ShareState::META_LEAD_DAYS,
+				'label' => __( 'Kolik dní předem', 'kct' ),
+				'desc'  => sprintf(
+					/* translators: %d: výchozí počet dní z nastavení webu. */
+					__( 'Necháte-li prázdné, použije se nastavení webu (%d dní).', 'kct' ),
+					$this->schedule->lead_days()
+				),
+				'min'   => 0,
+				'max'   => 365,
+			);
+		}
+
+		return $items;
 	}
 
 	/**
@@ -817,6 +927,129 @@ class FacebookShare {
 			ShareState::META_TIME     => 'integer',
 			ShareState::META_ERROR    => 'array',
 			ShareState::META_ATTEMPTS => 'integer',
+			ShareState::META_LEAD_DAYS => 'integer',
 		);
+	}
+
+	/**
+	 * Má se výsledek odeslání fotky brát jako konečný?
+	 *
+	 * Úspěch samozřejmě ano. U neúspěchu záleží na tom, jestli Facebook
+	 * odpověděl:
+	 *
+	 * - **Odpověděl a odmítl** (kód > 0) — fotka se mu z nějakého důvodu
+	 *   nelíbí a opakovat ji nemá smysl; odešle se odkaz, ať sdílení proběhne
+	 *   aspoň takhle. Bez toho by trvale odmítaný příspěvek po vyčerpání
+	 *   RETRY_DELAYS zůstal nesdílený úplně.
+	 * - **Neodpověděl** (kód 0, tedy chyba spojení nebo časový limit) — pak
+	 *   se neví, jestli příspěvek na zdi vznikl, nebo ne. Odeslat po tom ještě
+	 *   odkaz by mohlo znamenat dva příspěvky za sebou. Necháme to spadnout do
+	 *   běžného opakování, které je oproti tomu chráněné kontrolou
+	 *   is_shared().
+	 *
+	 * Neplatný token je výjimka v druhou stranu: odkaz by dopadl úplně stejně,
+	 * takže se jím neplýtvá a rovnou se to předá obsluze chyb, která kvůli
+	 * němu vypíše upozornění do administrace.
+	 *
+	 * @param array{ok: bool, code?: int, message?: string} $result
+	 */
+	private function keep_photo_result( array $result ): bool {
+		if ( ! empty( $result['ok'] ) ) {
+			return true;
+		}
+
+		$code = (int) ( $result['code'] ?? 0 );
+
+		if ( 0 === $code || GraphClient::ERROR_INVALID_TOKEN === $code ) {
+			return true;
+		}
+
+		error_log( sprintf(
+			'kct: Facebook odmítl fotku (%d: %s), zkouším odkazem.',
+			$code,
+			(string) ( $result['message'] ?? '' )
+		) );
+
+		return false;
+	}
+
+	/**
+	 * Adresa sdílecího obrázku 4:5, nebo null.
+	 *
+	 * Null znamená „pošli to odkazem jako dřív" — sdílení se kvůli obrázku
+	 * nesmí neuskutečnit.
+	 */
+	private function social_image( WP_Post $post ): ?string {
+		$result = PostPostType::KEY === $post->post_type
+			? $this->og_images->social_for_post( (int) $post->ID )
+			: $this->og_images->social_for_event_post( (int) $post->ID );
+
+		return $result['url'] ?? null;
+	}
+
+	/**
+	 * Přeplánuje odeslání akce, které se posunul termín.
+	 *
+	 * Neplatí pro akci, která už odeslaná je — poslat pozvánku podruhé kvůli
+	 * opravě překlepu v místě startu by bylo horší než tu opravu neudělat.
+	 *
+	 * @param int     $post_id ID příspěvku.
+	 * @param WP_Post $post    Příspěvek.
+	 */
+	public function reschedule( $post_id, $post ): void {
+		if ( ! $post instanceof WP_Post || 'publish' !== $post->post_status ) {
+			return;
+		}
+
+		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+			return;
+		}
+
+		if ( ! $this->credentials->is_configured() || $this->state->is_shared( (int) $post_id ) ) {
+			return;
+		}
+
+		wp_clear_scheduled_hook( self::CRON_HOOK, array( (int) $post_id ) );
+		wp_schedule_single_event( time() + self::DELAY, self::CRON_HOOK, array( (int) $post_id ) );
+	}
+
+	/**
+	 * Přepsání počtu dní u konkrétní akce, nebo null.
+	 *
+	 * Prázdné pole znamená „použij nastavení webu", ne „nula dní" — proto se
+	 * prázdná hodnota rozlišuje od vyplněné nuly.
+	 */
+	private function lead_override( int $post_id ): ?int {
+		$value = get_post_meta( $post_id, ShareState::META_LEAD_DAYS, true );
+
+		return is_numeric( $value ) ? (int) $value : null;
+	}
+
+	/**
+	 * Řádek do metaboxu: kdy se akce odešle.
+	 *
+	 * Prázdný řetězec u aktuality a u akce, která je už odeslaná — tam by to
+	 * bylo jen šum.
+	 */
+	public function schedule_note( WP_Post $post ): string {
+		if ( EventPostType::KEY !== $post->post_type || $this->state->is_shared( (int) $post->ID ) ) {
+			return '';
+		}
+
+		$target = $this->schedule->target_for_event(
+			$this->events->get_event( $post->ID, '' ),
+			$this->lead_override( (int) $post->ID )
+		);
+
+		if ( null === $target ) {
+			return __( 'Akce už proběhla, na Facebook se neodešle.', 'kct' );
+		}
+
+		if ( $target <= time() + self::SCHEDULE_TOLERANCE ) {
+			return __( 'Odešle se během několika minut.', 'kct' );
+		}
+
+		/* translators: %s: datum a čas odeslání. */
+		return sprintf( __( 'Odešle se %s.', 'kct' ), wp_date( 'j. n. Y \v H:i', $target ) );
 	}
 }

@@ -19,12 +19,14 @@ class ShareMetabox {
 	const ID = 'kct_facebook_status';
 
 	/**
-	 * @param ShareState $state      Čtení stavu odeslání.
-	 * @param string[]   $post_types Typy příspěvků, u kterých se box registruje.
+	 * @param ShareState                   $state      Stav odeslání.
+	 * @param array                        $post_types Typy obsahu, u kterých se metabox zobrazí.
+	 * @param callable(\WP_Post): string   $note       Vrátí řádek o plánovaném odeslání, nebo prázdný řetězec.
 	 */
 	public function __construct(
 		private ShareState $state,
-		private array $post_types
+		private array $post_types,
+		private $note
 	) {
 		add_action( 'add_meta_boxes', array( $this, 'register' ), 10, 2 );
 	}
@@ -46,7 +48,15 @@ class ShareMetabox {
 			return;
 		}
 
-		if ( ! $this->state->is_shared( $post->ID ) && ! $this->state->error( $post->ID ) ) {
+		// Box se ukáže i u příspěvku, který se teprve chystá odejít — u akce je
+		// to právě ta informace, kvůli které vznikl: kdy se odešle. Dřív se
+		// registroval jen u odeslaného nebo chybného, takže u čerstvé akce
+		// (tedy v tom nejběžnějším případě) se neukázal vůbec.
+		if (
+			! $this->state->is_shared( $post->ID )
+			&& ! $this->state->error( $post->ID )
+			&& '' === ( $this->note )( $post )
+		) {
 			return;
 		}
 
@@ -71,7 +81,21 @@ class ShareMetabox {
 			return;
 		}
 
-		$this->render_error( $post );
+		// Podmíněně: render_error() počítá s tím, že chyba existuje, a bez ní
+		// by vypsal „Odeslání selhalo:" s prázdným důvodem. Od chvíle, kdy se
+		// box registruje i kvůli plánovanému odeslání, se sem dostane
+		// i příspěvek, u kterého žádná chyba není.
+		if ( $this->state->error( $post->ID ) ) {
+			$this->render_error( $post );
+		}
+
+		// Řádek o plánovaném odeslání se vypisuje jen u neodeslaného
+		// příspěvku — u odeslaného už je nahoře datum odeslání a odkaz.
+		$note = ( $this->note )( $post );
+
+		if ( '' !== $note ) {
+			printf( '<p class="description">%s</p>', esc_html( $note ) );
+		}
 	}
 
 	/**

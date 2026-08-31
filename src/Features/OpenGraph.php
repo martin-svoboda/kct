@@ -17,8 +17,12 @@ use WP_User;
 class OpenGraph {
 	/**
 	 * @param Credentials $credentials Konfigurace sdílení, odsud se čte výchozí obrázek.
+	 * @param OgImages    $og_images   Vlastní sdílecí obrázky.
 	 */
-	public function __construct( private Credentials $credentials ) {
+	public function __construct(
+		private Credentials $credentials,
+		private OgImages $og_images
+	) {
 		add_action( 'wp_head', array( $this, 'render' ), 5 );
 	}
 
@@ -291,27 +295,34 @@ class OpenGraph {
 	}
 
 	/**
-	 * Náhledový obrázek: featured image příspěvku, jinak výchozí obrázek z nastavení.
+	 * Náhledový obrázek: vlastní sdílecí karta, jinak featured image příspěvku.
 	 *
 	 * Velikost 'full': registrovaná velikost by WordPress prohnal přes
 	 * image_constrain_size_for_editor() a omezil ji na $content_width tématu
 	 * (640 px) — pod doporučenými 1200×630 pro Facebook, který si kartu
 	 * skládá z deklarovaných rozměrů ještě před stažením obrázku.
 	 *
-	 * Bez SEO pluginu se default_image_id() čte z nastavení na každém
-	 * requestu bez cache — transient s invalidací by se hodil, až provoz webu
-	 * tenhle dotaz navíc skutečně zatíží.
-	 *
 	 * @param WP_Post|null $post Zobrazený příspěvek, nebo null mimo singulární stránku.
 	 *
 	 * @return array{0: string, 1: int, 2: int}|null
 	 */
 	private function image_url( ?WP_Post $post ): ?array {
-		$attachment_id = $post instanceof WP_Post ? get_post_thumbnail_id( $post ) : 0;
+		// Vlastní sdílecí obrázek má přednost — nese titulek, kategorii a datum
+		// (u akce start, cíl a pořadatele), na rozdíl od holého náhledu.
+		//
+		// Akce se řeší tady proto, že Seo\StandaloneOutput se na CPT stránce
+		// úmyslně nezapojuje a nechává tagy na téhle feature.
+		if ( $post instanceof WP_Post ) {
+			$own = 'post' === $post->post_type
+				? $this->og_images->for_post( (int) $post->ID )
+				: $this->og_images->for_event_post( (int) $post->ID );
 
-		if ( ! $attachment_id ) {
-			$attachment_id = $this->credentials->default_image_id();
+			if ( $own ) {
+				return array( $own['url'], $own['width'], $own['height'] );
+			}
 		}
+
+		$attachment_id = $post instanceof WP_Post ? get_post_thumbnail_id( $post ) : 0;
 
 		if ( ! $attachment_id ) {
 			return null;

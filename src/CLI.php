@@ -127,7 +127,12 @@ class CLI extends WP_CLI_Command {
 		}
 
 		$composer = kct_container()->get( MessageComposer::class );
+		// Dva tvary textu: fotopříspěvek nese odkaz v textu (nemá klikací
+		// náhledovou kartu), odkazový příspěvek ho dostane zvlášť v poli
+		// `link`. Kdyby se použil jeden pro obojí, byl by odkaz buď dvakrát,
+		// nebo vůbec.
 		$message  = $composer->compose( $post );
+		$photo_message = $composer->compose_with_link( $post );
 		$link     = $composer->link( $post );
 
 		if ( '' === trim( $message ) ) {
@@ -152,7 +157,7 @@ class CLI extends WP_CLI_Command {
 		$before = $share->snapshot( $post_id );
 
 		if ( $force ) {
-			$this->fb_share_forced( $post_id, $message, $link );
+			$this->fb_share_forced( $post_id, $message, $photo_message, $link );
 		} else {
 			$share->share( $post_id );
 		}
@@ -176,7 +181,7 @@ class CLI extends WP_CLI_Command {
 	 * @param string      $message Text příspěvku.
 	 * @param string|null $link    Odkaz pro náhledovou kartu, nebo null.
 	 */
-	private function fb_share_forced( int $post_id, string $message, ?string $link ): void {
+	private function fb_share_forced( int $post_id, string $message, string $photo_message, ?string $link ): void {
 		$credentials = kct_container()->get( Credentials::class );
 
 		if ( ! $credentials->is_configured() ) {
@@ -191,12 +196,16 @@ class CLI extends WP_CLI_Command {
 		}
 
 		try {
-			$result = kct_container()->get( GraphClient::class )->publish(
-				$credentials->page_id(),
-				$credentials->token(),
-				$message,
-				$link
-			);
+			$images = kct_container()->get( \Kct\Features\OgImages::class );
+			$image  = \Kct\PostTypes\PostPostType::KEY === get_post_type( $post_id )
+				? $images->social_for_post( $post_id )
+				: $images->social_for_event_post( $post_id );
+
+			$client = kct_container()->get( GraphClient::class );
+
+			$result = empty( $image['url'] )
+				? $client->publish( $credentials->page_id(), $credentials->token(), $message, $link )
+				: $client->publish_photo( $credentials->page_id(), $credentials->token(), $photo_message, $image['url'] );
 
 			if ( empty( $result['ok'] ) ) {
 				$state->mark_error( $post_id, (int) $result['code'], (string) $result['message'] );
@@ -501,6 +510,111 @@ class CLI extends WP_CLI_Command {
 		} else {
 			WP_CLI::log( $message );
 			WP_CLI::log( __( 'Nic se nesmazalo. Spusť znovu s --write.', 'kct' ) );
+		}
+	}
+
+	/**
+	 * Vyrobí sdílecí obrázky příspěvků a akcí.
+	 *
+	 * Ve výchozím stavu jen vypíše, co by udělal. Prochází všechny weby v síti.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--write]
+	 * : Opravdu obrázky vyrobit a uložit.
+	 *
+	 * [--site=<id>]
+	 * : Jen jeden web sítě.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp kct og_images
+	 *     wp kct og_images --write
+	 *     wp kct og_images --write --site=1
+	 */
+	public function og_images( $args, $assoc_args ) {
+		$write = ! empty( $assoc_args['write'] );
+		$only  = isset( $assoc_args['site'] ) ? (int) $assoc_args['site'] : 0;
+		$sites = $only ? array( $only ) : get_sites( array( 'number' => 0, 'fields' => 'ids' ) );
+
+		WP_CLI::log( $write
+			? __( 'Vyrábím sdílecí obrázky …', 'kct' )
+			: __( 'Nanečisto (vyrobení zapneš přepínačem --write) …', 'kct' ) );
+
+		$total = 0;
+		$failed = 0;
+
+		foreach ( $sites as $site_id ) {
+			switch_to_blog( $site_id );
+
+			$og     = kct_container()->get( \Kct\Features\OgImages::class );
+			$events = kct_container()->get( Events::class );
+			$made   = 0;
+
+			$post_ids = get_posts( array(
+				'post_type'      => 'post',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			) );
+
+			foreach ( $post_ids as $post_id ) {
+				if ( ! $write ) {
+					$made++;
+					continue;
+				}
+
+				if ( $og->for_post( (int) $post_id ) ) {
+					$made++;
+				} else {
+					$failed++;
+				}
+			}
+
+			foreach ( $events->get_events() as $event ) {
+				if ( ! $write ) {
+					$made++;
+					continue;
+				}
+
+				if ( $og->for_event( $event ) ) {
+					$made++;
+				} else {
+					$failed++;
+				}
+			}
+
+			if ( $made ) {
+				WP_CLI::log( sprintf(
+					'  %-30s %5d',
+					parse_url( get_home_url( $site_id ), PHP_URL_HOST ),
+					$made
+				) );
+			}
+
+			$total += $made;
+
+			restore_current_blog();
+		}
+
+		if ( $failed ) {
+			WP_CLI::log( sprintf(
+				/* translators: %d: počet objektů. */
+				__( 'U %d objektů se obrázek nevyrobil (chybí datum nebo fotka se nedá načíst).', 'kct' ),
+				$failed
+			) );
+		}
+
+		$message = sprintf(
+			/* translators: %d: počet obrázků. */
+			__( 'Obrázků: %d.', 'kct' ),
+			$total
+		);
+
+		if ( $write ) {
+			WP_CLI::success( $message );
+		} else {
+			WP_CLI::log( $message . ' ' . __( 'Nic se nezapsalo.', 'kct' ) );
 		}
 	}
 }

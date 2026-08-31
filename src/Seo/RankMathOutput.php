@@ -40,6 +40,34 @@ class RankMathOutput implements EventSeoOutput {
 		// nevšiml, protože ve schematu by prostě zase stálo jméno oblasti.
 		add_filter( 'rank_math/json_ld', array( $this, 'filter_event_organizer' ), PHP_INT_MAX );
 
+		// Sdílecí obrázek se registruje pro OBA případy, tedy i pro CPT
+		// příspěvek — na rozdíl od titulku a popisku níž. Důvod: /akce-db/{id}
+		// převedené akce trvale přesměrovává na /akce/{slug}/, takže právě CPT
+		// stránka je ta, kterou lidi sdílí. Kdyby se filtr registroval jen na
+		// virtuální stránce, převedené akce by jako jediné zůstaly bez karty.
+		//
+		// Kontrolu editorovi to nebere: karta se skládá z dat akce a případný
+		// vlastní náhledový obrázek v ní zůstává jako pozadí.
+		//
+		// `image`, ne `og_image`: og_image filtruje až finální hodnotu tagu a
+		// ten se vypíše, jen když Image třída už nějaký obrázek našla. Bez
+		// vlastního obrázku, výchozího OG obrázku v nastavení Rank Mathu i
+		// featured image (virtuální stránka žádný post nemá) žádný neexistuje
+		// a tag se nevypíše vůbec, takže by se pozdní filtr nikdy nezavolal.
+		// `image` je dřívější filtr uvnitř Image::add_image() — ten proběhne
+		// vždycky, i bez nalezeného obrázku (viz komentář „This allows … filter
+		// to be used even if no image is set“ v Rank Mathu).
+		add_filter( 'rank_math/opengraph/facebook/image', array( $this, 'filter_image' ) );
+		add_filter( 'rank_math/opengraph/twitter/image', array( $this, 'filter_image' ) );
+
+		// Rozměry. Filtr `image` bere jen URL, takže Rank Math u dosazeného
+		// obrázku nezná šířku ani výšku a og:image:width/height nevypíše —
+		// Facebook pak náhled při prvním sdílení nevykreslí, dokud si obrázek
+		// sám nestáhne. `image_array` běží hned za ním nad celým polem a
+		// Image::image_meta() z něj rozměry vypíše (class-image.php).
+		add_filter( 'rank_math/opengraph/facebook/image_array', array( $this, 'filter_image_array' ) );
+		add_filter( 'rank_math/opengraph/twitter/image_array', array( $this, 'filter_image_array' ) );
+
 		// U CPT příspěvku skládá titulek, popisek i kanonickou adresu Rank Math
 		// správně (a redakce je může ručně přepsat) — přepisovat je by editorovi
 		// sebralo kontrolu. Registruje se proto jen JSON-LD (výše). Ten ale i
@@ -71,18 +99,6 @@ class RankMathOutput implements EventSeoOutput {
 
 		add_filter( 'rank_math/opengraph/twitter/twitter_title', array( $this, 'filter_title' ) );
 		add_filter( 'rank_math/opengraph/twitter/twitter_description', array( $this, 'filter_description' ) );
-
-		// og_image/twitter_image filtrují až finální hodnotu tagu — ten se ale
-		// vypíše, jen když Image třída už nějaký obrázek našla. Bez vlastního
-		// obrázku, výchozího OG obrázku v nastavení Rank Mathu i featured image
-		// (virtuální stránka žádný post nemá) žádný neexistuje a tag se
-		// nevypíše vůbec, takže by se pozdní filtr nikdy nezavolal. `image` je
-		// dřívější filtr uvnitř Image::add_image() — ten proběhne vždycky,
-		// i bez nalezeného obrázku (viz komentář „This allows … filter to be
-		// used even if no image is set“ v Rank Mathu), takže je to jediné
-		// spolehlivé místo pro doplnění obrázku.
-		add_filter( 'rank_math/opengraph/facebook/image', array( $this, 'filter_image' ) );
-		add_filter( 'rank_math/opengraph/twitter/image', array( $this, 'filter_image' ) );
 	}
 
 	/**
@@ -231,6 +247,35 @@ class RankMathOutput implements EventSeoOutput {
 	 */
 	public function filter_image( $image ) {
 		return $this->image_url() ?: $image;
+	}
+
+	/**
+	 * Doplní k dosazenému obrázku jeho rozměry.
+	 *
+	 * Sahá jen na pole, jehož URL je obrázek akce — u cizího obrázku by
+	 * rozměry z EventSeoData byly lež.
+	 *
+	 * @param array $attachment Pole obrázku od Rank Mathu.
+	 *
+	 * @return array
+	 */
+	public function filter_image_array( $attachment ) {
+		if ( ! is_array( $attachment ) ) {
+			return $attachment;
+		}
+
+		$image = $this->data->image( $this->event );
+
+		if ( empty( $image['url'] ) || ( $attachment['url'] ?? '' ) !== $image['url'] ) {
+			return $attachment;
+		}
+
+		if ( $image['width'] && $image['height'] ) {
+			$attachment['width']  = $image['width'];
+			$attachment['height'] = $image['height'];
+		}
+
+		return $attachment;
 	}
 
 	/**

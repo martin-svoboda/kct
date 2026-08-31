@@ -25,6 +25,9 @@ class EventSeoData {
 	 */
 	const EVENT_DESCRIPTION_LIMIT = 500;
 
+	public function __construct( private \Kct\Features\OgImages $og_images ) {
+	}
+
 	/**
 	 * Titulek stránky bez názvu webu — ten doplní Rank Math ze šablony.
 	 *
@@ -206,6 +209,20 @@ class EventSeoData {
 	 * @return array{url: string, width: int, height: int}
 	 */
 	public function image( array $event ): array {
+		// Vlastní sdílecí obrázek má přednost před fotkou z importu i před
+		// logem — nese titulek, datum a data akce, takže odkaz na sociální
+		// síti vypadá jako akce, ne jako obrázek.
+		//
+		// Navíc u něj známe rozměry. Fotka z importu je vzdálená URL a
+		// width/height jsou nula, takže StandaloneOutput og:image:width vůbec
+		// nevypíše a Facebook náhled při prvním sdílení nevykreslí, dokud si
+		// obrázek sám nestáhne.
+		$own = $this->og_images->for_event( $event );
+
+		if ( $own ) {
+			return $own;
+		}
+
 		$url = $this->text( $event['image']['url'] ?? '' );
 
 		if ( $url ) {

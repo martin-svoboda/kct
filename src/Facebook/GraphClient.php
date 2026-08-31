@@ -49,6 +49,44 @@ class GraphClient {
 	}
 
 	/**
+	 * Publikuje na zeď stránky fotku s popiskem.
+	 *
+	 * Obrázek se nenahrává — předá se jeho veřejná adresa a Facebook si ho
+	 * stáhne sám. Z toho plyne, že se to nedá vyzkoušet z lokálního vývoje:
+	 * na sokct.test Facebook nedosáhne.
+	 *
+	 * Endpoint vrací dvě různá ID: `id` je identifikátor fotky, `post_id`
+	 * identifikátor příspěvku na zdi. Ukládá se ten druhý, protože z něj
+	 * Facebook\ShareMetabox staví odkaz na příspěvek — s ID fotky by odkaz
+	 * nefungoval, a to tiše, protože odeslání by proběhlo v pořádku. Volajícím
+	 * se vrací pod klíčem `id`, aby se nemusely měnit.
+	 *
+	 * @return array{ok: bool, id?: string, code?: int, message?: string}
+	 */
+	public function publish_photo( string $page_id, string $token, string $message, string $image_url ): array {
+		$response = wp_remote_post(
+			self::API_URL . self::API_VERSION . '/' . $page_id . '/photos',
+			array(
+				'timeout' => self::TIMEOUT,
+				'body'    => array(
+					'message'      => $message,
+					'url'          => $image_url,
+					'access_token' => $token,
+				),
+			)
+		);
+
+		$result = $this->parse( $response, 'post_id' );
+
+		if ( ! empty( $result['ok'] ) ) {
+			$result['id'] = $result['post_id'];
+			unset( $result['post_id'] );
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Ověří token a vrátí název připojené stránky.
 	 *
 	 * Token se posílá v hlavičce Authorization, ne v query stringu — ten by

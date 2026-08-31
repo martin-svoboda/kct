@@ -257,11 +257,6 @@ add_action( 'admin_head', 'kct_token_overrides' );
 add_filter( 'body_class', function ( $classes ) {
 	$classes[] = 'skin-' . kct_active_skin();
 
-	// Průhledné menu přes obsah — dle nastavení stránky/příspěvku.
-	if ( is_singular() && get_post_meta( get_queried_object_id(), '_kct_transparent_header', true ) === '1' ) {
-		$classes[] = 'header-transparent';
-	}
-
 	// Detail příspěvku má hero; průhledné menu přes něj dle Customizeru.
 	if ( is_singular( 'post' ) ) {
 		$classes[] = 'single-post-hero';
@@ -305,48 +300,6 @@ add_filter( 'body_class', function ( $classes ) {
 	}
 
 	return $classes;
-} );
-
-/**
- * Nastavení stránky/příspěvku — přepínač „Průhledné menu přes obsah".
- * Default = vypnuto (netransparentní hlavička).
- */
-add_action( 'add_meta_boxes', function () {
-	add_meta_box(
-		'kct_page_options',
-		__( 'Nastavení šablony KČT', 'kct' ),
-		'kct_page_options_metabox',
-		array( 'page', 'post' ),
-		'side',
-		'default'
-	);
-} );
-
-function kct_page_options_metabox( $post ) {
-	wp_nonce_field( 'kct_page_options', 'kct_page_options_nonce' );
-	$transparent = get_post_meta( $post->ID, '_kct_transparent_header', true );
-	?>
-	<p>
-		<label>
-			<input type="checkbox" name="kct_transparent_header" value="1" <?php checked( $transparent, '1' ); ?>>
-			<?php esc_html_e( 'Průhledné menu přes obsah', 'kct' ); ?>
-		</label>
-	</p>
-	<p class="description"><?php esc_html_e( 'Hlavička je průhledná přes horní obsah (např. hero) a při scrollu se podbarví. Vhodné pro stránky s úvodním obrázkem nahoře.', 'kct' ); ?></p>
-	<?php
-}
-
-add_action( 'save_post', function ( $post_id ) {
-	if ( ! isset( $_POST['kct_page_options_nonce'] ) || ! wp_verify_nonce( $_POST['kct_page_options_nonce'], 'kct_page_options' ) ) {
-		return;
-	}
-	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
-		return;
-	}
-	if ( ! current_user_can( 'edit_post', $post_id ) ) {
-		return;
-	}
-	update_post_meta( $post_id, '_kct_transparent_header', isset( $_POST['kct_transparent_header'] ) ? '1' : '' );
 } );
 
 // Editor: náhled bloků ve zvoleném skinu + opravy layoutu editoru (po skinu).

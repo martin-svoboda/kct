@@ -8,6 +8,9 @@ namespace Kct\Facebook;
 class ShareState {
 	const META_SHARE    = 'kct_fb_share';
 	const META_MESSAGE  = 'kct_fb_message';
+
+	/** Přepsání počtu dní před akcí u konkrétní akce; prázdné = nastavení webu. */
+	const META_LEAD_DAYS = 'kct_fb_lead_days';
 	const META_POST_ID  = 'kct_fb_post_id';
 	const META_TIME     = 'kct_fb_shared_at';
 	const META_ERROR    = 'kct_fb_error';

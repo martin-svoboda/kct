@@ -53,11 +53,25 @@ final class Plugin {
 	 * Na multisite je odinstalace vždy síťová akce (jednotlivý web plugin
 	 * odinstalovat nemůže), takže se úklid pouští nad všemi weby sítě.
 	 */
+	/**
+	 * Odinstalace pluginu.
+	 *
+	 * ÚMYSLNĚ NEMAŽE ŽÁDNÁ DATA. Uklidí se jen běhové věci, které bez pluginu
+	 * nedávají smysl — naplánované cron události, krátkodobé transienty
+	 * a zámky odesílání. Nastavení ani stav sdílení u příspěvků zůstávají.
+	 *
+	 * Je to vědomá odchylka od konvence WordPressu, že odinstalace po sobě
+	 * uklidí i data. Důvod: běžný způsob ruční aktualizace je plugin smazat
+	 * a nahrát znovu. WordPress u smazání nijak nevaruje, že tím přijdete
+	 * o nastavení — ID stránky a token by se ztratily nenávratně a s nimi
+	 * i evidence odeslaných příspěvků. A protože se podle té evidence pozná,
+	 * co už na Facebooku je, znamenala by její ztráta, že se dřív sdílené
+	 * příspěvky odešlou na veřejnou stránku znovu.
+	 *
+	 * Zbytky v databázi jsou proti tomu zanedbatelná cena.
+	 */
 	public function uninstall() {
-		$this->for_each_site( true, function () {
-			$this->clear_runtime_data();
-			$this->delete_stored_data();
-		} );
+		$this->for_each_site( true, array( $this, 'clear_runtime_data' ) );
 	}
 
 	/**
@@ -78,47 +92,6 @@ final class Plugin {
 		$this->delete_options_by_prefix( ShareState::LOCK_PREFIX );
 	}
 
-	/**
-	 * Smaže data, která plugin uložil natrvalo: stav odeslání u příspěvků
-	 * a nastavení Facebooku.
-	 *
-	 * Maže se jen sekce Facebook, ne celá option `kct_options` — zbylá
-	 * nastavení (kód odboru) používá i zbytek webu a jejich smazání není
-	 * součástí této funkce.
-	 */
-	private function delete_stored_data(): void {
-		$meta_keys = array(
-			ShareState::META_SHARE,
-			ShareState::META_MESSAGE,
-			ShareState::META_POST_ID,
-			ShareState::META_TIME,
-			ShareState::META_ERROR,
-			ShareState::META_ATTEMPTS,
-		);
-
-		foreach ( $meta_keys as $meta_key ) {
-			delete_post_meta_by_key( $meta_key );
-		}
-
-		$options = get_option( Settings::KEY, array() );
-
-		if ( ! is_array( $options ) ) {
-			return;
-		}
-
-		$facebook_keys = array( 'fb_page_id', 'fb_page_token', 'fb_share_default', 'fb_default_image' );
-		$found         = array_intersect( $facebook_keys, array_keys( $options ) );
-
-		if ( ! $found ) {
-			return;
-		}
-
-		foreach ( $found as $key ) {
-			unset( $options[ $key ] );
-		}
-
-		update_option( Settings::KEY, $options );
-	}
 
 	/**
 	 * Smaže transienty začínající danou předponou.
