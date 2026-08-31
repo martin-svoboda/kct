@@ -5,7 +5,7 @@ namespace Kct\Facebook;
 /**
  * Jediné místo, které zná meta klíče sdílení na Facebook.
  */
-class ShareState {
+class ShareState implements ShareStore {
 	const META_SHARE    = 'kct_fb_share';
 	const META_MESSAGE  = 'kct_fb_message';
 

@@ -5,6 +5,7 @@ namespace Kct\Features;
 use Kct\Facebook\Credentials;
 use Kct\Facebook\GraphClient;
 use Kct\Facebook\MessageComposer;
+use Kct\Facebook\Publisher;
 use Kct\Facebook\ShareMetabox;
 use Kct\Facebook\ShareSchedule;
 use Kct\Facebook\ShareState;
@@ -91,7 +92,8 @@ class FacebookShare {
 		private ShareState $state,
 		private OgImages $og_images,
 		private ShareSchedule $schedule,
-		private Events $events
+		private Events $events,
+		private Publisher $publisher
 	) {
 		add_action( 'transition_post_status', array( $this, 'maybe_schedule' ), 10, 3 );
 
@@ -265,30 +267,12 @@ class FacebookShare {
 				return;
 			}
 
-			$image  = $this->social_image( $post );
-			$result = null;
-
-			if ( null !== $image ) {
-				$result = $this->client->publish_photo(
-					$this->credentials->page_id(),
-					$this->credentials->token(),
-					$this->composer->compose_with_link( $post ),
-					$image
-				);
-
-				if ( ! $this->keep_photo_result( $result ) ) {
-					$result = null;
-				}
-			}
-
-			if ( null === $result ) {
-				$result = $this->client->publish(
-					$this->credentials->page_id(),
-					$this->credentials->token(),
-					$this->composer->compose( $post ),
-					$this->composer->link( $post )
-				);
-			}
+			$result = $this->publisher->send(
+				$this->composer->compose( $post ),
+				$this->composer->compose_with_link( $post ),
+				$this->composer->link( $post ),
+				$this->social_image( $post )
+			);
 
 			if ( ! empty( $result['ok'] ) ) {
 				$this->state->mark_shared( $post->ID, (string) $result['id'] );
@@ -929,48 +913,6 @@ class FacebookShare {
 			ShareState::META_ATTEMPTS => 'integer',
 			ShareState::META_LEAD_DAYS => 'integer',
 		);
-	}
-
-	/**
-	 * Má se výsledek odeslání fotky brát jako konečný?
-	 *
-	 * Úspěch samozřejmě ano. U neúspěchu záleží na tom, jestli Facebook
-	 * odpověděl:
-	 *
-	 * - **Odpověděl a odmítl** (kód > 0) — fotka se mu z nějakého důvodu
-	 *   nelíbí a opakovat ji nemá smysl; odešle se odkaz, ať sdílení proběhne
-	 *   aspoň takhle. Bez toho by trvale odmítaný příspěvek po vyčerpání
-	 *   RETRY_DELAYS zůstal nesdílený úplně.
-	 * - **Neodpověděl** (kód 0, tedy chyba spojení nebo časový limit) — pak
-	 *   se neví, jestli příspěvek na zdi vznikl, nebo ne. Odeslat po tom ještě
-	 *   odkaz by mohlo znamenat dva příspěvky za sebou. Necháme to spadnout do
-	 *   běžného opakování, které je oproti tomu chráněné kontrolou
-	 *   is_shared().
-	 *
-	 * Neplatný token je výjimka v druhou stranu: odkaz by dopadl úplně stejně,
-	 * takže se jím neplýtvá a rovnou se to předá obsluze chyb, která kvůli
-	 * němu vypíše upozornění do administrace.
-	 *
-	 * @param array{ok: bool, code?: int, message?: string} $result
-	 */
-	private function keep_photo_result( array $result ): bool {
-		if ( ! empty( $result['ok'] ) ) {
-			return true;
-		}
-
-		$code = (int) ( $result['code'] ?? 0 );
-
-		if ( 0 === $code || GraphClient::ERROR_INVALID_TOKEN === $code ) {
-			return true;
-		}
-
-		error_log( sprintf(
-			'kct: Facebook odmítl fotku (%d: %s), zkouším odkazem.',
-			$code,
-			(string) ( $result['message'] ?? '' )
-		) );
-
-		return false;
 	}
 
 	/**

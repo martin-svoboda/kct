@@ -63,4 +63,15 @@ class SettingsRepository {
 			default => '',
 		};
 	}
+
+	/**
+	 * Zahodí nastavení drženou v paměti.
+	 *
+	 * Repozitář je v kontejneru singleton a options si drží po celý proces,
+	 * takže po switch_to_blog() by dál vracel nastavení předchozího webu —
+	 * včetně Page ID a tokenu Facebooku. Kdo přepíná weby, musí zavolat tohle.
+	 */
+	public function reset(): void {
+		$this->options = [];
+	}
 }

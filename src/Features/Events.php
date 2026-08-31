@@ -526,6 +526,36 @@ class Events {
 	}
 
 	/**
+	 * Vypisuje tenhle web tuhle akci?
+	 *
+	 * Je to totéž pravidlo, kterým get_events() filtruje výpis: web s
+	 * třímístným kódem je oblast a vidí celou oblast, se šestimístným je odbor
+	 * a vidí jen svoje. Sdílení na Facebook se řídí tímtéž — web smí odeslat
+	 * akci právě tehdy, když ji sám vypisuje.
+	 *
+	 * Bez vyplněného kódu web nevypisuje nic a nesdílí nic.
+	 *
+	 * @param array $event Pole akce, nebo model s vlastnostmi region/department.
+	 */
+	public function lists_event( $event ): bool {
+		$filter_val = $this->settings->get_option( 'id_code' );
+		$filter_by  = $this->settings->code_type();
+
+		if ( ! $filter_val || ! $filter_by ) {
+			return false;
+		}
+
+		$region     = is_array( $event ) ? ( $event['region'] ?? '' ) : ( $event->region ?? '' );
+		$department = is_array( $event ) ? ( $event['department'] ?? '' ) : ( $event->department ?? '' );
+
+		if ( 'region' === $filter_by ) {
+			return (string) $filter_val === (string) $region;
+		}
+
+		return (string) $filter_val === (string) $department;
+	}
+
+	/**
 	 * Retrieves event data based on the provided ID and database ID.
 	 *
 	 * This method retrieves event data from the custom post type if the ID is valid

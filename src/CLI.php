@@ -617,4 +617,73 @@ class CLI extends WP_CLI_Command {
 			WP_CLI::log( $message . ' ' . __( 'Nic se nezapsalo.', 'kct' ) );
 		}
 	}
+
+	/**
+	 * Vypíše nebo odešle databázové akce, kterým nastal den odeslání.
+	 *
+	 * Ve výchozím stavu jen vypisuje. Prochází všechny weby v síti.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--send]
+	 * : Opravdu odeslat na Facebook.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp kct fb_due
+	 *     wp kct fb_due --send
+	 */
+	public function fb_due( $args, $assoc_args ) {
+		$send  = ! empty( $assoc_args['send'] );
+		$sites = get_sites( array( 'number' => 0, 'fields' => 'ids' ) );
+
+		WP_CLI::log( $send
+			? __( 'Odesílám databázové akce …', 'kct' )
+			: __( 'Nanečisto (odeslání zapneš přepínačem --send) …', 'kct' ) );
+
+		$total = 0;
+
+		foreach ( $sites as $site_id ) {
+			switch_to_blog( $site_id );
+
+			// SettingsRepository drží nastavení v paměti po celý proces
+			// a kontejner je singleton — bez tohohle by všechny weby dostaly
+			// nastavení toho prvního, včetně cizího Page ID a tokenu.
+			kct_container()->get( \Kct\Repositories\SettingsRepository::class )->reset();
+
+			$feature = kct_container()->get( \Kct\Features\DbEventShare::class );
+			$due     = $feature->due();
+
+			if ( $due ) {
+				WP_CLI::log( sprintf( '  %s', parse_url( get_home_url( $site_id ), PHP_URL_HOST ) ) );
+			}
+
+			foreach ( $due as $event ) {
+				$ok = $send ? $feature->send( $event ) : true;
+
+				WP_CLI::log( sprintf(
+					'    %-8s %-44s %s',
+					$event['db_id'],
+					mb_substr( (string) $event['title'], 0, 42 ),
+					$send ? ( $ok ? 'odesláno' : 'CHYBA' ) : 'odeslalo by se'
+				) );
+
+				$total++;
+			}
+
+			restore_current_blog();
+		}
+
+		$message = sprintf(
+			/* translators: %d: počet akcí. */
+			__( 'Akcí: %d.', 'kct' ),
+			$total
+		);
+
+		if ( $send ) {
+			WP_CLI::success( $message );
+		} else {
+			WP_CLI::log( $message . ' ' . __( 'Nic se neodeslalo.', 'kct' ) );
+		}
+	}
 }

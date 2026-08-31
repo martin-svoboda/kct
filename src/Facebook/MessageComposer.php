@@ -100,35 +100,66 @@ class MessageComposer {
 
 		// Knihovna wpify/custom-fields umí skupinu polí uložit i jako objekt
 		// (stdClass) — Events::update_start_date() ošetřuje stejný případ ze
-		// stejného důvodu. Bez toho by is_array() selhalo, $start by zůstalo
-		// prázdné pole a fallback níž by vzal místo ze samostatné mety misto
-		// hodnoty, kterou redaktor skutečně vyplnil ve skupině 'start'.
+		// stejného důvodu.
 		if ( is_object( $start ) ) {
 			$start = (array) $start;
 		} elseif ( ! is_array( $start ) ) {
 			$start = array();
 		}
 
-		// U akcí importovaných z centrální databáze KČT je 'start.date' uložené
-		// jako prázdný řetězec a skutečné datum leží v samostatné metě 'date' —
-		// klíč v poli tedy existuje, jen je prázdný, takže by ho `??` nechalo
-		// být a na samostatnou metu vůbec nespadlo. Proto se testuje empty(),
-		// ne isset().
-		$date  = ! empty( $start['date'] ) ? $start['date'] : get_post_meta( $post->ID, 'date', true );
-		$time  = ! empty( $start['time'] ) ? $start['time'] : '';
-		$place = ! empty( $start['place'] ) ? $start['place'] : get_post_meta( $post->ID, 'place', true );
+		// U akcí importovaných z centrální databáze je 'start.date' prázdný
+		// řetězec a skutečné datum leží v samostatné metě 'date' — klíč tedy
+		// existuje, jen je prázdný, takže `??` by na ni nespadlo.
+		return $this->event_lines(
+			$post->post_title,
+			(string) ( ! empty( $start['date'] ) ? $start['date'] : get_post_meta( $post->ID, 'date', true ) ),
+			(string) ( ! empty( $start['time'] ) ? $start['time'] : '' ),
+			(string) ( ! empty( $start['place'] ) ? $start['place'] : get_post_meta( $post->ID, 'place', true ) ),
+			$this->excerpt( $post, self::MAX_EXCERPT )
+		);
+	}
 
-		$lines = array( $post->post_title );
+	/**
+	 * Text pozvánky na databázovou akci.
+	 *
+	 * Tytéž hodnoty jako u CPT akce, jen z pole místo z post meta. Formát
+	 * skládá společná event_lines(), aby se obě cesty nerozešly.
+	 *
+	 * @param array $event Pole akce z Features\Events::get_event().
+	 */
+	public function db_event_message( array $event ): string {
+		$start = is_array( $event['start'] ?? null ) ? $event['start'] : array();
 
-		if ( ! empty( $date ) ) {
+		$excerpt = trim( wp_strip_all_tags( (string) ( $event['content'] ?? '' ) ) );
+
+		if ( mb_strlen( $excerpt ) > self::MAX_EXCERPT ) {
+			$excerpt = mb_substr( $excerpt, 0, self::MAX_EXCERPT ) . '…';
+		}
+
+		return $this->event_lines(
+			(string) ( $event['title'] ?? '' ),
+			(string) ( ! empty( $start['date'] ) ? $start['date'] : ( $event['date'] ?? '' ) ),
+			(string) ( ! empty( $start['time'] ) ? $start['time'] : '' ),
+			(string) ( ! empty( $start['place'] ) ? $start['place'] : ( $event['place'] ?? '' ) ),
+			$excerpt
+		);
+	}
+
+	/**
+	 * Společný formát pozvánky: titulek, kdy, kde, perex.
+	 */
+	private function event_lines( string $title, string $date, string $time, string $place, string $excerpt ): string {
+		$lines = array( $title );
+
+		if ( '' !== $date ) {
 			$lines[] = sprintf(
 				/* translators: %s: naformátované datum (a případně čas) začátku akce. */
 				__( 'Kdy: %s', 'kct' ),
-				$this->format_event_date( (string) $date, (string) $time )
+				$this->format_event_date( $date, $time )
 			);
 		}
 
-		if ( ! empty( $place ) ) {
+		if ( '' !== $place ) {
 			$lines[] = sprintf(
 				/* translators: %s: místo konání akce. */
 				__( 'Kde: %s', 'kct' ),
@@ -136,14 +167,36 @@ class MessageComposer {
 			);
 		}
 
-		$excerpt = $this->excerpt( $post, self::MAX_EXCERPT );
-
 		if ( '' !== $excerpt ) {
 			$lines[] = '';
 			$lines[] = $excerpt;
 		}
 
 		return implode( "\n", $lines );
+	}
+
+	/**
+	 * Text databázové akce i s odkazem na konci — pro sdílení fotkou.
+	 *
+	 * @param array $event Pole akce z Features\Events::get_event().
+	 */
+	public function db_event_message_with_link( array $event ): string {
+		$link = $this->db_event_link( $event );
+
+		return null === $link
+			? $this->db_event_message( $event )
+			: $this->db_event_message( $event ) . "\n\n" . $link;
+	}
+
+	/**
+	 * Odkaz na detail databázové akce, nebo null bez db_id.
+	 *
+	 * @param array $event Pole akce z Features\Events::get_event().
+	 */
+	public function db_event_link( array $event ): ?string {
+		$db_id = (int) ( $event['db_id'] ?? 0 );
+
+		return $db_id ? home_url( 'akce-db/' . $db_id ) : null;
 	}
 
 	/**

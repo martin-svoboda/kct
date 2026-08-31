@@ -65,6 +65,23 @@ class DbEventModel extends Model {
 	#[Column( type: Column::JSON, nullable: true )]
 	public array $proposal = array();
 
+	/**
+	 * Stav odeslání na Facebook, klíčovaný ID webu.
+	 *
+	 * Tabulka je jedna pro celou síť a tatáž akce se objevuje na oblastním
+	 * i odborovém webu — každý má vlastní facebookovou stránku, takže stav
+	 * musí být per web:
+	 *
+	 *     { "1": { "sent": 1756630800, "fb": "3113…_1223…" },
+	 *       "2": { "off": true } }
+	 *
+	 * ČTE se přes model, ale ZAPISUJE se mimo něj jedním atomickým příkazem
+	 * (viz Facebook\DbShareState). Kdyby se zapisovalo přes save(), přepsal by
+	 * si jeden web zápis druhého — oba tentýž řádek zpracovávají současně.
+	 */
+	#[Column( type: Column::JSON, nullable: true )]
+	public array $fb_share = array();
+
 	#[ReadOnlyProperty]
 	public string $permalink = '';
 

@@ -257,6 +257,8 @@ $kct_department_url = kct_container()->get( \Kct\Seo\DepartmentLink::class )->fo
 					), admin_url( 'admin-post.php' ) );
 
 					echo '<a class="" href="' . esc_url( $url ) . '">Převést na vlastní akci a upravit</a>';
+
+					echo kct_container()->get( \Kct\Features\DbEventShare::class )->control_html( $event );
 				}
 			} ?>
 		</div><!-- .entry-content -->
