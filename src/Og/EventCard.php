@@ -174,8 +174,12 @@ class EventCard implements Card {
 
 		// Fotka jen jako textura: sytost na 35 % a tma přes celou plochu.
 		// Zůstane z ní tvar a nálada, ne detail, který by konkuroval datům.
+		//
+		// Tma není plochá, ale přechod — nahoře 80 %, dole 100 %. Dole leží
+		// datový pás a titulek, tam musí být podklad úplně klidný; nahoře
+		// naopak nic není, tak se fotka nechá prosvítat.
 		$canvas->modulateImage( 100, 35, 100 );
-		$r->rect( $canvas, 0, 0, self::WIDTH, self::HEIGHT, 'rgba(13,25,38,0.82)' );
+		$r->gradient( $canvas, 'rgba(13,25,38,0.80)', 'rgba(13,25,38,1.0)', self::HEIGHT, 0 );
 
 		return $canvas;
 	}

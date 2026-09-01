@@ -23,17 +23,22 @@ class EventPosterCard implements Card {
 	 * s poznámkami a ještě tři řádky s délkami tras, a po zvětšení písma se to
 	 * do 540 px nevešlo — poslední poznámka narážela do linky nad trasami.
 	 */
-	private const PANEL_TOP = 700;
+	private const PANEL_TOP = 790;
 
 	private const QUALITY = 88;
 
-	private const TITLE_SIZE    = 62;
-	private const TITLE_LEADING = 72;
+	private const TITLE_SIZE    = 76;
+	private const TITLE_LEADING = 86;
 	private const TITLE_LINES   = 2;
 	private const TITLE_DESCENT = 16;
 
-	private const EYEBROW_SIZE = 27;
-	private const EYEBROW_GAP  = 70;
+	private const EYEBROW_SIZE = 30;
+	private const EYEBROW_GAP  = 84;
+
+	/** Účaří řádku s pořadatelem a místem, pod titulkem v tmavé ploše. */
+	private const ORGANISER_BASELINE = 748;
+
+	private const ORGANISER_SIZE = 30;
 
 	/**
 	 * Mezera mezi spodní hranou bloku s titulkem a horní hranou panelu.
@@ -41,36 +46,39 @@ class EventPosterCard implements Card {
 	 * Blok sahá do spodní části mapy — záměrně. Dřív visel v pruhu mezi mapou
 	 * a panelem, kde nepatřil ani k jednomu.
 	 */
-	private const BLOCK_GAP = 46;
+	/** Mezera mezi spodní hranou titulku a řádkem s pořadatelem. */
+	private const BLOCK_GAP = 90;
 
-	private const BADGE_W       = 128;
-	private const BADGE_W_RANGE = 190;
-	private const BADGE_H       = 156;
-	private const BADGE_HEAD_H  = 46;
+	private const BADGE_W       = 150;
+	private const BADGE_W_RANGE = 222;
+	private const BADGE_H       = 186;
+	private const BADGE_HEAD_H  = 54;
 	private const BADGE_RADIUS  = 14;
 	private const BADGE_GAP     = 30;
 
 	/** Výška pásu s mapou; 800×400 roztažené na šířku plátna. */
-	private const MAP_HEIGHT = 540;
+	private const MAP_HEIGHT = 500;
 
 	/** Přes kolik pixelů se spodní okraj mapy vytrácí do pozadí. */
-	private const MAP_FADE = 170;
+	private const MAP_FADE = 220;
 
-	private const ICON_SIZE = 36;
-	private const ICON_PAD  = 8;
-	private const ICON_GAP  = 6;
+	private const ICON_SIZE = 48;
+	private const ICON_PAD  = 10;
+	private const ICON_GAP  = 8;
 	private const ICON_MAX  = 4;
 
-	private const LABEL_SIZE = 26;
-	private const VALUE_SIZE = 40;
-	private const NOTE_SIZE  = 32;
+	private const LABEL_SIZE = 30;
+	private const VALUE_SIZE = 54;
+	private const NOTE_SIZE  = 31;
+
+	/** Mezera mezi sloupci START a CÍL. */
+	private const POINT_GAP = 44;
 
 	/** Šířka sloupce s popiskem v panelu; hodnota začíná za ním. */
-	private const LABEL_COLUMN = 250;
 
-	private const ROUTE_SIZE = 28;
-	private const ROUTE_ICON = 40;
-	private const ROUTE_STEP = 52;
+	private const ROUTE_SIZE = 34;
+	private const ROUTE_ICON = 50;
+	private const ROUTE_STEP = 64;
 	private const ROUTE_MAX  = 3;
 
 	public function __construct( private OgImageRenderer $renderer ) {
@@ -95,7 +103,8 @@ class EventPosterCard implements Card {
 	 *     month: int,
 	 *     date: array{head: string, day: string, month: string, end_day: string, end_month: string, is_range: bool},
 	 *     map: string,
-	 *     rows: array<int, array{label: string, value: string, note: string}>,
+	 *     organiser_line: string,
+	 *     points: array<int, array{label: string, value: string, note: string}>,
 	 *     routes: array<int, array{icon: string, text: string}>,
 	 *     icons: string[],
 	 *     logo: string
@@ -125,10 +134,11 @@ class EventPosterCard implements Card {
 
 		$this->draw_badge( $canvas, $data['date'], $badge_w, $bottom - self::BADGE_H );
 		$this->draw_title( $canvas, $eyebrow, $lines, $x, $bottom );
+		$this->draw_organiser( $canvas, $data['organiser_line'] );
 
 		$r->rect( $canvas, 0, self::PANEL_TOP, self::WIDTH, self::HEIGHT - self::PANEL_TOP, OgImageRenderer::WHITE );
 
-		$this->draw_rows( $canvas, $data['rows'] );
+		$this->draw_points( $canvas, $data['points'] );
 		$this->draw_routes( $canvas, $data['routes'] );
 
 		$r->strip( $canvas );
@@ -164,7 +174,10 @@ class EventPosterCard implements Card {
 		$canvas->compositeImage( $image, Imagick::COMPOSITE_OVER, 0, 0 );
 		$image->clear();
 
-		$r->rect( $canvas, 0, 0, self::WIDTH, self::MAP_HEIGHT, 'rgba(13,25,38,0.66)' );
+		// Mapa se ZÁMĚRNĚ neztmavuje plošně. Nese informaci — kde se akce koná —
+		// a pod tmou byla nečitelná. Text na ní neleží: titulek i pořadatel
+		// sedí až pod ní, v ploše, do které se mapa vytrácí přechodem. Ikony
+		// a logo mají vlastní světlý podklad, takže drží i na světlé mapě.
 		$r->gradient( $canvas, 'transparent', OgImageRenderer::INK, self::MAP_FADE, self::MAP_HEIGHT - self::MAP_FADE );
 		$r->gradient( $canvas, OgImageRenderer::INK, OgImageRenderer::INK_LIGHT, self::PANEL_TOP - self::MAP_HEIGHT, self::MAP_HEIGHT );
 	}
@@ -292,54 +305,82 @@ class EventPosterCard implements Card {
 	}
 
 	/**
-	 * Start, cíl a pořadatel jako řádky v panelu.
+	 * Pořadatel a místo jedním řádkem pod titulkem, ještě v tmavé ploše.
 	 *
-	 * Na kartě 1200×630 jsou to tři úzké sloupce a dlouhé názvy míst se v nich
-	 * ořezávají; na výšku je místo psát je pod sebe a vejdou se celé.
-	 *
-	 * @param array<int, array{label: string, value: string, note: string}> $rows
+	 * Nepatří do světlého panelu: panel nese to, co člověk potřebuje v den
+	 * akce (kdy a kam dorazit), kdežto pořadatel je kontext k titulku.
 	 */
-	private function draw_rows( Imagick $canvas, array $rows ): void {
-		$r    = $this->renderer;
-		$rows = array_values( array_filter( $rows, static fn( $row ) => '' !== $row['value'] ) );
-
-		if ( empty( $rows ) ) {
+	private function draw_organiser( Imagick $canvas, string $line ): void {
+		if ( '' === $line ) {
 			return;
 		}
 
-		$x     = OgImageRenderer::PAD;
-		$value = $x + self::LABEL_COLUMN;
-		$max   = self::WIDTH - $value - OgImageRenderer::PAD;
-		$y     = self::PANEL_TOP + 70;
+		$r   = $this->renderer;
+		$max = self::WIDTH - 2 * OgImageRenderer::PAD;
 
-		foreach ( $rows as $row ) {
-			$r->text( $canvas, OgImageRenderer::BODY_BOLD, self::LABEL_SIZE, OgImageRenderer::MUTED, $x, $y, $row['label'] );
+		$r->text(
+			$canvas,
+			OgImageRenderer::BODY,
+			self::ORGANISER_SIZE,
+			'rgba(255,255,255,0.74)',
+			OgImageRenderer::PAD,
+			self::ORGANISER_BASELINE,
+			$r->truncate( $canvas, OgImageRenderer::BODY, self::ORGANISER_SIZE, $line, $max )
+		);
+	}
+
+	/**
+	 * Start a cíl vedle sebe ve dvou sloupcích.
+	 *
+	 * Datum se tu neopakuje — je v datumové kartičce v hlavičce. Zbývá čas
+	 * a místo, což jsou dvě krátké hodnoty, na které je vedle sebe místo
+	 * a čtou se rychleji než pod sebou.
+	 *
+	 * Místo se zalamuje na dva řádky, ne ořezává: „Benešov, Jiráskova ul. –
+	 * jídelna ZŠ" je adresa, ze které useknutý konec dělá nesmysl.
+	 *
+	 * @param array<int, array{label: string, value: string, note: string}> $points
+	 */
+	private function draw_points( Imagick $canvas, array $points ): void {
+		$r      = $this->renderer;
+		$points = array_values( array_filter( $points, static fn( $p ) => '' !== $p['value'] || '' !== $p['note'] ) );
+
+		if ( empty( $points ) ) {
+			return;
+		}
+
+		$inner = self::WIDTH - 2 * OgImageRenderer::PAD;
+		$count = min( count( $points ), 2 );
+		$width = (int) ( ( $inner - self::POINT_GAP * ( $count - 1 ) ) / $count );
+
+		foreach ( array_slice( $points, 0, 2 ) as $i => $point ) {
+			$x = OgImageRenderer::PAD + $i * ( $width + self::POINT_GAP );
+			$y = self::PANEL_TOP + 68;
+
+			$r->text( $canvas, OgImageRenderer::BODY_BOLD, self::LABEL_SIZE, OgImageRenderer::MUTED, $x, $y, $point['label'] );
+
+			$y += 64;
+
 			$r->text(
 				$canvas,
-				OgImageRenderer::HEAD_MEDIUM,
+				OgImageRenderer::HEAD_BOLD,
 				self::VALUE_SIZE,
 				OgImageRenderer::TEXT,
-				$value,
+				$x,
 				$y,
-				$r->truncate( $canvas, OgImageRenderer::HEAD_MEDIUM, self::VALUE_SIZE, $row['value'], $max )
+				$r->truncate( $canvas, OgImageRenderer::HEAD_BOLD, self::VALUE_SIZE, $point['value'], $width )
 			);
 
-			$y += 46;
+			$y += 54;
 
-			if ( '' !== $row['note'] ) {
-				$r->text(
-					$canvas,
-					OgImageRenderer::BODY,
-					self::NOTE_SIZE,
-					OgImageRenderer::MUTED,
-					$value,
-					$y,
-					$r->truncate( $canvas, OgImageRenderer::BODY, self::NOTE_SIZE, $row['note'], $max )
-				);
-				$y += 44;
+			foreach ( $r->wrap( $canvas, OgImageRenderer::BODY, self::NOTE_SIZE, $point['note'], $width, 2 ) as $line ) {
+				if ( '' === $line ) {
+					continue;
+				}
+
+				$r->text( $canvas, OgImageRenderer::BODY, self::NOTE_SIZE, OgImageRenderer::MUTED, $x, $y, $line );
+				$y += 40;
 			}
-
-			$y += 16;
 		}
 	}
 

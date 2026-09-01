@@ -27,7 +27,7 @@ class OgImageRenderer {
 	 * čísla přegeneruje všechny obrázky. Bumpni při každé změně rozvržení
 	 * nebo barev, jinak se bude dál servírovat stará podoba.
 	 */
-	public const RENDER_VERSION = 13;
+	public const RENDER_VERSION = 16;
 
 	public const PAD    = 48;
 	public const STRIP  = 8;

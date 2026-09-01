@@ -229,6 +229,8 @@ class OgImages {
 				'end_month' => mb_strtolower( $this->text( $formatted['end_month'] ?? '' ), 'UTF-8' ),
 			),
 			'columns' => $columns,
+			'points'  => $this->event_points( $event ),
+			'organiser_line' => $this->event_organiser_line( $event ),
 			'map'     => $this->event_map_path( $event ),
 			'rows'    => $columns,
 			'routes'  => $this->event_routes( $event ),
@@ -452,6 +454,56 @@ class OgImages {
 
 	private function text( $value ): string {
 		return is_scalar( $value ) ? trim( (string) $value ) : '';
+	}
+
+	/**
+	 * Start a cíl pro kartu 4:5 — čas a místo, bez data.
+	 *
+	 * Datum se na plakátu neopakuje, je v datumové kartičce v hlavičce.
+	 * Hodnotou je proto samotný čas („6:00–12:00", „do 20:00"); když ho akce
+	 * nemá, spadne se na datum, ať sloupec není prázdný.
+	 *
+	 * @return array<int, array{label: string, value: string, note: string}>
+	 */
+	private function event_points( array $event ): array {
+		$point = function ( string $label, $data ): array {
+			if ( ! is_array( $data ) ) {
+				$data = array();
+			}
+
+			$time = $this->text( $data['time'] ?? '' );
+			$date = $this->text( $data['date'] ?? '' );
+
+			if ( '' === $time && '' !== $date ) {
+				$timestamp = strtotime( $date );
+				$time      = $timestamp ? date_i18n( 'j. n.', $timestamp ) : '';
+			}
+
+			return array(
+				'label' => $label,
+				'value' => $time,
+				'note'  => $this->text( $data['place'] ?? '' ),
+			);
+		};
+
+		return array(
+			$point( __( 'START', 'kct' ), $event['start'] ?? array() ),
+			$point( __( 'CÍL', 'kct' ), $event['finish'] ?? array() ),
+		);
+	}
+
+	/**
+	 * Pořadatel a místo jedním řádkem: „KČT, odbor Benešov | Benešov, okr. Benešov".
+	 *
+	 * Části se spojují svislítkem, ne čárkou — v obou už čárky jsou.
+	 */
+	private function event_organiser_line( array $event ): string {
+		$parts = array_filter( array(
+			$this->text( $event['organiser']['name'] ?? '' ),
+			$this->place_note( $event ),
+		) );
+
+		return implode( ' | ', $parts );
 	}
 
 	/**
