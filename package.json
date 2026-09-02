@@ -5,7 +5,11 @@
   "start": "wp-scripts start",
   "hot": "wp-scripts start --hot",
   "build": "wp-scripts build",
-  "packages-update": "wp-scripts packages-update"
+  "packages-update": "wp-scripts packages-update",
+  "docs": "npm --prefix docs/user run dev",
+  "docs:build": "npm --prefix docs/user run build",
+  "docs:preview": "npm --prefix docs/user run preview",
+  "docs:install": "npm --prefix docs/user ci"
  },
  "author": "WPify <info@wpify.io>",
  "license": "GPL-2.0-or-later",

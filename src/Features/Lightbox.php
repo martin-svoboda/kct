@@ -3,6 +3,7 @@
 namespace Kct\Features;
 
 use WP_Block;
+use WP_HTML_Tag_Processor;
 use WP_Theme_JSON_Data;
 
 /**
@@ -35,6 +36,14 @@ class Lightbox {
 		add_filter( 'wp_theme_json_data_theme', array( $this, 'enable_lightbox' ) );
 		add_filter( 'render_block_data', array( $this, 'prepare_block' ), 10, 3 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
+
+		// Priorita 20 — až po `block_core_image_render_lightbox()`, která běží
+		// na 15 a teprve zakládá záznam obrázku ve stavu.
+		add_filter( 'render_block_core/image', array( $this, 'store_caption' ), 20 );
+
+		// Priorita 9 — dřív, než jádro vypíše překryv, aby se do něj dal doplnit
+		// popisek.
+		add_action( 'wp_footer', array( $this, 'print_overlay' ), 9 );
 	}
 
 	/**
@@ -64,6 +73,89 @@ class Lightbox {
 	}
 
 	/**
+	 * Uloží popisek obrázku do stavu lightboxu.
+	 *
+	 * Jádro do stavu ukládá jen `alt`, popisek pod obrázkem nikoli — v překryvu
+	 * s ním vůbec nepočítá. Doplňuje se stejným způsobem, jakým si jádro samo
+	 * přidává pořadí obrázku v galerii (viz `block_core_gallery_render()`):
+	 * podle `data-wp-key`, které na `<figure>` zapsalo vykreslení lightboxu.
+	 *
+	 * Formátování se z popisku odstraňuje. Překryv text vypisuje přes
+	 * `data-wp-text`, který HTML neinterpretuje, takže by se značky ukázaly
+	 * jako text. U popisků fotografií to nevadí.
+	 *
+	 * @param string $block_content Vykreslený blok obrázku.
+	 *
+	 * @return string Nezměněný obsah; metoda jen sbírá data do stavu.
+	 */
+	public function store_caption( $block_content ) {
+		if ( ! is_string( $block_content ) || ! str_contains( $block_content, 'wp-lightbox-container' ) ) {
+			return $block_content;
+		}
+
+		if ( ! preg_match( '#<figcaption\b[^>]*>(.*?)</figcaption>#is', $block_content, $matches ) ) {
+			return $block_content;
+		}
+
+		$caption = trim( wp_strip_all_tags( $matches[1] ) );
+
+		if ( '' === $caption ) {
+			return $block_content;
+		}
+
+		$processor = new WP_HTML_Tag_Processor( $block_content );
+
+		if ( ! $processor->next_tag( 'figure' ) ) {
+			return $block_content;
+		}
+
+		$key = $processor->get_attribute( 'data-wp-key' );
+
+		if ( ! is_string( $key ) || '' === $key ) {
+			return $block_content;
+		}
+
+		wp_interactivity_state(
+			'core/image',
+			array( 'metadata' => array( $key => array( 'caption' => $caption ) ) )
+		);
+
+		return $block_content;
+	}
+
+	/**
+	 * Vypíše překryv lightboxu doplněný o popisek.
+	 *
+	 * Jádro nenabízí filtr, kterým by šlo do překryvu něco přidat, a vlastní
+	 * kopie celého překryvu by se rozešla s každou aktualizací WordPressu.
+	 * Necháváme ho proto vykreslit jádro a do hotového HTML doplníme jediný
+	 * prvek.
+	 *
+	 * Když se značky jádra změní a kotva se nenajde, vypíše se překryv beze
+	 * změny — přijdeme o popisky, ne o lightbox.
+	 */
+	public function print_overlay(): void {
+		if ( ! has_action( 'wp_footer', 'block_core_image_print_lightbox_overlay' ) ) {
+			return;
+		}
+
+		remove_action( 'wp_footer', 'block_core_image_print_lightbox_overlay' );
+
+		ob_start();
+		block_core_image_print_lightbox_overlay();
+		$overlay = ob_get_clean();
+
+		$anchor  = '<div class="scrim"';
+		$caption = '<p class="kct-lightbox-caption" data-wp-text="state.selectedImage.caption" data-wp-bind--hidden="!state.selectedImage.caption"></p>';
+
+		if ( str_contains( $overlay, $anchor ) ) {
+			$overlay = str_replace( $anchor, $caption . $anchor, $overlay );
+		}
+
+		echo $overlay; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- HTML z jádra plus vlastní statický prvek.
+	}
+
+	/**
 	 * Vrátí tlačítko lupy do rohu náhledu v oříznuté galerii.
 	 *
 	 * Jádro tlačítko umisťuje inline stylem a u obrázků se `scale` nastaveným
@@ -79,10 +171,16 @@ class Lightbox {
 	public function enqueue_styles(): void {
 		wp_register_style( 'kct-lightbox', false, array(), null );
 		wp_enqueue_style( 'kct-lightbox' );
-		wp_add_inline_style(
-			'kct-lightbox',
-			'.wp-block-gallery.is-cropped .wp-lightbox-container > button{top:16px !important;right:16px !important}'
-		);
+		wp_add_inline_style( 'kct-lightbox', implode( '', array(
+			'.wp-block-gallery.is-cropped .wp-lightbox-container > button{top:16px !important;right:16px !important}',
+			'.wp-lightbox-overlay .kct-lightbox-caption{position:absolute;z-index:2000002;margin:0;',
+			'bottom:calc(env(safe-area-inset-bottom) + 16px);left:50%;transform:translateX(-50%);',
+			'max-width:min(60ch,calc(100% - 160px));padding:8px 16px;border-radius:4px;',
+			'background:rgba(0,0,0,.7);color:#fff;font-size:14px;line-height:1.4;text-align:center}',
+			'.wp-lightbox-overlay .kct-lightbox-caption[hidden]{display:none}',
+			// Na užších displejích jsou šipky dole po stranách, popisek se posune nad ně.
+			'@media (max-width:959px){.wp-lightbox-overlay .kct-lightbox-caption{bottom:calc(env(safe-area-inset-bottom) + 72px)}}',
+		) ) );
 	}
 
 	/**

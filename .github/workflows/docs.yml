@@ -1,0 +1,81 @@
+# Sestavení a nasazení uživatelské dokumentace (docs/user) na GitHub Pages.
+#
+# Záměrně oddělené od deploy.yml: ten běží na tag, protože nasazení pluginu je
+# vydání verze. Dokumentace se ale opravuje i mezi vydáními — překlep nemá
+# čekat na release.
+#
+# Cílová adresa je https://napoveda.sokct.cz (vlastní doména nastavená v
+# Settings → Pages, v DNS CNAME napoveda → martin-svoboda.github.io).
+name: Dokumentace
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/user/**'
+      - '.github/workflows/docs.yml'
+  workflow_dispatch:
+
+# Pages se nasazují přes OIDC token, ne přes uložený secret — proto id-token.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Souběžná nasazení by si přepisovala výsledek. Rozdělaný běh se ale neruší
+# (cancel-in-progress: false), aby se nepřerušilo nasazení v půlce.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    defaults:
+      run:
+        working-directory: docs/user
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        # Plná historie kvůli `lastUpdated` ve Starlightu — z mělkého klonu
+        # by se datum poslední úpravy stránky nedalo zjistit.
+        with:
+          fetch-depth: 0
+
+      # Node 22, ne 18 jako v deploy.yml: Astro 7 má v engines node >=22.12.0.
+      # Jsou to dva nezávislé buildy, deploy.yml o dokumentaci neví.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: docs/user/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Build zároveň validuje interní odkazy (starlight-links-validator),
+      # takže rozbitý odkaz shodí tenhle krok a na web se nedostane.
+      - name: Build docs
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/user/dist
+
+  # Nasazení je samostatná úloha, protože deploy-pages musí běžet v prostředí
+  # github-pages — a to by jinak platilo i pro build.
+  deploy:
+    needs: build
+    runs-on: ubuntu-22.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

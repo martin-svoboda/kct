@@ -107,9 +107,22 @@ function kct_uninstall() {
 	kct()->uninstall();
 }
 
+/**
+ * Běží web na šabloně KČT?
+ *
+ * Porovnává se adresář šablony, ne její název. Dřív se sahalo na $theme->name
+ * a $theme->parent_theme, jenže hlavička v themes/kct/style.css má
+ * `Theme Name: KČT` — porovnání s 'kct' tedy neplatilo nikdy a funkce vracela
+ * false i na webu, kde šablona aktivní byla. Za touhle podmínkou přitom visí
+ * registrace bloků a metaboxů u stránek a příspěvků.
+ *
+ * get_stylesheet() vrací adresář aktivní šablony, get_template() adresář
+ * rodičovské — druhé kvůli případné podřízené šabloně.
+ */
 function kct_theme_is_active() {
 	$theme = wp_get_theme();
-	return 'kct' === $theme->name || 'kct' === $theme->parent_theme;
+
+	return 'kct' === $theme->get_stylesheet() || 'kct' === $theme->get_template();
 }
 
 function kct_php_upgrade_notice() {

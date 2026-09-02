@@ -181,8 +181,6 @@ final class Plugin {
 	 * @return bool Returns true if the KCT theme is active, false otherwise.
 	 */
 	public function kct_theme_is_active() {
-		$theme = wp_get_theme();
-
-		return 'kct' === $theme->name || 'kct' === $theme->parent_theme;
+		return kct_theme_is_active();
 	}
 }

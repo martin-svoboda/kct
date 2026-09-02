@@ -1,0 +1,142 @@
+---
+title: První nastavení webu
+description: Šest kroků, kterými se čerstvě založený web odboru uvede do provozu.
+sidebar:
+  order: 4
+---
+
+import { Image } from 'astro:assets';
+import dminastavenict from '../../../assets/admin-nastaveni-kct.png';
+
+Po přečtení téhle stránky bude jasné, co na novém webu odboru nastavit jako
+první, aby se rozjely akce a web vypadal jako web konkrétního odboru, ne jako
+prázdná šablona.
+
+Všechny kroky vyžadují roli administrátora — viz
+[Role uživatelů](/zaciname/role-uzivatelu/). Postup se prochází jednou, po
+založení webu, a zabere zhruba půl hodiny.
+
+## 1. Název a popis webu
+
+**Nastavení → Obecné**
+
+Vyplňuje se **Název webu** a **Popis webu**. Obojí se zobrazuje v hlavičce
+webu, v záložce prohlížeče a ve výsledcích vyhledávání, takže je dobré napsat
+je tak, jak se odbor sám představuje — například „KČT, odbor Chrudim".
+
+Popis webu je jednořádkový podtitulek. Nemá být heslem ani reklamou, spíš
+upřesněním, čí web to je nebo kde odbor působí.
+
+Na téže stránce se ověří **e-mailová adresa administrátora**. Na ni chodí
+provozní zprávy webu, takže na ni musí někdo skutečně číst.
+
+## 2. Kód odboru nebo oblasti
+
+**Nastavení → KČT**, pole **Kód oblasti / odboru**
+
+Tenhle jeden údaj rozhoduje o tom, jestli se na webu vůbec objeví akce.
+Zadává se číselný kód:
+
+- **tři číslice** pro oblast,
+- **šest číslic** pro odbor.
+
+Podle délky kódu web sám pozná, o který případ jde, a načte z centrální
+databáze akcí KČT buď akce celé oblasti, nebo jen daného odboru. Když pole
+zůstane prázdné nebo je v něm jiný počet číslic, nenačte se nic — výpis akcí
+zůstane prázdný a nikde se neobjeví žádná chybová hláška.
+
+Kód je stejný, jaký odbor používá vůči ústředí KČT. Kdo si jím není jistý,
+ověří si ho v centrální databázi akcí nebo u vedení oblasti.
+
+Jak akce dál fungují — které se načítají samy a které se zadávají ručně —
+popisuje stránka [Akce](/funkce/akce/).
+
+
+<Image src={dminastavenict} alt="Stránka Nastavení funkcí KČT s polem Kód oblasti / odboru a nastavením sdílení na Facebook" />
+
+## 3. Logo a druhé logo v hlavičce
+
+**Vzhled → Přizpůsobit → Základní informace**
+
+Nahrává se tu **logo** odboru. Zobrazuje se v hlavičce vlevo a nahrazuje
+psaný název webu, takže by na něm mělo být čitelně vidět, o který odbor jde.
+Nejlépe vypadá logo s průhledným pozadím.
+
+Pod tím je volba **Druhé logo v hlavičce**. Nabízí tři možnosti:
+
+- **Žádné**
+- **KČT** — obecné logo Klubu českých turistů,
+- **Vaše dobrá značka**
+
+Druhé logo se objeví v hlavičce vedle loga odboru. Není povinné; když si odbor
+není jistý, nechá se **Žádné**.
+
+Ve stejné části se nastavuje i **Ikona webu** — malý obrázek v záložce
+prohlížeče. Když ji odbor nenastaví, doplní šablona obecné logo KČT, aby
+záložka nezůstala prázdná.
+
+Doporučené rozměry a zacházení s obrázky popisuje
+[Média a fotky](/zaklady-wordpressu/media-a-fotky/).
+
+## 4. Styl šablony a primární barva
+
+**Vzhled → Přizpůsobit → Vzhled šablony**
+
+Volba **Styl šablony** má tři možnosti a mění celkový charakter webu:
+
+- **Obrazový** — sází na velké fotky, výchozí volba,
+- **Časopisový** — hustší výpis, více textu na obrazovce,
+- **Kartový** — obsah v oddělených kartách.
+
+Ve stejné části jsou i další volby, které stojí za projití hned na začátku:
+průhledné menu přes úvodní obrázek, zobrazení mapy ve výpisu akcí,
+vyhledávání v hlavičce a odkaz s textem tlačítka **Stát se členem**. Tlačítko
+se v hlavičce objeví, jen když se k němu vyplní odkaz — jinak zůstane skryté.
+
+**Primární barva** je o kus vedle, v části **Barvy**. Když zůstane prázdná,
+použije se výchozí barva zvoleného stylu, což je pro většinu odborů úplně
+dost. Vlastní barva má smysl, jen když se odbor drží nějaké své.
+
+Náhled vpravo ukazuje změny okamžitě. Nic se neuloží, dokud se nahoře
+neklikne na tlačítko pro publikování. Podrobnosti popisuje
+[Vzhled webu](/funkce/vzhled-webu/).
+
+## 5. Hlavní menu
+
+**Vzhled → Menu**
+
+Vytvoří se nové menu, přidají se do něj položky (stránky, odkazy na výpis
+akcí, vlastní odkazy) a dole se zaškrtne umístění **Hlavní menu**. Bez
+zaškrtnutého umístění se menu na webu nezobrazí, i když je hotové — je to
+nejčastější důvod, proč po prvním nastavení hlavička zůstává prázdná.
+
+Menu se vyplatí držet krátké. Postup krok za krokem je na stránce
+[Menu a navigace](/zaklady-wordpressu/menu-a-navigace/).
+
+## 6. Widgety do postranního sloupce a patičky
+
+**Vzhled → Widgety**
+
+Šablona nabízí dvě oblasti pro widgety:
+
+- **Postranní sloupec** — zobrazuje se vedle obsahu,
+- **Patička** — pruh na konci každé stránky.
+
+Do patičky patří to, co má být dostupné odkudkoli: kontakt na odbor,
+odkaz na Facebook, číslo účtu. Do postranního sloupce nejčastěji nejbližší
+akce, nejnovější aktuality nebo vyhledávání.
+
+Obě oblasti mohou zůstat prázdné — web bude fungovat dál, jen bude bez nich
+strohý. Jaké widgety se kam hodí, rozebírá
+[Postranní sloupec a patička](/zaklady-wordpressu/postranni-sloupec-a-paticka/).
+
+## Až bude hotovo
+
+Web je připravený a může se plnit obsahem. Kudy začít:
+
+- [Editor bloků](/zaklady-wordpressu/editor-bloku/) — jak se na webu píše,
+- [Stránky a aktuality](/zaklady-wordpressu/stranky-a-aktuality/) — první
+  stránka o odboru a první aktualita,
+- [Bloky šablony](/funkce/bloky/) — prvky, které běžný WordPress nemá,
+- [Sdílení na Facebook](/funkce/sdileni-na-facebook/) — pokud má odbor
+  facebookovou stránku a chce na ni posílat pozvánky.

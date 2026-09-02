@@ -1,0 +1,61 @@
+---
+title: Nápověda k šabloně KČT
+description: Uživatelská příručka k webové šabloně pro odbory a oblasti Klubu českých turistů.
+template: splash
+hero:
+  tagline: Jak spravovat web odboru nebo oblasti postavený na šabloně KČT.
+  actions:
+    - text: Začínáme
+      link: /zaciname/co-je-sablona-kct/
+      icon: right-arrow
+---
+
+import { LinkCard, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid>
+	<LinkCard
+		title="Začínáme"
+		href="/zaciname/co-je-sablona-kct/"
+		description="Co šablona umí, jak se přihlásit do administrace a co nastavit hned po převzetí webu."
+	/>
+	<LinkCard
+		title="Základy WordPressu"
+		href="/zaklady-wordpressu/editor-bloku/"
+		description="Editor bloků, stránky, aktuality, fotky a menu — jen to, co při správě webu odboru opravdu potřebujete."
+	/>
+	<LinkCard
+		title="Funkce šablony"
+		href="/funkce/akce/"
+		description="Akce, odbory, bloky, vzhled webu a sdílení na Facebook."
+	/>
+	<LinkCard
+		title="Pro správce"
+		href="/spravce/doporucene-pluginy/"
+		description="Které pluginy instalovat, které naopak nepotřebujete, aktualizace a zálohy."
+	/>
+</CardGrid>
+
+## Nejčastější dotazy
+
+<CardGrid>
+	<LinkCard
+		title="Kde se zadává kód odboru?"
+		href="/zaciname/prvni-nastaveni/"
+		description="Bez něj se nenačtou žádné akce. Nastavení → KČT."
+	/>
+	<LinkCard
+		title="Proč vypadá nahraná fotka jinak?"
+		href="/zaklady-wordpressu/media-a-fotky/"
+		description="Šablona fotky při nahrání zmenšuje a převádí do úspornějšího formátu."
+	/>
+	<LinkCard
+		title="Které pluginy neinstalovat?"
+		href="/spravce/zbytecne-pluginy/"
+		description="Lightbox, komprese obrázků, kalendář akcí i sdílení na Facebook už umí šablona sama."
+	/>
+	<LinkCard
+		title="Jak se akce dostanou na web?"
+		href="/funkce/akce/"
+		description="Většina se načítá z centrální databáze KČT, zbytek se zakládá ručně."
+	/>
+</CardGrid>

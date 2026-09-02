@@ -1,0 +1,138 @@
+---
+title: Vzhled webu
+description: Volby v Přizpůsobení, kterými se mění styl šablony, chování hlavičky, nadpisy výpisů a barva webu.
+sidebar:
+  order: 6
+---
+
+import { Image } from 'astro:assets';
+import dminrizpusobitzhled from '../../../assets/admin-prizpusobit-vzhled.png';
+
+Po přečtení téhle stránky je jasné, kde se přepíná styl šablony a co dělá každá
+z voleb, kterými se dá vzhled webu odboru upravit — bez zásahu do kódu.
+
+## Kde se vzhled nastavuje
+
+Všechny volby popsané níž jsou v administraci pod **Vzhled → Přizpůsobit**.
+Otevře se náhled webu a vlevo panel se sekcemi. Změna se v náhledu projeví
+hned, ale na web se dostane až tlačítkem **Publikovat** v horní části panelu.
+Bez něj se nic neuloží.
+
+Nastavení platí vždy jen pro jeden web. Když má oblast několik webů odborů,
+každý z nich se přizpůsobuje zvlášť.
+
+## Sekce Vzhled šablony
+
+Tuhle sekci přidává šablona KČT. Sdružuje volby, které jinde ve WordPressu
+nejsou.
+
+### Styl šablony
+
+Tři varianty celkového vzhledu:
+
+- **Obrazový** — výchozí. Velké fotografie, výrazné překryvy, akce jako
+  fotokarty, modrý akcent a kulaté rohy. Sluší webu, který má z akcí fotky.
+- **Časopisový** — redakční, na teplém papírovém podkladu, číslované seznamy,
+  zelený akcent a hranaté rohy. Sluší webu, který stojí spíš na textu.
+- **Kartový** — vystředěná hlavička, přehledné bílé karty, modrý akcent
+  a kulaté rohy. Nejstřízlivější z trojice.
+
+Když volbu nikdo nezměnil, platí Obrazový. Styl se dá přepnout kdykoli; obsah
+stránek se tím nemění, jen jeho zobrazení. Vyplatí se po přepnutí projít
+úvodní stránku, výpis akcí a jeden detail akce — každý styl řeší hlavičky
+a karty po svém.
+
+### Průhledné menu přes hero
+
+Ve výchozím stavu vypnuto. Po zapnutí se hlavní menu překrývá přes velký
+obrázek v hlavičce stránky a je vidět fotka pod ním. Jakmile návštěvník
+odroluje níž, menu se podbarví, aby zůstalo čitelné.
+
+Volba se uplatní jen tam, kde velký obrázek v hlavičce opravdu je:
+
+- na detailu aktuality,
+- na úvodní stránce, jejíž obsah **začíná** blokem
+  [Úvodní obrázek](/funkce/bloky/uvodni-obrazek/) — blok uprostřed stránky
+  se nepočítá, pod průhledným menu by pak plaval text,
+- na detailu [akce](/funkce/akce/) nebo [odboru](/funkce/odbory/), který má
+  nastavený náhledový obrázek.
+
+Bez obrázku zůstává hlavička plochá a menu se přes nic nepřekrývá, i když je
+volba zapnutá.
+
+### Nadpis stránky Akce
+
+Nadpis (H1) na výpisu akcí. Prázdné pole znamená výchozí „Akce". Hodí se
+k rozlišení oblastního a odborového webu — třeba „Akce v Českém ráji".
+
+### Nadpis stránky Odbory
+
+Totéž pro výpis odborů. Prázdné pole znamená výchozí „Odbory".
+
+### Zobrazit mapu ve výpisu akcí
+
+Zapnuto. Nad výpisem na stránce `/akce/` se ukazuje mapa s místy konání.
+Odborům, kterým mapa spíš překáží, se dá vypnout — samotný výpis akcí zůstane.
+
+### Vyhledávání v hlavičce
+
+Vypnuto. Po zapnutí přibude vedle menu ikona lupy a po kliknutí se rozbalí
+vyhledávací pole.
+
+Výchozí stav je vypnuto záměrně: hlavička je na každém webu jinak
+zaplněná — někde je dlouhé menu, jinde dvě loga a tlačítko — takže vyhledávání
+si má zapnout ten, komu se do hlavičky ještě vejde. Dokud je vypnuté, dá se na
+webu hledat jen přes adresu ve tvaru `/?s=výraz`.
+
+### Odkaz tlačítka v hlavičce
+
+Adresa, kam vede tlačítko „Stát se členem" v hlavičce. Když pole zůstane
+prázdné, tlačítko se v hlavičce vůbec nezobrazí — to je výchozí stav. Odkaz
+může vést na stránku s přihláškou na webu odboru i na cizí adresu.
+
+### Text tlačítka v hlavičce
+
+Popisek téhož tlačítka. Výchozí je „Stát se členem"; přepsat se dá třeba na
+„Přidejte se k nám". Bez vyplněného odkazu se tlačítko nezobrazí, ať je text
+jakýkoli.
+
+
+<Image src={dminrizpusobitzhled} alt="Přizpůsobení, sekce Vzhled šablony s volbou stylu a dalšími přepínači" />
+
+## Sekce Barvy
+
+### Primární barva
+
+Hlavní barva webu — používá se u odkazů, tlačítek a zvýrazněných prvků.
+Prázdné pole znamená, že platí výchozí barva zvoleného stylu šablony. Vlastní
+barva se vybírá z palety nebo zadává jako hexadecimální kód.
+
+Vyplatí se změnu udělat a pak projít web: barva se propisuje na mnoha místech
+a příliš světlý odstín zhorší čitelnost textu na tlačítkách.
+
+## Sekce Základní informace
+
+Sekce patří přímo WordPressu — kromě názvu webu, popisu, loga a ikony v ní
+šablona přidává ještě jednu volbu.
+
+### Druhé logo v hlavičce
+
+Vedle loga odboru se dá do hlavičky postavit ještě jedno:
+
+- **Žádné** — výchozí stav, v hlavičce je jen logo webu.
+- **KČT** — obecné logo Klubu českých turistů.
+- **Vaše dobrá značka** — logo programu Vaše dobrá značka.
+
+Druhé logo stojí v pravé části hlavičky, vedle tlačítka „Stát se členem".
+
+## Co se v Přizpůsobení nenastavuje
+
+- **Menu** má vlastní kapitolu, viz
+  [Menu a navigace](/zaklady-wordpressu/menu-a-navigace/).
+- **Postranní sloupec a patička** se skládají z widgetů, viz
+  [Postranní sloupec a patička](/zaklady-wordpressu/postranni-sloupec-a-paticka/).
+- **Náhledové obrázky stránek a akcí** se nastavují u konkrétního obsahu, ne
+  centrálně.
+
+Co je potřeba udělat hned po převzetí webu, shrnuje
+[První nastavení](/zaciname/prvni-nastaveni/).

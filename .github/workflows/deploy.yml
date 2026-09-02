@@ -145,6 +145,7 @@ jobs:
               --exclude="*.sh" \
               --exclude="node_modules" \
               --exclude="tests" \
+              --exclude="docs" \
               --exclude="/dist" \
               --exclude="/kct-*.zip" \
               . "$SSH_USER@$SSH_SERVER:$SITE_PATH/wp-content/plugins/kct/"

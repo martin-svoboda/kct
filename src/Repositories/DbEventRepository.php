@@ -50,10 +50,12 @@ class DbEventRepository extends CustomTableRepository {
 	 * @throws \ReflectionException
 	 */
 	public function get_by_db_id( int $db_id ): ?DbEventModel {
-		if ( ! is_multisite() ) {
-			return null;
-		}
-
+		// Dřív se tu mimo multisite rovnou vracelo null. Import ale podle
+		// návratu rozhoduje „načíst uloženou akci, nebo založit novou“
+		// (Features\Events::import_db_events()), takže na samostatné instalaci
+		// zakládal při každém běhu novou — akce se s každým importem
+		// duplikovaly a zrušené (deleted=Y) se neměly podle čeho smazat.
+		// Přepínání na web 1 níž si multisite hlídá samo, podmínka byla navíc.
 		$switched = false;
 		if ( is_multisite() && get_current_blog_id() !== 1 ) {
 			switch_to_blog( 1 );

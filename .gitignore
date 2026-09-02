@@ -20,3 +20,9 @@ src/.DS_Store
 templates/.DS_Store
 themes/.DS_Store
 themes/kct/.DS_Store
+
+# Uživatelská dokumentace (docs/user) je samostatný projekt Astro.
+# Kořenové vzory výš jsou kotvené na kořen repa a na podsložku nesednou.
+/docs/user/node_modules/
+/docs/user/dist/
+/docs/user/.astro/
