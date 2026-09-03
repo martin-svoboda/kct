@@ -33,9 +33,17 @@ function kct_customize_register( $wp_customize ) {
 	}
 
 	// Skin / vzhled šablony
+	// Popis sekce nese odkaz do příručky. Přizpůsobení je jediné místo, kde se
+	// nedá použít vestavěná záložka Nápovědy — běží ve vlastním rozhraní bez
+	// WP_Screen, takže je odkaz v popisu jediná cesta, jak ho sem dostat.
 	$wp_customize->add_section( 'kct_appearance', array(
-		'title'    => __( 'Vzhled šablony', 'kct' ),
-		'priority' => 30,
+		'title'       => __( 'Vzhled šablony', 'kct' ),
+		'priority'    => 30,
+		'description' => sprintf(
+			'<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
+			esc_url( kct_container()->get( \Kct\Help\DocsLinks::class )->inline_url( 'appearance' ) ),
+			esc_html__( 'Nápověda: Vzhled webu', 'kct' )
+		),
 	) );
 	$wp_customize->add_setting( 'kct_skin', array(
 		'default'           => 'photo',

@@ -2,6 +2,7 @@
 
 namespace Kct\PostTypes;
 
+use Kct\Help\DocsLinks;
 use Kct\Repositories\EventRepository;
 use Kct\Repositories\SettingsRepository;
 use Kct\Taxonomies\EventTypeTaxonomy;
@@ -16,7 +17,8 @@ class EventPostType extends AbstractCustomPostType {
 
 	public function __construct(
 		CustomFields $wcf,
-		private EventRepository $event_repository
+		private EventRepository $event_repository,
+		private DocsLinks $docs
 	) {
 		$this->wcf = $wcf;
 
@@ -25,6 +27,14 @@ class EventPostType extends AbstractCustomPostType {
 
 	public function setup() {
 		$items = array(
+			array(
+				'type'    => 'html',
+				'id'      => 'kct_event_docs',
+				'content' => sprintf(
+					'<p style="margin:0 0 8px">%s</p>',
+					$this->docs->inline_link( 'event_data', __( 'Jak se zakládá akce', 'kct' ) )
+				),
+			),
 			array(
 				'type'  => 'number',
 				'id'    => 'db_id',

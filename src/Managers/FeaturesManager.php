@@ -2,6 +2,7 @@
 
 namespace Kct\Managers;
 
+use Kct\Features\AdminHelp;
 use Kct\Features\DbEventShare;
 use Kct\Features\DepartmentSeo;
 use Kct\Features\Events;
@@ -26,7 +27,8 @@ final class FeaturesManager {
 		ImageUploads $image_uploads,
 		DepartmentSeo $department_seo,
 		OgImages $og_images,
-		DbEventShare $db_event_share
+		DbEventShare $db_event_share,
+		AdminHelp $admin_help
 	) {
 	}
 }

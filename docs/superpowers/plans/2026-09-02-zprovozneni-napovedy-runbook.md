@@ -21,6 +21,9 @@ v `docs/user/**` na větvi `main`.
   výsledek.
 - `deploy.yml` vylučuje celou složku `docs` z produkce i z instalačního ZIPu,
   takže se dokumentace nikdy nedostane do pluginu.
+- `docs/user/public/CNAME` nese `napoveda.sokct.cz`. Astro kopíruje obsah
+  `public/` do kořene sestaveného webu, takže vlastní doména jde na Pages
+  přímo s artefaktem a nestojí jen na políčku v nastavení.
 
 ## Co je potřeba udělat
 
@@ -77,6 +80,16 @@ dig napoveda.sokct.cz CNAME +short
 2. **Custom domain:** vyplnit `napoveda.sokct.cz` a dát **Save**.
 3. GitHub ověří DNS — u zeleného zaškrtnutí je hotovo. Když hlásí chybu,
    nejspíš se ještě nepropsal CNAME; počkat a dát **Check again**.
+
+   Díky souboru `docs/user/public/CNAME` se doména do nastavení propíše i sama
+   při prvním nasazení. Tenhle krok je tedy pojistka — pokud už je políčko
+   vyplněné, není co dělat.
+
+   **Jak poznat, že doména ještě nefunguje:** web běží na
+   `martin-svoboda.github.io/kct/`, stránky se načtou bez stylů a odkazy
+   nikam nevedou. Není to chyba buildu — web je postavený pro kořen domény, a
+   pod cestou `/kct/` proto soubory `/_astro/…` nesedí. Jakmile doména naběhne,
+   spraví se to samo.
 4. **Enforce HTTPS** zaškrtnout, jakmile to jde. Certifikát od Let's Encrypt
    se vystavuje automaticky a může to trvat od pár minut do 24 hodin — dokud
    není hotový, je to políčko zašedlé. To je normální, není to chyba.
@@ -143,7 +156,8 @@ vyhledávací index prázdný.
 | --- | --- |
 | `Get Pages site failed` v úloze deploy | Pages nejsou zapnuté, nebo je Source nastavený na „Deploy from a branch". Krok 1. |
 | Web běží na `martin-svoboda.github.io/kct/`, ne na vlastní doméně | Custom domain není uložená v nastavení Pages. Krok 3. |
-| Po nasazení se vlastní doména z nastavení vyresetovala | Přidat soubor `docs/user/public/CNAME` s jediným řádkem `napoveda.sokct.cz`. Co je v `public/`, kopíruje Astro do kořene webu, takže se doména propíše i do artefaktu. |
+| Po nasazení se vlastní doména z nastavení vyresetovala | Ověřit, že existuje `docs/user/public/CNAME` s jediným řádkem `napoveda.sokct.cz` a že se dostal do sestavení (`cat docs/user/dist/CNAME` po `npm run docs:build`). |
+| Stránky se načtou bez stylů a odkazy nikam nevedou | Web běží na `martin-svoboda.github.io/kct/` místo na vlastní doméně — vlastní doména není aktivní. Ověřit: `curl -sI http://napoveda.sokct.cz/` vrací od GitHubu 404, když doménu nezná, a `curl -sv https://napoveda.sokct.cz/` hlásí, že certifikát na jméno nesedí. Krok 3. |
 | Stránky se načtou, ale bez stylů | Chybný `base`. Web běží v kořeni domény, takže se `base` nemá nastavovat vůbec — v `astro.config.mjs` je správně jen `site`. |
 | `napoveda.sokct.cz` ukazuje WordPress | DNS míří na server s multisite. Multisite má `SUBDOMAIN_INSTALL` a `DOMAIN_CURRENT_SITE` z `HTTP_HOST`, takže si subdoménu vezme. Ověřit CNAME z kroku 2. |
 | Certifikát neplatí, `Enforce HTTPS` nejde zaškrtnout | Vystavení certifikátu trvá až 24 hodin. Když to trvá déle, v nastavení doménu smazat, uložit, znovu vyplnit a uložit — tím se vystavení nastartuje znovu. |

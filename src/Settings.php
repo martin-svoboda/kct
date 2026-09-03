@@ -4,6 +4,7 @@ namespace Kct;
 
 use Kct\Facebook\Credentials;
 use Kct\Features\FacebookShare;
+use Kct\Help\DocsLinks;
 use Kct\Repositories\SettingsRepository;
 use KctDeps\Wpify\CustomFields\CustomFields;
 
@@ -30,7 +31,7 @@ class Settings {
 	 */
 	const KEY = 'kct_options';
 
-	public function __construct( CustomFields $wcf, private Credentials $credentials ) {
+	public function __construct( CustomFields $wcf, private Credentials $credentials, private DocsLinks $docs ) {
 		$this->wcf = $wcf;
 
 		$this->setup();
@@ -98,6 +99,15 @@ class Settings {
 				'id'      => 'add_style',
 				'type'    => 'html',
 				'content' => '<style>.forminp input[type=number].small-text {width:200px}</style>',
+			),
+			array(
+				'id'      => 'docs_link',
+				'type'    => 'html',
+				'content' => sprintf(
+					'<p>%s %s</p>',
+					esc_html__( 'Co která volba dělá, popisuje uživatelská příručka:', 'kct' ),
+					$this->docs->inline_link( 'settings', __( 'První nastavení webu', 'kct' ) )
+				),
 			),
 			array(
 				'title' => __( 'Kód oblasti / odboru', 'kct' ),

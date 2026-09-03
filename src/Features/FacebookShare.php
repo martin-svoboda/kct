@@ -2,6 +2,7 @@
 
 namespace Kct\Features;
 
+use Kct\Help\DocsLinks;
 use Kct\Facebook\Credentials;
 use Kct\Facebook\GraphClient;
 use Kct\Facebook\MessageComposer;
@@ -93,7 +94,8 @@ class FacebookShare {
 		private OgImages $og_images,
 		private ShareSchedule $schedule,
 		private Events $events,
-		private Publisher $publisher
+		private Publisher $publisher,
+		private DocsLinks $docs
 	) {
 		add_action( 'transition_post_status', array( $this, 'maybe_schedule' ), 10, 3 );
 
@@ -805,6 +807,14 @@ class FacebookShare {
 	 */
 	private function metabox_items( string $post_type ): array {
 		$items = array(
+			array(
+				'type'    => 'html',
+				'id'      => 'kct_fb_docs',
+				'content' => sprintf(
+					'<p style="margin:0 0 8px">%s</p>',
+					$this->docs->inline_link( 'facebook', __( 'Jak sdílení funguje', 'kct' ) )
+				),
+			),
 			array(
 				'type'    => 'toggle',
 				'id'      => ShareState::META_SHARE,

@@ -26,6 +26,27 @@ odkaz na neexistující stránku shodí workflow. Nové stránky se zakládají 
 `docs/user/src/content/docs/` a v postranním panelu se řadí podle
 `sidebar.order` ve frontmatteru.
 
+### Odkazy z administrace do příručky
+
+Administrace odkazuje na konkrétní stránky nápovědy dvěma způsoby — vestavěnou
+záložkou „Nápověda“ a viditelnými odkazy u polí a panelů. Všechny adresy drží
+`src/Help/DocsLinks.php`; jinde se URL nápovědy nepíší.
+
+Základní adresa je přebitelná konstantou `KCT_DOCS_URL` ve `wp-config.php`
+nebo filtrem `kct_docs_url`, aby web mimo síť KČT neodkazoval na cizí doménu.
+
+**Tuhle hranici žádný validátor nehlídá.** Odkazy uvnitř příručky kontroluje
+`starlight-links-validator` při jejím sestavení, ale o pluginu neví. Když se
+stránka v příručce přejmenuje nebo zruší, odkaz z administrace tiše zamíří na
+404. Po každé takové změně tedy:
+
+```bash
+npm run docs:build
+grep -oE "'/[a-z0-9/-]+/'" src/Help/DocsLinks.php | tr -d "'" | sort -u | while read p; do
+  [ -f "docs/user/dist${p}index.html" ] && echo "OK    $p" || echo "CHYBÍ $p"
+done
+```
+
 ### Náhled při vývoji
 
 Dokumentace se **nespouští v ddev**. Node má nativní binárky vázané na
