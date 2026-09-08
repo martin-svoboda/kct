@@ -96,7 +96,11 @@ class Settings {
 			'menu_title'  => __( 'KČT', 'kct' ),
 			'menu_slug'   => self::KEY,
 			'capability'  => 'manage_options',
-			'option_key'  => self::KEY,
+			// Knihovna čte `option_name`; `option_key` nezná a tiše ho ignoruje.
+			// Bez toho zůstane název option prázdný, hodnoty se hledají jako
+			// samostatné options (`get_option('fb_page_id')`) a formulář se
+			// otevře prázdný, i když v `kct_options` data jsou.
+			'option_name' => self::KEY,
 			'items'       => $settings,
 			'tabs'        => array(
 				'obecne'   => 'Obecné',
