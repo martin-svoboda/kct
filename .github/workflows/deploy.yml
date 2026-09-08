@@ -5,6 +5,13 @@ on:
     tags:
       - '*'
 
+# Krok "Create GitHub Release" zapisuje do repozitáře, což výchozí GITHUB_TOKEN
+# v nově založeném repu neumí — nová repa startují s právy jen pro čtení.
+# Deklarujeme si to tady, ne přepnutím v Settings → Actions: nastavení repa se
+# při dalším stěhování zapomene, tenhle řádek se stěhuje s kódem.
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-22.04
