@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "kct/action",
+	"title": "CTA blok",
+	"category": "kct",
+	"icon": "migrate",
+	"description": "Výzva k akci s obrázkem na pozadí, obrázkem v popředí, textem a tlačítkem.",
+	"textdomain": "kct",
+	"supports": {
+		"html": false,
+		"customClassName": false,
+		"reusable": true
+	},
+	"attributes": {
+		"title": { "type": "string", "default": "" },
+		"text": { "type": "string", "default": "" },
+		"link": { "type": "object", "default": {} },
+		"background": { "type": "integer", "default": 0 },
+		"image": { "type": "integer", "default": 0 },
+		"image_position": { "type": "string", "default": "right" },
+		"gradient": { "type": "boolean", "default": true }
+	}
+}

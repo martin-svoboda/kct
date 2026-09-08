@@ -1,0 +1,33 @@
+/.idea/
+/.ssh/
+/build/
+/deps/
+/dist/
+# pracovní adresář wpify/scoper — po instalaci se má uklidit sám,
+# jednou tu ale zůstal ležet i s absolutními cestami z vývojářského stroje
+/tmp-*/
+/node_modules/
+/vendor/
+/.php_cs.cache
+/src.old/
+.DS_Store
+*/.DS_Store
+.DS_Store
+assets/.DS_Store
+assets/apps/.DS_Store
+assets/apps/events/.DS_Store
+src/.DS_Store
+templates/.DS_Store
+themes/.DS_Store
+themes/kct/.DS_Store
+
+# Interní vývojová dokumentace zůstává jen na disku. Repozitář je veřejný a
+# návrhy s plány nesou lokální cesty, ddev příkazy a .test domény — do balíčku
+# se nikdy nedostaly (deploy.yml vylučuje celé `docs`), ven teď nepůjdou vůbec.
+/docs/superpowers/
+
+# Uživatelská dokumentace (docs/user) je samostatný projekt Astro.
+# Kořenové vzory výš jsou kotvené na kořen repa a na podsložku nesednou.
+/docs/user/node_modules/
+/docs/user/dist/
+/docs/user/.astro/

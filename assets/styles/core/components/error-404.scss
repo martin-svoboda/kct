@@ -1,0 +1,32 @@
+// 404 stránka — viz template-parts/content-404.php.
+// Vlastní partial, ne dopisování do widgets.scss: stránka teď (po zrušení
+// NOBLOGREDIRECT přesměrování pro celý web, viz Frontend.php) doopravdy
+// existuje a chodí na ni návštěvníci z vyhledávače, takže má smysl jí dát
+// vlastní, čitelný layout místo holého base.scss textu.
+.error-404 {
+	.page-content {
+		max-width: 640px;
+	}
+
+	// get_search_form() tu není v .widget_search/.wp-block-search wrapperu
+	// (viz forms.scss), takže si flex layout řeší po svém.
+	.search-form {
+		display: flex;
+		gap: 8px;
+		max-width: 420px;
+		margin: 1.5rem 0;
+
+		.search-field {
+			flex: 1;
+		}
+	}
+
+	&__links {
+		list-style: none;
+		margin: 2rem 0 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 12px;
+	}
+}

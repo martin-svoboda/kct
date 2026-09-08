@@ -1,0 +1,43 @@
+{
+ "name": "kct",
+ "version": "1.0.0",
+ "scripts": {
+  "start": "wp-scripts start",
+  "hot": "wp-scripts start --hot",
+  "build": "wp-scripts build",
+  "packages-update": "wp-scripts packages-update",
+  "docs": "npm --prefix docs/user run dev",
+  "docs:build": "npm --prefix docs/user run build",
+  "docs:preview": "npm --prefix docs/user run preview",
+  "docs:install": "npm --prefix docs/user ci"
+ },
+ "author": "WPify <info@wpify.io>",
+ "license": "GPL-2.0-or-later",
+ "engines": {
+  "node": ">=v14.17.6"
+ },
+ "sideEffects": [
+  "*.scss",
+  "./assets/blocks/**/*.js"
+ ],
+ "browserslist": [
+  "defaults",
+  "cover 97%"
+ ],
+ "devDependencies": {
+  "@wordpress/scripts": "^26.16.0",
+  "browser-sync": "^2.29.3",
+  "browser-sync-webpack-plugin": "^2.3.0",
+  "node-sass-glob-importer": "^5.3.3",
+  "svg-spritemap-webpack-plugin": "^4.5.0"
+ },
+ "dependencies": {
+  "@wordpress/api-fetch": "^6.43.0",
+  "leaflet": "^1.9.4",
+  "leaflet-gpx": "^2.1.2",
+  "react": "^18.2.0",
+  "react-datepicker": "^4.23.0",
+  "react-dom": "^18.2.0",
+  "wpify-mapy-cz": "^1.1.4"
+ }
+}

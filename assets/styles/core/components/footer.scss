@@ -1,0 +1,55 @@
+.site-footer {
+	position: relative;
+	background: var(--surface-invert);
+	color: rgba(255, 255, 255, .7);
+	margin-top: 0;
+
+	// Barevný proužek nahoře: modrá full-width + trikolóra přes kontejner (jako rozcestník)
+	@include kct-strip;
+
+	a {
+		color: rgba(255, 255, 255, .82);
+		text-decoration: none;
+
+		&:hover {
+			color: #fff;
+		}
+	}
+
+	h1, h2, h3, h4, h5, h6 {
+		color: #fff;
+		font-family: var(--font-head);
+		text-transform: uppercase;
+	}
+
+	.container {
+		flex-direction: column;
+		padding: 48px 20px 22px;
+		gap: 2rem;
+	}
+
+	.widget-area {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1.5rem 3rem;
+		width: 100%;
+
+		div {
+			min-width: 220px;
+			flex: 1 0 0;
+		}
+	}
+
+	.site-info {
+		border-top: 1px solid rgba(255, 255, 255, .12);
+		padding-top: 18px;
+		width: 100%;
+		font-size: 12.5px;
+		color: rgba(255, 255, 255, .5);
+		text-align: center;
+
+		.sep {
+			opacity: .4;
+		}
+	}
+}

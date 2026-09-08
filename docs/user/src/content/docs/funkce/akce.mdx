@@ -1,0 +1,103 @@
+---
+title: Akce
+description: Odkud se na webu berou akce, jak se liší vlastní a importovaná akce a kde všude se akce zobrazují.
+sidebar:
+  order: 1
+---
+
+import { Image } from 'astro:assets';
+import dminkceetail from '../../../assets/admin-akce-detail.png';
+
+Po přečtení této stránky je jasné, odkud se akce na webu berou, co jde u které upravovat a kde se ve webu objevují.
+
+Akce jsou nejdůležitější obsah celé šablony. Vlastních příspěvků je přitom málo — na webu oblasti sokct.cz se z 319 vypisovaných akcí opírá o vlastní příspěvek dvanáct. Zbytek se načítá z centrální Databáze turistických akcí KČT.
+
+## Dva zdroje akcí
+
+Akce na webu pocházejí ze dvou míst a chovají se odlišně:
+
+- **Importované akce** přicházejí z centrální Databáze turistických akcí KČT. V administraci pro ně žádný příspěvek neexistuje — nejsou tedy v seznamu Akce a nedají se běžně editovat. Na webu ale mají vlastní stránku a objevují se ve všech výpisech.
+- **Vlastní akce** jsou příspěvky typu Akce, které se zakládají ručně v administraci. Používají se na akce, které v centrální databázi nejsou, a na akce, ke kterým je potřeba doplnit vlastní text a fotku.
+
+Rozdíl je podstatný hlavně proto, že importovanou akci nemá smysl ručně upravovat — viz níže.
+
+## Odkud se import bere a co ho podmiňuje
+
+Data se stahují z centrální databáze KČT a ukládají se do tabulky akcí na webu. Je-li web součástí sítě více webů, uloží se jednou pro celou síť, na jejím hlavním webu, a jednotlivé weby si z nich pak berou jen to, co jim patří.
+
+O tom, co web vypisuje, rozhoduje kód vyplněný v nastavení šablony:
+
+- **třímístný kód** znamená oblast — web vypisuje akce celé oblasti,
+- **šestimístný kód** znamená odbor — web vypisuje jen akce toho odboru.
+
+Bez vyplněného kódu web nevypíše žádnou akci a import pro něj nic nenačte. Kde se kód zadává, popisuje [První nastavení](/zaciname/prvni-nastaveni/).
+
+Import se nespouští tlačítkem v administraci. Provádí se příkazem na serveru, zpravidla pravidelně. Akce, které centrální databáze označí za zrušené, import z webu zase odstraní, takže na webu nezůstanou viset jako duchy.
+
+## Importované akce se při aktualizaci přepisují
+
+Při každém běhu importu se údaje akce nahradí tím, co je právě v centrální databázi. Cokoliv se u importované akce změní jinde, další import přepíše.
+
+Z toho plyne jediné rozumné pravidlo: **opravy termínu, místa, kontaktů, typu akce nebo popisu patří do centrální databáze KČT, ne na web.** Web je jen zrcadlo.
+
+Připomíná to i editor: u akce navázané na centrální databázi se místo běžných polí zobrazí upozornění, že se veškerá data načítají z databáze akcí a že se mají upravit tam.
+
+## Převod importované akce na vlastní
+
+Občas je potřeba u importované akce doplnit něco, co centrální databáze nemá — delší pozvánku, vlastní fotku, odkazy. K tomu slouží převod na vlastní akci.
+
+Postup:
+
+1. Otevřít na webu stránku dané akce, přihlášeným účtem s právem upravovat příspěvky.
+2. Pod obsahem akce se zobrazí odkaz **Převést na vlastní akci a upravit**.
+3. Odkaz založí příspěvek typu Akce, převezme do něj název a datum akce, uloží si vazbu na číslo akce v centrální databázi a rovnou ho otevře k úpravám.
+
+Co se tím získá a co ne:
+
+- Vzniklý příspěvek **není kopií** akce. Vyplněné zůstávají jen název a datum.
+- V editoru se nabízí popis, náhledový obrázek a datum startu. Ostatní údaje se dál načítají z centrální databáze.
+- Při zobrazení má přednost to, co je vyplněné v příspěvku; prázdná pole se doplní z centrální databáze. Vlastní text a fotka tedy přežijí i další import, protože leží v příspěvku, ne v importovaných datech.
+- Datum v příspěvku musí souhlasit s centrální databází. Mění se jen v případě chyby — a bez vyplněného data se akce ve výpise nezobrazí vůbec.
+
+Jak nahrát a vybrat obrázek popisuje [Média a fotky](/zaklady-wordpressu/media-a-fotky/).
+
+## Pole vlastní akce
+
+Akce, která v centrální databázi není (pole s číslem akce zůstane na nule), nabízí v editoru plnou sadu polí:
+
+- **Název a popis** — název příspěvku a obsah v editoru bloků.
+- **Náhledový obrázek** — použije se v záhlaví stránky akce i ve výpisech.
+- **Ročník** — nepovinný, u pravidelných akcí. Předsadí se před název („25. ročník").
+- **Místo akce** a **Okres** — obecné určení, kde se akce koná.
+- **Start** — datum (povinné), čas a místo startu. Bez data startu se akce ve výpise neobjeví.
+- **Cíl** — datum, čas a místo cíle. Nevyplněné datum cíle znamená, že akce končí v den startu; vyplněné se ve výpisech ukáže jako rozsah „od–do“.
+- **Kontakt** — osoba, adresa, telefon a e-mail. Kontaktů lze přidat víc.
+- **Detaily (tipy) akce** — typ akce vybraný z číselníku KČT a délka trasy v kilometrech. Typů lze přidat víc, takže pochod s trasami 15, 25 a 50 km se zadá jako tři položky. Ikony typů akcí se do výpisů berou z centrální databáze.
+- **Nastavení stránky → Pozice detailů akce** — kde se na stránce akce zobrazí panel s obrázkem, typy akce a kontakty: v bočním panelu, nad patičkou, nebo vůbec.
+
+Typy akcí se nabízejí podle číselníku, který se stahuje spolu s akcemi. Na webu, kde ještě žádný import neproběhl, může být výběr prázdný.
+
+
+<Image src={dminkceetail} alt="Editor akce s rozbaleným panelem Data akce a poli termínu, místa a startu" />
+
+## Kde se akce zobrazují
+
+**Výpis akcí** na adrese `/akce/` sdružuje oba zdroje do jednoho seznamu seřazeného podle data. Nad seznamem je filtr podle rozsahu dat a typu akce; ve výchozím stavu ukazuje rok dopředu od dnešního dne. Filtr funguje i bez JavaScriptu, jen se stránka načte znovu.
+
+**Mapa nad výpisem** vykresluje akce, které mají souřadnice. Ty pocházejí z centrální databáze — u ručně založené akce se souřadnice nikde nezadávají, takže se na mapě neobjeví, přestože v seznamu je. Mapu jde na webu vypnout, viz [Vzhled webu](/funkce/vzhled-webu/); tam se mění i nadpis stránky s výpisem.
+
+**Blok Kalendář akcí** vloží výpis nejbližších akcí na libovolnou stránku, například na úvodní. Popisuje ho [Kalendář akcí](/funkce/bloky/kalendar-akci/).
+
+**Stránka odboru** ukazuje nejbližší akce toho odboru, viz [Odbory](/funkce/odbory/).
+
+**Stránka jedné akce** skládá dohromady pořadatele (s odkazem na jeho stránku odboru, pokud existuje), místo konání, termín, typy akce s kilometry, kontakty a případné propozice v PDF. U akce, která už proběhla, se do záhlaví přidá poznámka s datem konání.
+
+## Akce odboru na webu oblasti
+
+Tohle platí jen v síti více webů. Na webu s kódem odboru tam přibývá u vlastní akce oddíl **Propojení s webem oblasti**. Přepínač „Zveřejnit na webu oblasti“ pošle akci do výpisu oblastního webu, pole „Krátký text do obsahu“ k ní připojí krátký popis, který se na oblastním webu zobrazí. Po vypnutí přepínače se akce z oblastního webu zase odstraní.
+
+Na samostatném webu se oddíl v editoru nezobrazuje — není kam akci posílat.
+
+## Sdílení na Facebook
+
+Akce z obou zdrojů se dají odesílat na facebookovou stránku odboru. Nastavení a pravidla popisuje [Sdílení na Facebook](/funkce/sdileni-na-facebook/).

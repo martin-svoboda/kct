@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "kct/cover",
+	"title": "Úvodní obrázek",
+	"category": "kct",
+	"icon": "cover-image",
+	"description": "Úvodní obrázek s nadpisem, textem a tlačítkem.",
+	"textdomain": "kct",
+	"supports": {
+		"html": false,
+		"customClassName": false,
+		"reusable": true
+	},
+	"attributes": {
+		"background": { "type": "integer", "default": 0 },
+		"title": { "type": "string", "default": "" },
+		"text": { "type": "string", "default": "" },
+		"link": { "type": "object", "default": {} }
+	}
+}

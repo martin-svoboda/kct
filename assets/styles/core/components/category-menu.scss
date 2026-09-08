@@ -1,0 +1,19 @@
+.category-menu {
+	margin-bottom: 2rem;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 7px;
+
+	&__item {
+		padding: .5rem 1rem;
+		border-radius: var(--chip-radius);
+		background: $white-color;
+		color: $secondary-color;
+		text-decoration: none;
+
+		&.active {
+			background: $primary-color;
+			color: $white-color;
+		}
+	}
+}

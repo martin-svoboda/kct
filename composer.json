@@ -1,0 +1,45 @@
+{
+  "name": "martin-svoboda/kct",
+  "description": "KČT theme and functions",
+  "type": "project",
+  "license": "GPL-2.0-or-later",
+  "config": {
+	"platform-check": false,
+	"allow-plugins": {
+	  "wpify/plugin-composer-scripts": true,
+	  "wpify/scoper": true,
+	  "dealerdirect/phpcodesniffer-composer-installer": true
+	}
+  },
+  "autoload": {
+	"psr-4": {
+	  "Kct\\": "src/"
+	}
+  },
+  "scripts": {
+    "post-create-project-cmd": [
+      "composer rename-wpify-plugin",
+      "composer remove --dev wpify/plugin-composer-scripts",
+      "composer require --dev wpify/scoper:^3",
+      "npm install --save-dev @wordpress/scripts browser-sync browser-sync-webpack-plugin node-sass-glob-importer svg-spritemap-webpack-plugin",
+      "npm run build"
+    ]
+  },
+  "require": {
+	"php": "^8.0.0",
+	"ext-json": "*"
+  },
+  "require-dev": {
+	"wpify/tracy": "^1.0",
+	"squizlabs/php_codesniffer": "^3.6",
+	"roave/security-advisories": "dev-latest",
+	"dealerdirect/phpcodesniffer-composer-installer": "^0.7.1",
+	"wp-coding-standards/wpcs": "dev-main",
+    "wpify/scoper": "^3"
+  },
+  "extra": {
+	"wpify-scoper": {
+	  "prefix": "KctDeps"
+	}
+  }
+}

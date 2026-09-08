@@ -1,0 +1,203 @@
+// Události — holý responzivní seznam jako PŘED redesignem.
+// Pokrývá blok homepage (.block-events / .event__*) i React archiv /akce/ (.events / .date / h3).
+// Responzivita (klíčová): .content-box je na mobilu SLOUPEC, na desktopu ŘÁDEK;
+// ikony jsou na mobilu na plnou šířku (pod obsahem), na desktopu vpravo (max 93px).
+.block-events,
+.events {
+	margin-top: 1rem;
+
+	.events-list {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	.event {
+		display: flex;
+		align-items: flex-start;
+		gap: 16px;
+		padding: 20px 0;
+		border-bottom: 1px solid var(--line);
+		color: var(--text);
+		text-decoration: none;
+
+		&:hover {
+			filter: none;
+			background: var(--surface);
+		}
+
+		& > img {
+			max-width: 100px;
+			flex: 0 0 auto;
+			border-radius: var(--radius-sm);
+			object-fit: cover;
+		}
+	}
+
+	// Datum = kartička (modrá hlavička s dnem v týdnu / počtem dní, velké číslo, měsíc)
+	.event-date {
+		flex: 0 0 auto;
+		min-width: 74px;
+		text-align: center;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: var(--radius-card);
+		overflow: hidden;
+		box-shadow: var(--shadow-card);
+
+		&__head {
+			display: block;
+			padding: 5px 6px;
+			background: var(--primary);
+			color: #fff;
+			font-family: var(--font-head);
+			font-weight: 700;
+			font-size: 13px;
+			letter-spacing: .03em;
+			line-height: 1.25;
+			text-transform: uppercase;
+			white-space: nowrap;
+		}
+
+		&__body {
+			display: flex;
+			align-items: baseline;
+			justify-content: center;
+			gap: 8px;
+			padding: 9px 8px 11px;
+		}
+
+		&__part {
+			display: block;
+			min-width: 26px;
+		}
+
+		&__num {
+			display: block;
+			font-family: var(--font-head);
+			font-weight: 700;
+			font-size: 2rem;
+			line-height: 1;
+			color: var(--text);
+		}
+
+		&__mon {
+			display: block;
+			margin-top: 3px;
+			font-size: 12px;
+			line-height: 1;
+			text-transform: lowercase;
+			color: var(--text-muted);
+		}
+
+		&__sep {
+			align-self: center;
+			font-size: 1.4rem;
+			font-weight: 400;
+			color: var(--text-muted);
+		}
+	}
+
+	// V seznamu žádná fotka
+	.event__media { display: none; }
+
+	.content-box {
+		flex: 1;
+		display: flex;
+		flex-wrap: wrap;
+		flex-direction: column;
+		gap: 10px;
+
+		@media (min-width: $medium-screen) {
+			flex-direction: row;
+			align-items: flex-start;
+		}
+	}
+
+	.content {
+		flex: 1;
+		min-width: 0;
+	}
+
+	// Nadpis (nové .event__title i staré .content h3) — jako dřív, bez uppercase
+	.event__title,
+	.content h3 {
+		font-family: var(--font-head);
+		font-weight: 700;
+		font-size: 1.25rem;
+		text-transform: none;
+		margin: 0 0 4px;
+		color: var(--text);
+	}
+
+	.event__meta,
+	.event__tags,
+	.content p {
+		color: var(--text-muted);
+		margin: 0;
+	}
+
+	// Jen meta (pořádající odbor + místo) menší; km detaily (.event__tags)
+	// jsou v podstatě description a zůstávají v původní velikosti.
+	.event__meta {
+		font-size: 13px;
+		line-height: 1.4;
+	}
+
+	.icons {
+		width: 100%;
+		line-height: 1;
+		display: flex;
+		align-content: flex-start;
+		flex-wrap: wrap;
+		gap: 4px;
+
+		@media (min-width: $medium-screen) {
+			max-width: 133px;
+		}
+
+		img {
+			max-width: 30px;
+		}
+
+		.proposal-icon {
+			width: 29px;
+			height: 29px;
+			margin-right: 1px;
+			margin-bottom: 1px;
+			border: 1px solid black;
+			color: var(--primary);
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-content: center;
+			box-shadow: 1px 1px black;
+		}
+	}
+
+	.event__link {
+		color: var(--primary);
+		font-weight: 700;
+		white-space: nowrap;
+	}
+
+	.events-error {
+		color: var(--text-muted);
+		padding: 20px 0;
+	}
+
+	p {
+		margin-bottom: 0;
+	}
+}
+
+// V sidebaru (úzký sloupec) zalomit stejně jako na mobilu — obsah pod sebe,
+// ikony na plnou šířku (přebíjí desktopový řádkový režim).
+#secondary,
+.widget-area {
+	.block-events,
+	.events {
+		.content-box { flex-direction: column; }
+		.icons { max-width: none; width: 100%; }
+	}
+}

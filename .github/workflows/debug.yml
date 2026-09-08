@@ -1,0 +1,37 @@
+name: Debug Server Connection
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug:
+    runs-on: ubuntu-22.04
+    # Viz komentář v deploy.yml — adresa serveru a uživatel patří do secrets.
+    env:
+      SSH_SERVER: ${{ secrets.SSH_SERVER }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PORT: 22
+
+    steps:
+      - name: Add private SSH key
+        run: |
+          echo "Setting up SSH key..."
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -t rsa $SSH_SERVER >> ~/.ssh/known_hosts || true
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Debug SSH connection
+        run: |
+          echo "Testing SSH port..."
+          nc -zv $SSH_SERVER $SSH_PORT || echo "Port $SSH_PORT is not accessible"
+          echo "SSH port is accessible."
+
+      - name: Test SSH connection
+        run: |
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -T "$SSH_USER@$SSH_SERVER" "echo 'Connection successful'"
+
+      - name: Verify known_hosts
+        run: cat ~/.ssh/known_hosts

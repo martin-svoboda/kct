@@ -1,0 +1,119 @@
+.department-post {
+	width: 100%;
+
+	.entry-header {
+		// Kontejner je sloupec: nahoře drobečky přes celou šířku, pod nimi
+		// řádek s logem a titulkem. Dřív byl řádkem přímo kontejner, jenže na
+		// desktopu má `flex-wrap: nowrap` (aby logo zůstalo vedle titulku)
+		// a v takovém kontejneru se nedá nic zalomit na vlastní řádek — cokoli
+		// dalšího uvnitř se jen smrskne vedle. Proto má řádek vlastní obal.
+		.container {
+			position: relative;
+			flex-flow: column;
+			gap: 20px;
+			z-index: 1;
+		}
+
+		.department-head {
+			display: flex;
+			flex-flow: row;
+			flex-wrap: wrap;
+			gap: 20px;
+			position: relative;
+
+			@media (min-width: $medium-screen) {
+				flex-wrap: nowrap;
+			}
+
+			div {
+				display: flex;
+				flex-flow: column;
+				justify-content: center;
+				gap: 0;
+				position: relative;
+			}
+		}
+
+		img {
+			width: 120px;
+		}
+	}
+
+	.department-content-wrap {
+		width: 100%;
+		margin-bottom: 2rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 3rem;
+
+		.entry-content {
+			@media (min-width: $medium-screen) {
+				flex: 1;
+			}
+		}
+
+		.department-sidebar {
+			@media (min-width: $medium-screen) {
+				max-width: 31%;
+				flex: 0 0 auto;
+				min-width: 250px;
+			}
+
+			& > * {
+				margin-bottom: 1rem;
+			}
+		}
+	}
+}
+
+.departments {
+	margin-top: 1rem;
+
+	.departments-list {
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-wrap: wrap;
+		column-gap: 2rem;
+
+		li {
+			flex: 1;
+			width: 100%;
+			min-width: 300px;
+
+			@media (min-width: 500px) {
+				min-width: 450px;
+			}
+		}
+	}
+
+	.department {
+		display: flex;
+		padding: 20px 0;
+		border-bottom: 1px solid $line-color;
+		color: $secondary-color;
+		text-decoration: none;
+
+		&:hover {
+			filter: none;
+			background: var(--surface);
+		}
+
+		.content {
+			flex: 1;
+		}
+
+		& > img {
+			width: auto;
+			height: 65px;
+			object-fit: contain;
+			margin-right: 20px;
+		}
+	}
+
+	p {
+		margin-bottom: 0;
+	}
+}
+
