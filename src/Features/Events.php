@@ -499,8 +499,16 @@ class Events {
 
 			$post_data['details'] = $this->merge_event_details_data( $post_data['details'] );
 
-			if ( $post_event->db_id ) {
-				$event_db      = $this->db_event_repository->get_by_db_id( (int) $post_event->db_id );
+			$event_db = $post_event->db_id
+				? $this->db_event_repository->get_by_db_id( (int) $post_event->db_id )
+				: null;
+
+			// Spárovaná akce v tabulce být nemusí — import ji smaže, jakmile ji
+			// feed označí jako zrušenou (deleted=Y), ale db_id u příspěvku
+			// zůstane. Bez téhle pojistky spadne to_array() na null a 500 vrátí
+			// každý výpis akcí, tedy i titulka. Totéž hlídá get_event()
+			// u /akce-db/{id}. Osiřelý příspěvek se vypíše z vlastních dat.
+			if ( $event_db ) {
 				$event_db_data = $event_db->to_array();
 				$event         = [];
 				foreach ( $post_data as $key => $value ) {
@@ -796,6 +804,14 @@ class Events {
 		$event = $this->event_repository->create();
 		/** @var DbEventModel $db_event */
 		$db_event = $this->db_event_repository->get_by_db_id( $db_id );
+
+		// Akci mezitím mohl smazat import, když ji feed označil jako zrušenou,
+		// nebo je db_id z adresy vymyšlené. Bez téhle pojistky spadne čtení
+		// title na null a správce dostane bílou obrazovku; založit příspěvek
+		// bez názvu a data by bylo horší než to říct.
+		if ( ! $db_event ) {
+			wp_die( esc_html__( 'Tato akce už v Databázi akcí KČT není, příspěvek z ní nejde založit.', 'kct' ) );
+		}
 
 		$event->db_id = $db_id;
 		$event->title = $db_event->title;
