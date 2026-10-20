@@ -56,12 +56,22 @@ function kct_container(): Container {
 /**
  * Naformátuje datum akce pro výpis (karta data).
  *
- * @param string $date   Datum začátku (Y-m-d).
- * @param string $finish Datum konce (Y-m-d), volitelné — u vícedenních akcí.
+ * Datum nemusí z databáze akcí přijít jako řetězec. Prázdný prvek feedu se do
+ * tabulky uloží jako prázdné pole (`a:0:{}`), takže `$row['finish']['date']`
+ * klidně je `array()` — a `?? ''` to nezachytí, protože klíč existuje. Typy se
+ * proto nesrovnávají u každého volajícího zvlášť, ale tady: na tomhle datu visí
+ * celý výpis akcí a TypeError z jediného pokaženého řádku shodí titulku i
+ * archiv akcí.
+ *
+ * @param mixed $date   Datum začátku (Y-m-d); co není řetězec, bere se jako prázdné.
+ * @param mixed $finish Datum konce (Y-m-d), volitelné — u vícedenních akcí.
  *
  * @return array Pole s částmi data pro kartu i pro původní textový výpis.
  */
-function kct_format_event_date( string $date, string $finish = '' ): array {
+function kct_format_event_date( mixed $date, mixed $finish = '' ): array {
+	$date   = is_string( $date ) ? $date : '';
+	$finish = is_string( $finish ) ? $finish : '';
+
 	$start_ts   = strtotime( $date );
 	$finish_ts  = $finish ? strtotime( $finish ) : 0;
 	$start_day  = strtotime( date( 'Y-m-d', $start_ts ) );
