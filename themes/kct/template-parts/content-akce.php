@@ -282,8 +282,22 @@ $kct_department_url = kct_container()->get( \Kct\Seo\DepartmentLink::class )->fo
 
 					$details = [];
 					foreach ( $event['details'] as $detail ) {
-						$text      = $detail['name'] . ( $detail['km'] ? ': ' . $detail['km'] : '' );
-						$details[] = sprintf( '<img src="%s" alt="%s" width="30" height="30"> %s', esc_url( $detail['icon'] ), esc_attr( $detail['name'] ), esc_html( $text ) );
+						$text = $detail['name'] . ( $detail['km'] ? ': ' . $detail['km'] : '' );
+
+						// Prázdný prvek feedu se uloží jako prázdné pole, ne jako
+						// prázdný řetězec, a esc_url() na poli spadne TypeError —
+						// shodí se tím celá stránka akce. Bez ikony se položka
+						// vypíše dál, informaci nese text. Výpis akcí to řeší
+						// stejně (inc/template-tags.php).
+						$icon = ! empty( $detail['icon'] ) && is_string( $detail['icon'] )
+							? sprintf(
+								'<img src="%s" alt="%s" width="30" height="30"> ',
+								esc_url( $detail['icon'] ),
+								esc_attr( $detail['name'] )
+							)
+							: '';
+
+						$details[] = $icon . esc_html( $text );
 					}
 
 
