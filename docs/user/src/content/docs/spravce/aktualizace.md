@@ -31,16 +31,20 @@ dostane připravený.
 
 ## Aktualizace pluginu a šablony
 
-Plugin není v adresáři WordPress.org, takže se pro něj v přehledu aktualizací
-WordPressu nikdy nenabídne tlačítko.
+Plugin není v adresáři WordPress.org, ale novou verzi hlásí sám — běžnou
+cestou WordPressu. Je-li venku novější vydání, objeví se u položky Kct
+v přehledu **Pluginy** hláška s odkazem na podrobnosti a tlačítkem
+**Aktualizovat**. Aktualizovat jde i hromadně přes **Nástěnka →
+Aktualizace** a u pluginu se dají zapnout automatické aktualizace.
 
-**Na samostatném webu** je aktualizace na správci webu a dělá se ručně: stáhnout
-novější soubor ZIP z vydání na GitHubu a nahrát ho stejnou cestou jako při
-instalaci, tedy přes **Pluginy → Instalace pluginu → Nahrát plugin**. WordPress
-pozná, že plugin už je nainstalovaný, a nabídne nahrazení stávající verze.
-Nastavení, obsah ani evidence odeslaných příspěvků se přitom neztratí. Šablona
-vzhledu se aktualizuje spolu s pluginem, protože je uvnitř balíčku — zvlášť se
-nenahrává.
+Šablona vzhledu se aktualizuje spolu s pluginem, protože je uvnitř balíčku —
+zvlášť se nenahrává. Nastavení, obsah ani evidence odeslaných příspěvků se
+aktualizací neztratí.
+
+Před větší aktualizací je rozumné mít po ruce zálohu. Ruční cesta přes
+**Pluginy → Instalace pluginu → Nahrát plugin** funguje dál a hodí se, když
+je potřeba vrátit se ke starší verzi: starší balíčky zůstávají ke stažení na
+[github.com/martin-svoboda/kct/releases](https://github.com/martin-svoboda/kct/releases).
 
 **Je-li web součástí spravované sítě**, plugin i šablonu nasazuje provozovatel
 sítě na všechny weby najednou. Odbor se o to nestará a nová verze prostě
@@ -51,11 +55,37 @@ projevily.
 V obou případech platí, že plugin ani šablonu nemá smysl upravovat přímo na
 webu — příští aktualizace soubory přepíše.
 
+## Co se při kontrole aktualizací posílá
+
+Aby web poznal, že je venku novější verze, ptá se dvakrát denně serveru
+`updates.sokct.cz`. V dotazu jde:
+
+- adresa webu (u sítě adresa sítě a počet webů v ní),
+- verze pluginu, WordPressu a PHP,
+- jazyk administrace.
+
+Žádné údaje o návštěvnících ani o obsahu webu se neposílají. Záznamy
+jednotlivých dotazů se mažou po 90 dnech, trvale se drží jen poslední známý
+stav každé domény. Slouží to k jedinému: vědět, které weby šablonu používají
+a jestli někde neběží dávno zastaralá verze s chybou, která je už opravená.
+
+Samotný balíček se stahuje přímo z GitHubu, ne z `updates.sokct.cz`.
+
+Kontroly se dají vypnout — do `wp-config.php` nad řádek
+`require_once ABSPATH . 'wp-settings.php';` patří:
+
+```php
+define( 'KCT_DISABLE_UPDATES', true );
+```
+
+Pak se ale aktualizace přestanou nabízet a je potřeba je hlídat ručně.
+
 ## O co se stará správce webu vždycky
 
 Běžnou cestou, tedy přes **Nástěnka → Aktualizace**, se řeší:
 
 - jádro WordPressu,
+- plugin KČT se šablonou,
 - ostatní pluginy (Rank Math, WP Optimize a další),
 - překlady.
 

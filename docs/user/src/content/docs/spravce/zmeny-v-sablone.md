@@ -16,6 +16,25 @@ Historie začíná u verze 2.0.0, kterou se šablona začala vydávat veřejně.
 Předchozí vydání vznikala jen pro weby provozované přímo autorem šablony a
 zpětně se nedoplňují — všechno, co uměla, je součástí verze 2.0.0.
 
+## 2.1.0 — 6. 11. 2026
+
+- **Šablona si novou verzi hlásí sama.** Je-li venku novější vydání, objeví se
+  u pluginu Kct v přehledu **Pluginy** hláška s tlačítkem **Aktualizovat** —
+  stejně jako u kteréhokoli jiného pluginu. Stahovat balíček z GitHubu a
+  nahrávat ho ručně už není potřeba; ruční cesta zůstává pro návrat ke starší
+  verzi. Podrobnosti i to, co se při kontrole odesílá, popisuje stránka
+  [Aktualizace šablony](/spravce/aktualizace/).
+
+  :::note[Platí až od příští aktualizace]
+  Aby se nová verze uměla nabídnout sama, musí na webu nejdřív běžet tahle.
+  Přechod z 2.0.x na 2.1.0 se tedy ještě dělá ručně.
+  :::
+
+- **Údaje odboru jdou vyplnit celé v administraci.** Dřív šla část polí
+  přepsat jen v centrální Databázi akcí KČT. Její export už ale není v
+  provozu, takže se všechno edituje přímo na webu — i u odborů, které vznikly
+  importem. Popisuje to stránka [Odbory](/funkce/odbory/).
+
 ## 2.0.0 — 8. 9. 2026
 
 První veřejné vydání. Šablonu si nově může nainstalovat kterýkoli odbor, ne

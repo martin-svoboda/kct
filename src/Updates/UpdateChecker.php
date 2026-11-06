@@ -31,9 +31,14 @@ final class UpdateChecker {
 	private const ENDPOINT = 'https://updates.sokct.cz/kct';
 
 	public function __construct( private PluginUtils $utils ) {
-		// Weby nasazované rsyncem z deploy.yml (sokct.cz, posazavskastezka.cz,
-		// vývojová kopie) aktualizaci nepotřebují a v přehledu instalací by
-		// jen šuměly.
+		// Vypínací konstanta patří jen na vývojovou kopii: tam je v hlavičce
+		// nenahrazený zástupný text KCT_VERSION, který version_compare()
+		// bere jako nižší než každé vydání — aktualizace by se nabídla
+		// a spuštěná by složku pluginu i s .git nahradila obsahem ZIPu.
+		//
+		// Produkční weby ji vědomě nemají: nasazují se rsyncem na verzi
+		// posledního tagu, takže se jim nic nenabízí, a v přehledu instalací
+		// je chceme vidět.
 		if ( defined( 'KCT_DISABLE_UPDATES' ) && KCT_DISABLE_UPDATES ) {
 			return;
 		}

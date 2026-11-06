@@ -35,6 +35,9 @@ class DocsLinks {
 	 * @var array<string, array<string, string>>
 	 */
 	private const SCREENS = array(
+		'plugins'                   => array(
+			'/spravce/aktualizace/' => 'Aktualizace šablony',
+		),
 		'settings_page_kct_options' => array(
 			'/zaciname/prvni-nastaveni/'      => 'První nastavení webu',
 			'/funkce/sdileni-na-facebook/'    => 'Sdílení na Facebook',

@@ -68,6 +68,52 @@ Dokumentace běží na Node 22 — Astro 7 má v `engines` `node >=22.12.0`. To 
 záměrný rozchod s `deploy.yml`, který staví bloky pluginu na Node 18; jsou to
 dva nezávislé buildy.
 
+## Aktualizace pluginu
+
+Weby mimo nasazení z `deploy.yml` dostávají aktualizace přes
+`plugin-update-checker` (`src/Updates/UpdateChecker.php`) a vlastní endpoint
+na `https://updates.sokct.cz`. Kód endpointu je v repozitáři v
+`server/updates/`, nasazuje ho `.github/workflows/updates-server.yml`.
+`deploy.yml` celou složku `server` vylučuje z rsyncu i z instalačního ZIPu —
+oba seznamy výjimek se mění spolu.
+
+Instalační ZIP se stahuje z přílohy vydání na GitHubu, ne z našeho serveru.
+Výpadek endpointu tedy znamená jen to, že se nenabídne aktualizace, ne
+přerušenou instalaci.
+
+**`plugin-update-checker` je v `composer.json`, ne v `composer-deps.json`, a
+nejde přes scoper. Není to opomenutí.** Knihovna si skládá jména tříd
+z řetězců (verzované jmenné prostory `…\v5pX\…`) a php-scoper jméno slepené
+za běhu přepsat neumí — scopovaná kopie by se rozbila až v runtime. Ten
+verzovaný namespace je navíc přímo mechanismus, kterým knihovna řeší souběh
+víc pluginů s různými verzemi; scopování by ho vyřadilo a nahradilo vlastním,
+neověřeným.
+
+Adresa endpointu je na dvou místech, která se musí shodovat: konstanta
+`UpdateChecker::ENDPOINT` a hlavička `Update URI` v `kct.php`. Podle hlavičky
+WordPress od 5.8 pozná, že se na aktualizace tohoto pluginu nemá ptát
+WordPress.org — bez ní by stačilo, aby tam někdo vydal plugin se složkou
+`kct`, a instalace by si stáhly cizí kód.
+
+Konstanta `KCT_DISABLE_UPDATES` ve `wp-config.php` kontroly vypíná. Patří
+**jen na vývojovou kopii**: tam má plugin v hlavičce nenahrazený zástupný
+text `KCT_VERSION`, který `version_compare()` vyhodnotí jako nižší než
+jakékoli vydání — aktualizace by se nabídla a její spuštění by složku pluginu
+i s `.git` nahradilo obsahem ZIPu.
+
+Na sokct.cz ani posazavskastezka.cz konstanta **vědomě není**. Nasazují se
+rsyncem na verzi posledního tagu, takže se jim žádná aktualizace nenabídne,
+a v přehledu instalací je chceme vidět — mimo jiné proto, že zaseknutá verze
+tam prozradí nepovedené nasazení.
+
+Změny v `server/updates/` ověřuje `php server/updates/public/test.php` —
+testuje čistou logiku, bez sítě a databáze. Workflow ho spouští před
+nasazením.
+
+**Aktualizaci nikdy netestovat na vývojové kopii.** Plugin tam leží jako git
+pracovní kopie a aktualizace WordPressu složku pluginu smaže a nahradí
+obsahem ZIPu — i s `.git`. Na ověření patří samostatná WordPress instalace.
+
 ## Dokumentace vývoje
 
 `docs/superpowers/specs/` jsou návrhy, `docs/superpowers/plans/` implementační
