@@ -33,7 +33,7 @@ if ( is_single() && has_post_thumbnail() ) {
 					echo wp_get_attachment_image( $department->logo, 'medium', array( "class" => "department-logo" ) );
 				} ?>
 				<div>
-					odbor č. <?php echo $department->department_id ?>
+					<?php if ( $department->department_id ) { ?>odbor č. <?php echo esc_html( $department->department_id ); } ?>
 					<h1 class="entry-title"><?= $department->title ?></h1>
 				</div>
 			</div>
@@ -61,7 +61,15 @@ if ( is_single() && has_post_thumbnail() ) {
 			<?php // kct_post_thumbnail(); ?>
 
 			<h3>Kontaktní informace odboru</h3>
-			<p><?php printf( '%s, %s %s, %s', $department->street, $department->zip, $department->town, $department->state ) ?></p>
+			<?php
+			// Adresa se skládá jen z vyplněných částí — od chvíle, kdy se odbory
+			// vedou ručně, může kterákoli chybět a pevný formát by po sobě nechal
+			// osamocené čárky.
+			$kct_address_line = trim( implode( ' ', array_filter( array( $department->zip, $department->town ) ) ) );
+			$kct_address      = array_filter( array( $department->street, $kct_address_line, $department->state ) );
+			if ( $kct_address ) { ?>
+				<p><?php echo esc_html( implode( ', ', $kct_address ) ) ?></p>
+			<?php } ?>
 			<?php if ( $department->phones ) {
 				$phones = [];
 				foreach ( $department->phones as $phone ) {

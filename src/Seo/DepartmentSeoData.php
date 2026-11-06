@@ -63,7 +63,11 @@ class DepartmentSeoData {
 	 *                                     typu v Titles & Meta).
 	 */
 	public function schema( array $department, string $canonical, array $parent_organization = array() ): array {
-		$name = $this->text( $department['name'] ?? '' ) ?: $this->text( $department['title'] ?? '' );
+		// Titulek napřed, metapole `name` jen jako záloha: `name` plní import
+		// z centrální databáze, ale ručně se edituje titulek příspěvku. Kdyby
+		// mělo přednost `name`, přejmenovaný odbor by měl ve schématu pořád
+		// starý název z importu.
+		$name = $this->text( $department['title'] ?? '' ) ?: $this->text( $department['name'] ?? '' );
 
 		if ( '' === $name ) {
 			return array();

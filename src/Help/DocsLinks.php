@@ -122,10 +122,11 @@ class DocsLinks {
 	 * ne záložka Nápovědy. Do kontroly odkazů ale patří stejně.
 	 */
 	private const INLINE = array(
-		'settings'   => '/zaciname/prvni-nastaveni/',
-		'facebook'   => '/funkce/sdileni-na-facebook/',
-		'event_data' => '/funkce/akce/',
-		'appearance' => '/funkce/vzhled-webu/',
+		'settings'        => '/zaciname/prvni-nastaveni/',
+		'facebook'        => '/funkce/sdileni-na-facebook/',
+		'event_data'      => '/funkce/akce/',
+		'department_data' => '/funkce/odbory/',
+		'appearance'      => '/funkce/vzhled-webu/',
 	);
 
 	/**

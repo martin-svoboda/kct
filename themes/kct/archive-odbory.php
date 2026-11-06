@@ -54,7 +54,17 @@ $kct_map_data = array_map( static function ( $d ) {
 								<?php endif; ?>
 								<div class="content">
 									<h3><?php echo esc_html( $kct_d['title'] ); ?></h3>
-									<p>Odbor č. <?php echo esc_html( $kct_d['department_id'] ?? '' ); ?> | <?php echo esc_html( $kct_d['town'] ?? '' ); ?></p>
+									<?php
+									// Číslo i obec můžou u ručně vedeného odboru chybět — vypisuje
+									// se jen to, co je vyplněné, ať nezůstane viset „č. 0 |“.
+									$kct_meta = array_filter( array(
+										! empty( $kct_d['department_id'] ) ? sprintf( 'Odbor č. %s', $kct_d['department_id'] ) : '',
+										$kct_d['town'] ?? '',
+									) );
+									?>
+									<?php if ( $kct_meta ) : ?>
+										<p><?php echo esc_html( implode( ' | ', $kct_meta ) ); ?></p>
+									<?php endif; ?>
 								</div>
 							</a>
 						</li>

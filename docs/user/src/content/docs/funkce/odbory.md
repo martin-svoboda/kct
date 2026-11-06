@@ -1,11 +1,11 @@
 ---
 title: Odbory
-description: K čemu slouží typ obsahu Odbory, odkud se seznam odborů načítá a co se u odboru dá doplnit ručně.
+description: K čemu slouží typ obsahu Odbory, jak se vyplňují údaje odboru a co se z nich kde zobrazí.
 sidebar:
   order: 2
 ---
 
-Po přečtení této stránky je jasné, k čemu typ obsahu Odbory slouží, odkud se seznam bere a co se u odboru dá doplnit ručně.
+Po přečtení této stránky je jasné, k čemu typ obsahu Odbory slouží, jak se údaje odboru vyplňují a kde se pak na webu objeví.
 
 ## K čemu Odbory slouží
 
@@ -13,29 +13,34 @@ Typ obsahu Odbory drží seznam odborů jedné oblasti — adresu, kontakty, pol
 
 Na samostatném webu jsou Odbory dostupné. Je-li web součástí sítě více webů, existují **jen na jejím hlavním webu** — na podřízeném webu jednotlivého odboru se položka v administraci vůbec neobjeví, a je to tak správně: odbor sám seznam odborů nevede.
 
-## Seznam se načítá z centrální databáze
+## Odkud se odbory vzaly
 
-Odbory se nezakládají ručně. Načítají se z centrální databáze KČT, stejně jako akce. Import z ní přebírá:
+Seznam odborů se do webu původně načetl importem z centrální databáze KČT. Ten už data nedodává — XML export z centrální databáze skončil.
 
-- název odboru a jeho číslo,
-- ulici, PSČ, obec a stát,
-- telefony a e-maily,
-- adresu webu odboru,
-- zeměpisné souřadnice pro mapu.
+Odbory se proto vedou ručně: nový odbor se zakládá tlačítkem **Přidat odbor** a všechny údaje u něj jsou v administraci normálně editovatelné, u založených importem stejně jako u ručně přidaných. Žádné pole není zamčené a opravy se nikam jinam neposílají.
 
-Které odbory se načtou, určuje kód oblasti v nastavení šablony — bez něj se nenačte nic. Kde se kód zadává, popisuje [První nastavení](/zaciname/prvni-nastaveni/). Import se spouští příkazem na serveru, není k němu tlačítko v administraci.
+:::caution
+Kdyby import někdy znovu běžel, údaje, které z něj pocházejí, přepíše svými. Ručně přidané odbory a pole, která import nezná — logo, náhledový obrázek a vlastní text — se ho netýkají.
+:::
 
-Odbory, které centrální databáze označí za smazané, přesune import do koše.
+## Co se u odboru vyplňuje
 
-## Co se u odboru doplňuje ručně
+Nadpis příspěvku je název odboru. V panelu **Data odboru** pod editorem se vyplňuje zbytek:
 
-Údaje z databáze se při každé změně přepíšou, takže je nemá smysl upravovat v administraci — opravy patří do centrální databáze KČT.
+- **Číslo odboru** — registrační číslo odboru v KČT. Zobrazí se v záhlaví stránky odboru a ve výpisu.
+- **Číslo oblasti** — oblast, pod kterou odbor patří.
+- **Adresa** — ulice a číslo popisné, PSČ, obec, stát.
+- **Telefony a e-maily** — dá se jich přidat víc, tlačítkem pod polem. Telefony se vypíšou jako odkazy k vytočení, e-maily skrytě, aby je z webu nesbírali roboti.
+- **Web odboru** — adresa včetně `https://`. Zobrazí se jako tlačítko.
+- **Poloha** — zeměpisná šířka a délka jako desetinná čísla (např. 50.2306 a 14.0875). Bez obou souřadnic se u odboru nezobrazí mapka a odbor nebude mít značku v mapě nad výpisem.
 
-Ručně doplněné věci ale import nepřepisuje a zůstávají:
+Mimo panel Data odboru se ještě vyplňuje:
 
 - **Logo odboru** — pole v pravém sloupci editoru. Zobrazí se v záhlaví stránky odboru a ve výpisu.
 - **Náhledový obrázek** — použije se jako velké pozadí záhlaví stránky odboru.
 - **Vlastní text** — obsah napsaný v editoru bloků se na stránce odboru zobrazí pod výpisem nejbližších akcí.
+
+Odbor, který se má z webu ztratit, se přesune do koše jako každý jiný příspěvek.
 
 ## Výpis odborů
 
@@ -43,6 +48,6 @@ Výpis je na adrese `/odbory/`. Nad seznamem je mapa se značkami všech odborů
 
 ## Stránka odboru
 
-Stránka jednoho odboru ukazuje v záhlaví logo, číslo odboru a název, v obsahu tři nejbližší akce odboru a pod nimi vlastní text. V bočním sloupci jsou kontaktní údaje z centrální databáze — adresa, telefony a e-maily. E-mailové adresy se vypisují skrytě, aby je z webu nesbírali roboti.
+Stránka jednoho odboru ukazuje v záhlaví logo, číslo odboru a název, v obsahu tři nejbližší akce odboru a pod nimi vlastní text. V bočním sloupci jsou kontaktní údaje — adresa, telefony, e-maily, odkaz na web odboru a mapka.
 
 Odkud se berou akce vypsané na stránce odboru, popisují [Akce](/funkce/akce/).
