@@ -1,0 +1,35 @@
+# Endpoint aktualizací pluginu KČT.
+#
+# Subdoména updates.sokct.cz je na tomhle hostingu obyčejná složka vedle `www`
+# a obsluhuje ji Apache. Vlastní konfigurace webserveru k ní neexistuje —
+# všechno, co endpoint potřebuje navíc, je tady.
+
+RewriteEngine On
+
+# Provozní data: SQLite s evidencí instalací a cache odpovědi GitHubu.
+# Leží uvnitř docrootu, protože složka vedle `www` by se na tomhle hostingu
+# sama stala další subdoménou. Zvenčí tedy nesmí být vidět.
+#
+# Pravidlo musí být před obecným přesměrováním níž.
+RewriteRule ^data/ - [F,L]
+
+# Metadata se vydávají na /kct, což není soubor na disku. Existující soubory
+# (prehled.php) si Apache obslouží sám — proto ty dvě podmínky.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [L]
+
+# Přehled instalací je jediná stránka pro člověka a jediná za heslem.
+# Soubor s hesly vytváří ručně správce serveru, v repozitáři není.
+<Files "prehled.php">
+	AuthType Basic
+	AuthName "Instalace pluginu KCT"
+	AuthUserFile /www/hosting/sokct.cz/updates/.htpasswd
+	Require valid-user
+</Files>
+
+# Debian zakazuje .ht* už ve výchozím apache2.conf. Tohle je pojistka pro
+# případ, že by endpoint jednou běžel jinde.
+<FilesMatch "^\.ht">
+	Require all denied
+</FilesMatch>

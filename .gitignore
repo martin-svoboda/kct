@@ -31,3 +31,7 @@ themes/kct/.DS_Store
 /docs/user/node_modules/
 /docs/user/dist/
 /docs/user/.astro/
+
+# Provozní data endpointu aktualizací — SQLite a cache GitHubu. Vznikají při
+# lokálním běhu i na serveru a do repozitáře nepatří.
+/server/updates/public/data/

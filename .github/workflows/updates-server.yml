@@ -1,0 +1,91 @@
+# Nasazení endpointu aktualizací (server/updates) na updates.sokct.cz.
+#
+# Odděleně od deploy.yml, stejně jako dokumentace: ten běží na tag, protože
+# nasazení pluginu je vydání verze. Endpoint se ale opravuje i mezi vydáními
+# a oprava nemá čekat na release.
+#
+# Subdoména je na tomhle hostingu obyčejná složka vedle `www`
+# (/www/hosting/sokct.cz/updates), obsluhuje ji Apache a vlastní konfiguraci
+# webserveru nemá — co endpoint potřebuje navíc, je v jeho .htaccess.
+name: Endpoint aktualizací
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'server/updates/**'
+      - '.github/workflows/updates-server.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-22.04
+    # Adresa serveru, uživatel a cesta jsou v secrets — repozitář je veřejný.
+    env:
+      SSH_SERVER: ${{ secrets.SSH_SERVER }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PATH_UPDATES: ${{ secrets.SSH_PATH_UPDATES }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Ověřit syntaxi PHP
+        run: find server/updates -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Testy čisté logiky
+        run: php server/updates/public/test.php
+
+      - name: Add private SSH key
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -t rsa "$SSH_SERVER" >> ~/.ssh/known_hosts || true
+          chmod 644 ~/.ssh/known_hosts
+
+      - name: Nasadit
+        run: |
+          set -euo pipefail
+
+          # Dvě výjimky, obě kritické. `--delete` maže na cíli všechno, co
+          # není ve zdroji — bez nich by každé nasazení smazalo evidenci
+          # instalací a soubor s hesly k přehledu. Vyloučené cesty `--delete`
+          # nemaže, proto stačí `--exclude`.
+          rsync -av --delete \
+            --exclude='/data/' \
+            --exclude='.htpasswd' \
+            -e "ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no" \
+            server/updates/public/ \
+            "$SSH_USER@$SSH_SERVER:$SSH_PATH_UPDATES/"
+
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no \
+            "$SSH_USER@$SSH_SERVER" bash -s -- "$SSH_PATH_UPDATES" <<'REMOTE'
+          set -euo pipefail
+
+          ROOT="${1%/}"
+
+          # Vlastnictví se nehádá, ale kopíruje ze sousední složky `www`,
+          # která na tom stroji prokazatelně funguje. rsync běží pod rootem,
+          # takže nasazené soubory by jinak patřily rootovi a PHP by do
+          # data/ nezapsalo.
+          WWW="$(dirname "$ROOT")/www"
+
+          if [ ! -d "$WWW" ]; then
+            echo "Sousední složka $WWW neexistuje — cesta v SSH_PATH_UPDATES je nejspíš špatně." >&2
+            exit 1
+          fi
+
+          # data/ musí existovat dřív, než se na ni sáhne chownem. Obsah se
+          # nemaže — je v ní evidence instalací a cache GitHubu.
+          mkdir -p "$ROOT/data"
+
+          chown -R --reference="$WWW" "$ROOT"
+          find "$ROOT" -type d -exec chmod 755 {} +
+          find "$ROOT" -type f -exec chmod 644 {} +
+
+          echo "Nasazeno do $ROOT (vlastník podle $WWW)"
+          ls -la "$ROOT"
+          REMOTE
