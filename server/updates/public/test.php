@@ -103,5 +103,14 @@ $from_ua = kct_visit( array(), 'WordPress/6.8.1; https://odbor2.example.cz' );
 check( 'dotaz: doména z User-Agentu', $from_ua['domain'], 'odbor2.example.cz' );
 check( 'dotaz: bez multisite', $from_ua['is_multisite'], 0 );
 
+// network_home_url() umí na multisite vrátit „http:///“, když WordPress nezná
+// doménu sítě. Parametr je neprázdný, ale hostname v něm není — musí se sáhnout
+// po User-Agentu, jinak by se ta instalace do evidence nikdy nedostala.
+$rozbita = kct_visit( array( 'site' => 'http:///' ), 'WordPress/6.8.1; https://odbor3.example.cz' );
+check( 'dotaz: nesmyslné site → doména z User-Agentu', $rozbita['domain'], 'odbor3.example.cz' );
+
+$oboje_spatne = kct_visit( array( 'site' => 'http:///' ), 'WordPress/6.8.1' );
+check( 'dotaz: nesmyslné site i User-Agent → prázdno', $oboje_spatne['domain'], '' );
+
 echo "\n" . ( $failed === 0 ? "Všechno prošlo.\n" : "Selhalo testů: $failed\n" );
 exit( $failed === 0 ? 0 : 1 );

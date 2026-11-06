@@ -27,7 +27,8 @@
   },
   "require": {
 	"php": "^8.0.0",
-	"ext-json": "*"
+	"ext-json": "*",
+	"yahnis-elsts/plugin-update-checker": "^5.7"
   },
   "require-dev": {
 	"wpify/tracy": "^1.0",

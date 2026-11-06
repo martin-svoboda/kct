@@ -120,14 +120,18 @@ function kct_site_from_user_agent( string $user_agent ): string {
  * UpdateChecker v pluginu. Všechno se zkracuje — do databáze jde cizí vstup.
  */
 function kct_visit( array $query, string $user_agent ): array {
-	$site = (string) ( $query['site'] ?? '' );
+	// Záloha se bere, i když parametr `site` přijde neprázdný, ale nesmyslný.
+	// Stává se to: na multisite může network_home_url() vrátit „http:///“,
+	// když WordPress nezná doménu sítě. Bez téhle pojistky by se taková
+	// instalace do evidence nikdy nedostala.
+	$domain = kct_host( (string) ( $query['site'] ?? '' ) );
 
-	if ( $site === '' ) {
-		$site = kct_site_from_user_agent( $user_agent );
+	if ( $domain === '' ) {
+		$domain = kct_host( kct_site_from_user_agent( $user_agent ) );
 	}
 
 	return array(
-		'domain'         => kct_host( $site ),
+		'domain'         => $domain,
 		'plugin_version' => substr( (string) ( $query['installed_version'] ?? '' ), 0, 32 ),
 		'wp_version'     => substr( (string) ( $query['wp'] ?? '' ), 0, 32 ),
 		'php_version'    => substr( (string) ( $query['php'] ?? '' ), 0, 32 ),

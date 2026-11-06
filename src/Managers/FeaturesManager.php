@@ -14,6 +14,7 @@ use Kct\Features\Lightbox;
 use Kct\Features\OgImages;
 use Kct\Features\OpenGraph;
 use Kct\Features\Turinka;
+use Kct\Updates\UpdateChecker;
 
 final class FeaturesManager {
 	public function __construct(
@@ -30,7 +31,8 @@ final class FeaturesManager {
 		OgImages $og_images,
 		DbEventShare $db_event_share,
 		Turinka $turinka,
-		AdminHelp $admin_help
+		AdminHelp $admin_help,
+		UpdateChecker $update_checker
 	) {
 	}
 }
