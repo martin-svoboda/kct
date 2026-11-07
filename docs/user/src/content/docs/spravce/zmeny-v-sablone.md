@@ -16,6 +16,37 @@ Historie začíná u verze 2.0.0, kterou se šablona začala vydávat veřejně.
 Předchozí vydání vznikala jen pro weby provozované přímo autorem šablony a
 zpětně se nedoplňují — všechno, co uměla, je součástí verze 2.0.0.
 
+## 2.1.1 — 7. 11. 2026
+
+- **Stránka akce nabízí, kam jít dál.** Pod obsahem akce je navigace na
+  předchozí a následující akci — řadí se podle data konání, takže jde projít
+  kalendář dopředu i zpátky. Pod ní je **Mohlo by vás zajímat** se třemi
+  nejbližšími budoucími akcemi; přednost mají akce stejného druhu. Na konci
+  postranního oddílu přibyly **Další ročníky**, tedy tatáž akce v jiných
+  letech, od nejnovějšího ročníku k nejstaršímu. Ročníky se poznají podle
+  názvu akce a pořádajícího odboru, takže fungují i u akce, která v centrální
+  databázi vůbec není. Popisuje to stránka [Akce](/funkce/akce/).
+
+- **Ikony druhů turistiky se zobrazují u všech akcí.** U části akcí chyběly,
+  protože je centrální databáze u některých záznamů neposílá. Nově se doplní
+  z číselníku druhů turistiky, který se stahuje spolu s akcemi. Načítají se
+  navíc přímo z webu, ne ze serveru ústředí.
+
+- **Zrušené akce mizí z webu spolehlivěji.** Import odstraní i akci, kterou
+  centrální databáze přestala nabízet bez ohlášení — typicky když ústředí
+  nahradí chybný záznam novým a na webu pak visely obě verze vedle sebe.
+  Maže se jen dopředu: proběhlé akce v archivu zůstávají, i když je centrální
+  databáze už nenabízí.
+
+- **Import nepoloží jediný vadný znak.** Export z centrální databáze nebyl
+  vždy platné XML a import kvůli tomu tiše skončil bez jediné akce. Teď si
+  takovou vadu opraví sám a zapíše ji do chybového logu; když se export přečíst
+  opravdu nedá, napíše do logu proč, místo aby mlčel.
+
+- **Administrace mluví česky.** Akce mají v menu položku **Kalendář akcí**
+  s ikonou kalendáře, odbory ikonu skupiny. Hlášky typu „Add New Akce"
+  a „Edit Odbor" jsou pryč.
+
 ## 2.1.0 — 6. 11. 2026
 
 - **Šablona si novou verzi hlásí sama.** Je-li venku novější vydání, objeví se
