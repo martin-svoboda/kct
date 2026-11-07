@@ -124,3 +124,27 @@
 		margin: 0;
 	}
 }
+
+// ── Svislý rytmus postranních oddílů ──────────────────────────────────────
+// Postranní oddíl je plochý seznam bloků: seznam typů akce, nadpis, odstavec,
+// vlastní sekce. Mezi vším byla jednotně 1rem, takže nový blok navazoval na
+// předchozí stejně těsně jako odstavec na svůj nadpis a oba splývaly v jeden
+// — „Další ročníky“ hned pod kontaktem se tak četly jako jeho pokračování.
+//
+// Nadpis a vlastní sekce ale blok ZAČÍNAJÍ: od toho, co je nad nimi,
+// potřebují odstup, zatímco k obsahu pod sebou patří těsně. Odtud margin-top
+// jen na nich. Dřív měl tenhle odstup jen `h3` z obecného pravidla pro
+// nadpisy, takže „Kontakt“ dýchal a nic jiného ne.
+.event-sidebar,
+.department-sidebar {
+	> h2,
+	> h3,
+	> section {
+		margin-top: 2rem;
+	}
+
+	// Oddíl nezačíná mezerou — navazuje na obsah vedle sebe.
+	> :first-child {
+		margin-top: 0;
+	}
+}

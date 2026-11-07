@@ -34,6 +34,8 @@ Bez vyplněného kódu web nevypíše žádnou akci a import pro něj nic nenač
 
 Import se nespouští tlačítkem v administraci. Provádí se příkazem na serveru, zpravidla pravidelně. Akce, které centrální databáze označí za zrušené, import z webu zase odstraní, takže na webu nezůstanou viset jako duchy.
 
+Stejně dopadne i akce, kterou centrální databáze přestane nabízet bez ohlášení — typicky když ústředí nahradí chybný záznam novým. Import takovou akci z webu odstraní, aby se nevypisovala vedle té platné jako duplicita. **Maže se jen dopředu:** akce s dnešním a pozdějším datem. Proběhlé akce zůstávají, i když je centrální databáze už nenabízí — archiv na webu je po čase jediné místo, kde o nich něco zbylo.
+
 ## Importované akce se při aktualizaci přepisují
 
 Při každém běhu importu se údaje akce nahradí tím, co je právě v centrální databázi. Cokoliv se u importované akce změní jinde, další import přepíše.
@@ -91,6 +93,12 @@ Typy akcí se nabízejí podle číselníku, který se stahuje spolu s akcemi. N
 **Stránka odboru** ukazuje nejbližší akce toho odboru, viz [Odbory](/funkce/odbory/).
 
 **Stránka jedné akce** skládá dohromady pořadatele (s odkazem na jeho stránku odboru, pokud existuje), místo konání, termín, typy akce s kilometry, kontakty a případné propozice v PDF. U akce, která už proběhla, se do záhlaví přidá poznámka s datem konání.
+
+Pod obsahem akce je **navigace na předchozí a další akci**. Řadí se podle data konání, ne podle data vložení — vlevo je akce s dřívějším datem, vpravo s pozdějším. Jde jí projít i historie, protože zahrnuje i akce, které už proběhly.
+
+Pod navigací je **Mohlo by vás zajímat** — tři nejbližší budoucí akce. Přednost mají akce stejného typu jako ta zobrazená; když takových není dost, doplní se nejbližšími bez ohledu na typ. Jiné ročníky téže akce se tam neukazují, ty má vedle sebe postranní oddíl.
+
+Na konci postranního oddílu akce je **Další ročníky** — tatáž akce v jiných letech, od nejnovějšího ročníku k nejstaršímu. Každý ročník se vypíše jako řádek s číslem ročníku, názvem, štítkem „Proběhlo“ nebo „Chystá se“ a datem konání; u akce, která číslo ročníku vyplněné nemá, je v boxíku místo něj rok konání. Ročníky se poznají podle názvu akce a pořádajícího odboru, takže fungují i u akce, kterou v centrální databázi vůbec nemáte. Vypnete-li postranní oddíl v poli „Umístění podrobností“, skryjí se s ním i ročníky.
 
 ## Akce odboru na webu oblasti
 

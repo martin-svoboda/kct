@@ -31,6 +31,17 @@ $kct_past_date  = $event_seo_data->is_past( $event ) ? $event_seo_data->format_d
 // nedá dohledat (bez pořadatele, nebo pořadatel bez vlastní stránky odboru).
 // Beze změny se pak jméno pořadatele vypíše jako holý text, viz použití níž.
 $kct_department_url = kct_container()->get( \Kct\Seo\DepartmentLink::class )->for_event( $event );
+
+// Seznam akcí tohoto webu pro sekce pod obsahem a pro ročníky v postranním
+// oddílu. Jedno volání na stránku, části ho dostanou argumentem — ať se
+// nepočítá třikrát.
+//
+// Aktuální akce se v tom seznamu dohledá, nebere se z $event výš: klíče
+// potřebné pro klíč série (db_title, db_department) přidává až get_events().
+// null znamená, že tenhle web tuhle akci nevypisuje — akci cizího odboru na
+// odborovém webu, kde /akce-db/{id} vědomě vrací 200. Sekce se pak nevypíšou.
+$kct_events  = kct_container()->get( \Kct\Features\Events::class )->get_events( '', '' );
+$kct_current = kct_event_find( $kct_events, (int) get_the_ID(), (int) $db_event_id );
 ?>
 
 <article id="post-<?php echo $event_id; ?>" class="event-post">
@@ -363,7 +374,24 @@ $kct_department_url = kct_container()->get( \Kct\Seo\DepartmentLink::class )->fo
 						?>
 					</p>
 				<?php endif; ?>
+				<?php
+				get_template_part( 'template-parts/event-series', null, array(
+					'events'  => $kct_events,
+					'current' => $kct_current,
+				) );
+				?>
 			</div>
 		<?php endif; ?>
 	</div>
 </article><!-- #post-<?php the_ID(); ?> -->
+
+<?php
+get_template_part( 'template-parts/event-nav', null, array(
+	'events'  => $kct_events,
+	'current' => $kct_current,
+) );
+
+get_template_part( 'template-parts/event-related', null, array(
+	'events'  => $kct_events,
+	'current' => $kct_current,
+) );

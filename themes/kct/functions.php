@@ -328,6 +328,11 @@ require get_template_directory() . '/inc/custom-header.php';
 require get_template_directory() . '/inc/template-tags.php';
 
 /**
+ * Čistá logika sekcí detailu akce (sousedi, ročníky, doporučené akce).
+ */
+require get_template_directory() . '/inc/event-sections.php';
+
+/**
  * Functions which enhance the theme by hooking into WordPress.
  */
 require get_template_directory() . '/inc/template-functions.php';

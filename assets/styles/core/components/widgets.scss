@@ -6,6 +6,32 @@
 	.widget + .widget { margin-top: 36px; }
 }
 
+// ── Mezery mezi bloky UVNITŘ jednoho widgetu ─────────────────────────────
+// Pravidlo výš řeší rytmus mezi widgety. Postranní sloupec se ale v praxi
+// skládá z jednoho jediného blokového widgetu, do kterého se naskládá víc
+// bloků pod sebe — výpis akcí s tlačítkem, nadpis, seznam článků. Mezi nimi
+// pak nebyla mezera vůbec žádná (naměřeno 0 px na kctricany.cz: tlačítko
+// „Přejít na kalendář akcí“ dosedlo na nadpis „Nejnovější příspěvky“).
+//
+// Odstup dostává nadpis, protože nový blok začíná; k seznamu pod sebou
+// zůstává těsně (.wp-block-heading má v sidebaru margin-bottom .5rem, viz
+// _section-head.scss), aby se nadpis a jeho obsah nerozpadly.
+//
+// Schválně jen PŘÍMÝ potomek skupiny: nadpisy uvnitř karet článků
+// (.articles_grid article h2) jsou zanořené hlouběji a ty se nesmí hnout.
+//
+// Jen `#secondary`, tedy sidebar ze sidebar.php. Třída `.widget-area` sedí
+// i na patičce a tam tenhle rytmus nepatří.
+#secondary .widget {
+	:is(.wp-block-group, .wp-block-group__inner-container) > :is(h2, h3, h4) {
+		margin-top: 2rem;
+
+		&:first-child {
+			margin-top: 0;
+		}
+	}
+}
+
 // ── Nejnovější příspěvky = IDENTICKÁ karta výpisu (content-boxed),
 //    jen kompaktní horizontální varianta (obrázek vlevo, bez excerptu). ────
 // Prefix `.widget` kvůli přebití specificity základních .articles_grid stylů.

@@ -52,7 +52,15 @@
 			}
 		}
 
-		ul {
+		// Seznamy údajů o akci (typy akce s ikonou, kontakty) — položka je
+		// řádek ikona + text.
+		//
+		// `:not()` vynechává seznamy, které si stavbu položky nesou samy.
+		// Bez něj tohle pravidlo přebíjelo `.event-series__item` (má jen
+		// jednu třídu, kdežto tenhle selektor dvě třídy a dva elementy) a
+		// položka ročníku zůstala flexem: odkaz uvnitř se pak smrskl na
+		// šířku obsahu a aktivní plocha končila v půlce řádku.
+		ul:not(.event-series__list) {
 			list-style-type: none;
 			padding: 0;
 			margin: 0;
@@ -147,4 +155,156 @@
 	// upozornit návštěvníka z vyhledávače, že se dívá na archiv, je ztlumená
 	// šeď navíc proti záměru.
 	color: var(--text);
+}
+
+// ── „Mohlo by vás zajímat“ na detailu akce ─────────────────────────────────
+// Symetrická mezera nahoře i dole (padding, ne margin → bez kolapsu), stejně
+// jako .post-related u článků.
+.event-related {
+	padding: 56px 0;
+
+	.wp-block-heading {
+		margin: 0 0 24px;
+	}
+}
+
+// ── „Další ročníky“ na konci postranního oddílu akce ───────────────────────
+// Stavba je stejná jako u karty výpisu akcí (.event v blocks/events.scss):
+// vlevo boxík, vpravo nadpis a meta, položky oddělené linkou. Boxík je
+// záměrně TÝŽ tvar jako kartička data (modrá hlavička + velké číslo) — jen
+// nese číslo ročníku, protože tím se položky v tomhle seznamu liší; datum
+// je tu údaj druhé úrovně a patří do meta.
+//
+// Rozměry nejsou sdílené s .event-date: ta má v sobě rozsah „od–do“ a sedí
+// v širokém sloupci, kdežto tohle musí vyjít v postranním oddílu širokém
+// 250 px. Sdílet je přes jeden mixin by svázalo dvě věci, které se mají
+// vyvíjet zvlášť.
+.event-series {
+	&__title {
+		margin: 0 0 0.75rem;
+	}
+
+	// Postranní oddíl stylizuje `ul li` na flex s ikonou (viz .event-sidebar ul
+	// výš); tady je položka odkaz na celou šířku, proto vlastní pravidla.
+	&__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	&__item {
+		display: block;
+		margin: 0;
+		border-bottom: 1px solid var(--line);
+
+		&:last-child {
+			border-bottom: 0;
+		}
+	}
+
+	&__link {
+		display: flex;
+		align-items: flex-start;
+		gap: 12px;
+		padding: 12px 0;
+		color: var(--text);
+		text-decoration: none;
+
+		&:hover {
+			filter: none;
+			background: var(--surface);
+		}
+	}
+
+	// Boxík s ročníkem — obdoba .event-date
+	&__box {
+		flex: 0 0 auto;
+		min-width: 56px;
+		text-align: center;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: var(--radius-card);
+		overflow: hidden;
+		box-shadow: var(--shadow-card);
+	}
+
+	&__box-head {
+		display: block;
+		padding: 4px 6px;
+		background: var(--primary);
+		color: #fff;
+		font-family: var(--font-head);
+		font-weight: 700;
+		font-size: 11px;
+		letter-spacing: .03em;
+		line-height: 1.25;
+		text-transform: uppercase;
+		white-space: nowrap;
+	}
+
+	&__box-num {
+		display: block;
+		padding: 6px 6px 8px;
+		font-family: var(--font-head);
+		font-weight: 700;
+		font-size: 1.5rem;
+		line-height: 1;
+		color: var(--text);
+	}
+
+	&__content {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+	}
+
+	&__name {
+		display: block;
+		font-family: var(--font-head);
+		font-weight: 700;
+		font-size: 1rem;
+		line-height: 1.25;
+		color: var(--text);
+	}
+
+	&__meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 8px;
+	}
+
+	// Štítek proběhlo / chystá se. Barvy jsou plné, ne ztlumené: na
+	// --surface-alt nevychází --text-muted na kontrast podle WCAG AA,
+	// stejný důvod jako u .event-past-notice výš.
+	&__state {
+		display: inline-block;
+		padding: 2px 8px;
+		border-radius: 999px;
+		font-size: 11px;
+		font-weight: 700;
+		line-height: 1.45;
+		letter-spacing: .02em;
+		text-transform: uppercase;
+		white-space: nowrap;
+
+		&--future {
+			background: var(--primary);
+			color: #fff;
+		}
+
+		&--past {
+			background: var(--surface-alt);
+			color: var(--text);
+			border: 1px solid var(--line);
+		}
+	}
+
+	&__date {
+		color: var(--text-muted);
+		font-size: 13px;
+		white-space: nowrap;
+	}
 }
