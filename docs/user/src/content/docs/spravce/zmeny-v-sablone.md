@@ -47,6 +47,22 @@ zpětně se nedoplňují — všechno, co uměla, je součástí verze 2.0.0.
   s ikonou kalendáře, odbory ikonu skupiny. Hlášky typu „Add New Akce"
   a „Edit Odbor" jsou pryč.
 
+
+- **Obrázky PNG se po nahrání převádějí do WebP, stejně jako fotky.** Dosud
+  se převáděly jen soubory JPEG a PNG zůstávalo beze změny, protože se čekalo,
+  že na logách a schématech bude komprese dělat viditelné šmouhy. Měření na
+  celé knihovně KČT to nepotvrdilo — u všech PNG nad 512 kB se barva odchýlila
+  průměrně o 0,5 až 1,7 % a rozdíl není poznat ani při dvojnásobném zvětšení.
+  Objem přitom spadl ze 41 MB na 8 MB. Průhlednost se převodem neztrácí,
+  takže logo s průhledným pozadím zůstane průhledné. Podrobnosti popisuje
+  stránka [Média a fotky](/zaklady-wordpressu/media-a-fotky/).
+
+- **Starší knihovnu jde srovnat se současnými pravidly.** Fotky nahrané dřív,
+  než šablona zavedla strop 2048 pixelů, zabírají místo navíc, které se na
+  obrazovku nikdy nedostane. Nově je správce sítě umí zmenšit jednorázově,
+  i zpětně, a volitelně s nimi převést i PNG do WebP. Ze stránky Média se to
+  vyvolat nedá, spouští se to z příkazové řádky a dá se to nejdřív pustit
+  nanečisto. Komu se knihovna nafoukla, ať se ozve.
 ## 2.1.0 — 6. 11. 2026
 
 - **Šablona si novou verzi hlásí sama.** Je-li venku novější vydání, objeví se

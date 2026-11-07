@@ -686,4 +686,150 @@ class CLI extends WP_CLI_Command {
 			WP_CLI::log( $message . ' ' . __( 'Nic se neodeslalo.', 'kct' ) );
 		}
 	}
+
+	/**
+	 * Zmenší obrázky, které v knihovně zůstaly nad stropem rozměrů.
+	 *
+	 * Strop 2048 px drží Features\ImageUploads, ale jen pro nově nahrávané
+	 * soubory. Tenhle příkaz srovná na stejnou míru i starší knihovnu.
+	 *
+	 * Mění se pouze rozměr, ne formát — převod staré knihovny do WebP je
+	 * druhá ztrátová komprese a vědomě se nedělá (viz Images\Downscaler).
+	 * Odvozené velikosti se negenerují znovu, jsou menší než strop a platí
+	 * dál; maže se jen ta, která by po zmenšení byla kopií plného souboru.
+	 *
+	 * Prochází všechny weby sítě. Bez přepínače --write jen spočítá, co by
+	 * se stalo.
+	 *
+	 * POZOR: zmenšení je nevratné. Plné rozlišení se přepíše na disku.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--write]
+	 * : Opravdu zmenšit. Bez něj běží příkaz nanečisto.
+	 *
+	 * [--site=<id>]
+	 * : Jen jeden web sítě podle ID, jinak všechny.
+	 *
+	 * [--limit=<pocet>]
+	 * : Zpracovat nejvýše tolik příloh (na každém webu).
+	 *
+	 * [--png-webp]
+	 * : Převést navíc PNG do WebP, stejně jako to u nově nahrávaných souborů dělá ImageUploads. Mění název souboru, takže příkaz přepíše i odkazy v obsahu.
+	 *
+	 * ## EXAMPLES
+	 *
+	 *     wp kct shrink_images
+	 *     wp kct shrink_images --site=6
+	 *     wp kct shrink_images --write
+	 *     wp kct shrink_images --write --png-webp
+	 *
+	 * @when after_wp_load
+	 */
+	public function shrink_images( $args, $assoc_args ) {
+		$write = ! empty( $assoc_args['write'] );
+		$only  = isset( $assoc_args['site'] ) ? (int) $assoc_args['site'] : 0;
+		$limit = isset( $assoc_args['limit'] ) ? (int) $assoc_args['limit'] : 0;
+		$webp  = ! empty( $assoc_args['png-webp'] );
+		$sites = $only ? array( $only ) : get_sites( array( 'number' => 0, 'fields' => 'ids' ) );
+
+		WP_CLI::log( $write
+			? __( 'Zmenšuji obrázky nad stropem …', 'kct' )
+			: __( 'Nanečisto (zmenšení zapneš přepínačem --write) …', 'kct' ) );
+
+		$downscaler = kct_container()->get( \Kct\Images\Downscaler::class );
+
+		$celkem_n = 0;
+		$celkem_b = 0;
+		$chyb     = 0;
+
+		foreach ( $sites as $site_id ) {
+			switch_to_blog( (int) $site_id );
+
+			$ids = get_posts( array(
+				'post_type'      => 'attachment',
+				'post_mime_type' => array( 'image/jpeg', 'image/png', 'image/webp' ),
+				'post_status'    => 'inherit',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			) );
+
+			$n     = 0;
+			$b     = 0;
+			$prevedeno = 0;
+			$mapa  = array();
+
+			foreach ( $ids as $id ) {
+				$vysledek = $downscaler->shrink( (int) $id, $write );
+
+				if ( 'error' === $vysledek['status'] ) {
+					WP_CLI::warning( sprintf( '#%d %s', $id, $vysledek['note'] ) );
+					$chyb++;
+				} elseif ( 'resized' === $vysledek['status'] ) {
+					$n++;
+					$b += $vysledek['before'] - $vysledek['after'];
+				}
+
+				// Převod formátu až po zmenšení — kóduje se jednou, z už
+				// zmenšeného souboru, ne dvakrát.
+				if ( $webp ) {
+					$prevod = $downscaler->to_webp( (int) $id, $write );
+
+					if ( 'error' === $prevod['status'] ) {
+						WP_CLI::warning( sprintf( '#%d %s', $id, $prevod['note'] ) );
+						$chyb++;
+					} elseif ( 'converted' === $prevod['status'] ) {
+						$prevedeno++;
+						$b   += $prevod['before'] - $prevod['after'];
+						$mapa = $mapa + $prevod['urls'];
+					}
+				}
+
+				if ( $limit && ( $n + $prevedeno ) >= $limit ) {
+					break;
+				}
+			}
+
+			$prepsano = $mapa ? $downscaler->rewrite_urls( $mapa, $write ) : 0;
+
+			if ( $n || $prevedeno ) {
+				WP_CLI::log( sprintf(
+					'  %-30s zmenšeno %4d, převedeno %4d, %10s%s',
+					parse_url( get_home_url( (int) $site_id ), PHP_URL_HOST ),
+					$n,
+					$prevedeno,
+					size_format( $b, 1 ),
+					$prepsano ? sprintf( ', odkazů v %d příspěvcích', $prepsano ) : ''
+				) );
+			}
+
+			$celkem_n += $n + $prevedeno;
+			$celkem_b += $b;
+
+			restore_current_blog();
+		}
+
+		if ( $chyb ) {
+			WP_CLI::log( sprintf(
+				/* translators: %d: počet příloh. */
+				__( 'U %d příloh se zmenšení nepovedlo.', 'kct' ),
+				$chyb
+			) );
+		}
+
+		$message = sprintf(
+			/* translators: 1: počet obrázků, 2: ušetřené místo. */
+			__( 'Zpracovaných obrázků: %1$d, místo: %2$s.', 'kct' ),
+			$celkem_n,
+			size_format( $celkem_b, 1 )
+		);
+
+		if ( $write ) {
+			WP_CLI::success( $message );
+		} else {
+			WP_CLI::log( $message );
+			WP_CLI::log( __( 'Nic se nezměnilo. Spusť znovu s --write.', 'kct' ) );
+		}
+	}
+
 }

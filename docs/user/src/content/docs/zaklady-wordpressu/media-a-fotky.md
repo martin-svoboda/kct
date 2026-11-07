@@ -26,7 +26,7 @@ Knihovna patří vždy jen tomu jednomu webu. Je-li web součástí sítě více
 Tohle je na šabloně KČT nezvyklé a vyplatí se to vědět předem. Fotka se po nahrání **automaticky upraví** — ještě než se objeví v knihovně:
 
 1. **Zmenší se na 2048 pixelů delší strany**, pokud je větší.
-2. **Převede se do formátu WebP**, pokud jde o JPEG.
+2. **Převede se do formátu WebP.**
 3. **Vymaže se z ní technický popis fotoaparátu.**
 
 Úprava je automatická a nedá se u jednotlivého souboru vypnout. Platí pro všechny nově nahrávané soubory.
@@ -43,7 +43,9 @@ Zmenšení se týká jen rozměrů obrazovky, ne kvality — 2048 pixelů je po�
 
 WebP je novější obrazový formát, kterému rozumí všechny dnešní prohlížeče. Při stejném rozlišení a prakticky stejné kvalitě vyjde znatelně menší. Naměřeno na fotce z knihovny: velikost používaná v článku měla 278 kB jako JPEG a 174 kB jako WebP — o 37 % méně při shodných rozměrech.
 
-Převádí se **jen fotky**, tedy soubory JPEG. Obrázky ve formátu PNG zůstávají, jak jsou: na webu to bývají loga, ikony a schémata s ostrými hranami a plochými barvami, a právě na nich by komprese udělala viditelné šmouhy. Logo tedy má smysl nahrávat jako PNG.
+Převádí se **fotky i obrázky ve formátu PNG**. PNG se dřív vynechávalo s tím, že na webu bývá hlavně v logách, ikonách a schématech s ostrými hranami, kde by komprese udělala viditelné šmouhy. Měření na celé knihovně KČT to nepotvrdilo: u všech PNG nad 512 kB se barva od předlohy odchýlila průměrně o 0,5 až 1,7 %, přičemž snímky administrace a mapy na tom nebyly hůř než fotky. Rozdíl není poznat ani při dvojnásobném zvětšení, a objem spadl ze 41 MB na 8 MB.
+
+Průhlednost se při převodu neztrácí, takže logo s průhledným pozadím zůstane průhledné.
 
 Formát se změní i v názvu souboru — z `dscn1234.jpg` se stane `dscn1234.webp`. Odkaz na obrázek vytvořený z knihovny na to bere ohled sám, jen se nedá spoléhat na to, že si adresu souboru někdo zapamatuje dopředu.
 
@@ -61,15 +63,17 @@ Vedlejší efekt, který stojí za zmínku: se souřadnicemi z fotoaparátu zmiz
 
 Fotka nafocená na výšku má správnou orientaci uloženou právě v těch technických datech. Kdyby se smazala hned, fotky na výšku by se na webu objevily položené na bok. Úklid proto běží až ve chvíli, kdy si WordPress orientaci přečte a zmenšeniny podle ní natočí. Fotky na výšku tedy zůstávají na výšku.
 
-## Starší fotky se zpětně nepřevádějí
+## Starší fotky se samy nepřevádějí
 
-Všechno výše platí **jen pro nově nahrávané soubory**. Co v knihovně leží z dřívějška, zůstává beze změny.
+Všechno výše platí **jen pro nově nahrávané soubory**. Co v knihovně leží z dřívějška, zůstává beze změny, dokud se o to někdo neřekne.
 
-Není to opomenutí, je to vědomé rozhodnutí. Fotka uložená jako JPEG už jednou prošla ztrátovou kompresí. Její převod do WebP by znamenal kompresi podruhé, tedy další úbytek kvality — a měření ukázalo, že zisk v bajtech za tu ztrátu nestojí. U části souborů by navíc výsledek vyšel dokonce větší než předloha.
+U formátu to není opomenutí, ale vědomé rozhodnutí. Fotka uložená jako JPEG už jednou prošla ztrátovou kompresí. Její převod do WebP by znamenal kompresi podruhé, tedy další úbytek kvality — a měření ukázalo, že zisk v bajtech za tu ztrátu nestojí. U části souborů by navíc výsledek vyšel dokonce větší než předloha. U nově nahrávané fotky je situace jiná: kóduje se z nedotčené předlohy z fotoaparátu, takže se komprimuje poprvé a WebP jasně vyhrává.
 
-U nově nahrávané fotky je situace jiná: kóduje se z nedotčené předlohy z fotoaparátu, takže se komprimuje poprvé a WebP jasně vyhrává.
+**Zmenšení rozměrů je jiný případ** a zpětně se udělat dá. Nad 2048 pixelů nese soubor jen data, která se na obrazovku nikdy nedostanou, takže se nic viditelného nezahazuje. V knihovnách KČT takhle leží stovky souborů z doby, než se strop zavedl.
 
-Váhu starších stránek řeší šablona jinak — posílá do stránky menší připravenou velikost místo plné fotky.
+Jestli má web knihovnu plnou velkých fotek z dřívějška, **napište správci sítě** — úklid se spouští jednorázově z příkazové řádky a ze stránky Média se vyvolat nedá. Běží po jednotlivých webech a dá se nejdřív pustit nanečisto, takže je dopředu vidět, kolika souborů se dotkne a kolik místa ušetří.
+
+Váhu starších stránek řeší šablona i bez toho — posílá do stránky menší připravenou velikost místo plné fotky.
 
 ## Původní soubor se neuchovává
 

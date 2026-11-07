@@ -70,16 +70,28 @@ class ImageUploads {
 	}
 
 	/**
-	 * Odvozené velikosti fotek generovat ve WebP.
+	 * Odvozené velikosti generovat ve WebP.
 	 *
 	 * Naměřeno na fotce 1500×2000: velikost „large“ 278 kB v JPEGu proti
 	 * 174 kB ve WebP, tedy o 37 % méně při stejném rozlišení.
 	 *
-	 * Proč jen JPEG a ne i PNG: WebP se tu kóduje ztrátově (jádro používá
-	 * stejnou kvalitu jako u JPEGu). U fotek to nevadí, ale PNG na webu
-	 * bývají loga, ikony a schémata s ostrými hranami a plochými barvami —
-	 * přesně to, na čem ztrátová komprese dělá viditelné šmouhy. PNG proto
-	 * zůstávají, jak jsou.
+	 * PNG se dřív vynechávala s odůvodněním, že na webu bývají loga, ikony
+	 * a schémata s ostrými hranami, na kterých ztrátová komprese dělá
+	 * viditelné šmouhy. Zní to rozumně, ale na knihovně KČT to neplatí:
+	 * změřeno na všech 35 PNG nad 512 kB vyšla průměrná odchylka barvy proti
+	 * předloze 0,48–1,70 % na kanál, přičemž grafika a snímky administrace
+	 * na tom nebyly hůř než fotky. Nejhorší kus celé sady je mapa s tenkými
+	 * čarami (1,70 %), a i u ní je rozdíl při běžném zobrazení nerozpoznatelný.
+	 * Objem přitom spadl ze 41,3 MB na 8,3 MB. PNG proto do WebP jdou taky.
+	 *
+	 * Průhlednost se neztrácí — WebP má alfa kanál a jádro ho při převodu
+	 * zachová.
+	 *
+	 * Co se tím NEŘEŠÍ: u obrázku o pár plochých barvách (jednoduché logo,
+	 * ikona) může WebP vyjít větší než PNG. Jádro na to háček nemá, takže
+	 * se takový soubor uloží jako WebP, i když se nevyplatí. Zpětný převod
+	 * knihovny tu pojistku má (Images\Downscaler), při nahrávání jde o
+	 * jednotky kilobajtů a nestojí za vlastní obrazovou vrstvu.
 	 *
 	 * Proč ne AVIF: na testovaném snímku vyšel větší než WebP (107 kB proti
 	 * 93 kB) a o dvě třetiny pomalejší. Kodér v Imagicku by se musel ladit
@@ -97,6 +109,7 @@ class ImageUploads {
 		}
 
 		$formats['image/jpeg'] = 'image/webp';
+		$formats['image/png']  = 'image/webp';
 
 		return $formats;
 	}
