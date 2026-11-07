@@ -55,12 +55,22 @@ class PlacePostType extends AbstractCustomPostType {
 	}
 
 	public function get_args(): array {
-		$singular = _x( 'Místo', 'post type singular name', 'kct' );
-		$plural   = _x( 'Místa', 'post type name', 'kct' );
+		$labels = CzechLabels::build(
+			array(
+				'rod'   => 'n',
+				'nom_j' => 'Místo',
+				'acc_j' => 'místo',
+				'gen_j' => 'místa',
+				'lok_j' => 'místu',
+				'nom_m' => 'Místa',
+				'gen_m' => 'míst',
+				'acc_m' => 'místa',
+			)
+		);
 
 		return array(
-			'label'              => $plural,
-			'labels'             => $this->generate_labels( $singular, $plural ),
+			'label'              => $labels['name'],
+			'labels'             => $labels,
 			'public'             => true,
 			'hierarchical'       => false,
 			//'taxonomies'         => array( EventTypeTaxonomy::KEY ),

@@ -55,12 +55,22 @@ class RoadPostType extends AbstractCustomPostType {
 	}
 
 	public function get_args(): array {
-		$singular = _x( 'Trasa', 'post type singular name', 'kct' );
-		$plural   = _x( 'Trasy', 'post type name', 'kct' );
+		$labels = CzechLabels::build(
+			array(
+				'rod'   => 'f',
+				'nom_j' => 'Trasa',
+				'acc_j' => 'trasu',
+				'gen_j' => 'trasy',
+				'lok_j' => 'trase',
+				'nom_m' => 'Trasy',
+				'gen_m' => 'tras',
+				'acc_m' => 'trasy',
+			)
+		);
 
 		return array(
-			'label'              => $plural,
-			'labels'             => $this->generate_labels( $singular, $plural ),
+			'label'              => $labels['name'],
+			'labels'             => $labels,
 			'public'             => true,
 			'hierarchical'       => false,
 			//'taxonomies'         => array( EventTypeTaxonomy::KEY ),

@@ -168,12 +168,23 @@ class DepartmentPostType extends AbstractCustomPostType {
 	}
 
 	public function get_args(): array {
-		$singular = _x( 'Odbor', 'post type singular name', 'kct' );
-		$plural   = _x( 'Odbory', 'post type name', 'kct' );
+		$labels = CzechLabels::build(
+			array(
+				'rod'   => 'm',
+				'nom_j' => 'Odbor',
+				'acc_j' => 'odbor',
+				'gen_j' => 'odboru',
+				'lok_j' => 'odboru',
+				'nom_m' => 'Odbory',
+				'gen_m' => 'odborů',
+				'acc_m' => 'odbory',
+			)
+		);
 
 		return array(
-			'label'              => $plural,
-			'labels'             => $this->generate_labels( $singular, $plural ),
+			'label'              => $labels['name'],
+			'labels'             => $labels,
+			'menu_icon'          => 'dashicons-groups',
 			'public'             => true,
 			'hierarchical'       => false,
 			//'taxonomies'         => array( EventTypeTaxonomy::KEY ),

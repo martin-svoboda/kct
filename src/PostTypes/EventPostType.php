@@ -277,12 +277,24 @@ class EventPostType extends AbstractCustomPostType {
 	}
 
 	public function get_args(): array {
-		$singular = _x( 'Akce', 'post type singular name', 'kct' );
-		$plural   = _x( 'Akce', 'post type name', 'kct' );
+		$labels = CzechLabels::build(
+			array(
+				'rod'   => 'f',
+				'nom_j' => 'Akce',
+				'acc_j' => 'akci',
+				'gen_j' => 'akce',
+				'lok_j' => 'akci',
+				'nom_m' => 'Akce',
+				'gen_m' => 'akcí',
+				'acc_m' => 'akce',
+				'menu'  => 'Kalendář akcí',
+			)
+		);
 
 		return array(
-			'label'              => $plural,
-			'labels'             => $this->generate_labels( $singular, $plural ),
+			'label'              => $labels['name'],
+			'labels'             => $labels,
+			'menu_icon'          => 'dashicons-calendar-alt',
 			'public'             => true,
 			'hierarchical'       => false,
 			//'taxonomies'         => array( EventTypeTaxonomy::KEY ),
