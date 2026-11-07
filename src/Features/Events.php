@@ -3,6 +3,7 @@
 namespace Kct\Features;
 
 use DateTime;
+use Kct\Import\FeedXml;
 use Kct\Models\DbEventModel;
 use Kct\Models\EventModel;
 use Kct\Repositories\DbEventRepository;
@@ -15,6 +16,63 @@ use WP_Post;
 class Events {
 
 	public $db;
+
+	/**
+	 * Výsledky get_events() v rámci jednoho requestu, klíčované argumenty.
+	 *
+	 * Jedna stránka si tentýž seznam říká opakovaně — archiv spolu s blokem
+	 * akcí, víc bloků na jedné stránce — a celý výpočet se jinak dělá znovu.
+	 * Object cache ušetří dotazy, ale ne PHP práci nad stovkami akcí
+	 * (měřeno: druhé volání 11 dotazů, ale pořád 45 ms).
+	 *
+	 * Žádná invalidace: pole žije jen do konce requestu.
+	 *
+	 * @var array<string, array>
+	 */
+	private array $events_cache = array();
+
+	/**
+	 * Vlastnosti příspěvku akce, které výpis potřebuje.
+	 *
+	 * to_array() bez argumentů rozbalí i relace, které tu nikdo nečte —
+	 * author, parent, top_parent, children, featured_image, categories, tags —
+	 * a každá je dotaz navíc (měřeno 52 dotazů na 12 příspěvků místo 16).
+	 * Zároveň tím z veřejného endpointu /kct/v1/events odpadnou pole, která
+	 * tam nemají co dělat (password, filter, guid, to_ping) a tvar položky z
+	 * příspěvku se srovná s tvarem databázové akce.
+	 *
+	 * Jsou tu jen vlastnosti modelu. `post_id`, `db_title` a `db_department`
+	 * sem nepatří — ty se do pole dopisují až po to_array().
+	 *
+	 * Databázová akce relace nemá a prochází to_array() bez whitelistu, její
+	 * tvar se tím nemění.
+	 */
+	private const POST_EVENT_PROPS = array(
+		'id',
+		'db_id',
+		'date',
+		'title',
+		'content',
+		'excerpt',
+		'permalink',
+		'slug',
+		'post_type',
+		'post_date',
+		'post_modified',
+		'menu_order',
+		'year',
+		'place',
+		'district',
+		'organiser',
+		'start',
+		'finish',
+		'contact',
+		'details',
+		'proposal',
+		'start_date',
+		'details_position',
+		'main_page_connection',
+	);
 
 	public function __construct(
 		private DbEventRepository $db_event_repository,
@@ -144,11 +202,19 @@ class Events {
 	 * The XML URL and filter settings are retrieved from the plugin's settings.
 	 *
 	 * Exporty ve složce, jejíž adresu drží nastavení (`db_export_url`):
-	 * akceexport1.php  jen změny akcí v poslední době
-	 * akceexport1x.php všechny dostupné akce
-	 * akceexport2.php  seznam oblastí
-	 * akceexport3.php  seznam odborů
-	 * akceexport4.php  typy akcí
+	 * Exporty jsou dva a jmenují se obráceně, než by člověk čekal — `1x` NENÍ
+	 * větší `1`. Změřeno 7. 11. 2026:
+	 *   - `1`  plný export budoucích akcí: 1139 akcí, žádné rušení,
+	 *          2026-11-06 … 2028-10-02. Tenhle bere denní cron ($just_updated).
+	 *   - `1x` delta posledních změn: 209 akcí, z toho 33 s `deleted=Y`,
+	 *          sahá i do minulosti. Tenhle bere ruční `wp kct import_events`.
+	 *
+	 * Z toho plyne i rozdělení práce: zrušené akce se dozvíme jen z delty,
+	 * zatímco záznamy, které ústředí zrušilo bez ohlášení, pozná jen plný
+	 * export — viz remove_stale_events().
+	 *
+	 * Vedle nich jsou ve stejné složce ještě exporty 2 (oblasti), 3 (odbory)
+	 * a 4 (typy akcí).
 	 *
 	 * The method iterates over each event in the XML data and performs the following steps:
 	 * - Skips deleted events.
@@ -175,13 +241,36 @@ class Events {
 			return;
 		}
 
-		$xml = file_get_contents( $url );
-		$xml = mb_convert_encoding( $xml, 'UTF-8' );
-		$xml = json_decode( json_encode( simplexml_load_string( $xml ) ), true );
+		$feed = FeedXml::read( (string) file_get_contents( $url ) );
 
-		if ( ! $xml ) {
+		if ( $feed['repaired'] ) {
+			$this->log_import(
+				sprintf(
+					/* translators: %d: počet opravených znaků & */
+					__( 'Export nebyl validní XML, neescapovaných znaků & v něm bylo %d. Import si je opravil, ale patří to nahlásit ústředí KČT.', 'kct' ),
+					$feed['repaired']
+				)
+			);
+		}
+
+		if ( ! $feed['data'] ) {
+			// Dřív se tu jen `return`ovalo. Export ale přijde rozbitý i kvůli
+			// jedinému znaku a import pak hodiny mlčky nedělal nic — cron má
+			// výstup v /dev/null, takže jediné, kde se to dá zahlédnout, je
+			// chybový log.
+			$this->log_import(
+				sprintf(
+					/* translators: %s: popis chyby parseru */
+					__( 'Export z Databáze akcí KČT se nepodařilo přečíst (%s). Import se nespustil.', 'kct' ),
+					$feed['error']
+				),
+				true
+			);
+
 			return;
 		}
+
+		$xml = $feed['data'];
 
 		// filtr z nastavení
 		$filter_val = $this->settings->get_option( 'id_code' );
@@ -190,7 +279,11 @@ class Events {
 		}
 
 		$imported_ids = [];
-		$progress = \WP_CLI\Utils\make_progress_bar( 'Import events', count( $xml['event']) );
+		// Progress bar umí jen WP-CLI; pod cronem ta třída vůbec neexistuje a
+		// import by na ní spadl na fatální chybu.
+		$progress = ( defined( 'WP_CLI' ) && WP_CLI )
+			? \WP_CLI\Utils\make_progress_bar( 'Import events', count( $xml['event'] ) )
+			: null;
 		$filter_by = $this->settings->code_type();
 		foreach ( $xml['event'] as $xml_event ) {
 			// Zrušené akce: feed je značí <deleted>Y</deleted> (jen id + deleted + changed).
@@ -202,13 +295,13 @@ class Events {
 				if ( $existing ) {
 					$this->db_event_repository->delete( $existing );
 				}
-				$progress->tick();
+				$progress?->tick();
 				continue;
 			}
 
 			// Skip empty events
 			if ( ( empty( $xml_event['name'] ) ) && ( empty( $xml_event['start'] ) ) ) {
-				$progress->tick();
+				$progress?->tick();
 				continue;
 			}
 
@@ -219,7 +312,7 @@ class Events {
 					( 'department' === $filter_by && $filter_val != $xml_event['department'] )
 				)
 			) {
-				$progress->tick();
+				$progress?->tick();
 				continue;
 			}
 
@@ -279,12 +372,36 @@ class Events {
 			// Save
 			$this->db_event_repository->save( $db_event );
 			$imported_ids[] = $db_event->db_id;
-			$progress->tick();
+			$progress?->tick();
 		}
 
-		$progress->finish();
-		print_r( 'Import finished with ids: ' );
-		print_r( $imported_ids );
+		$progress?->finish();
+
+		// Mazat se dá jen podle plného exportu. Delta nese jen to, co se od
+		// minule změnilo, takže „v exportu to není“ u ní neznamená vůbec nic.
+		$removed = $just_updated
+			? $this->remove_stale_events( $xml['event'], $imported_ids )
+			: array();
+
+		$this->log_import(
+			sprintf(
+				/* translators: 1: počet uložených akcí, 2: počet smazaných akcí */
+				__( 'Import hotový: uloženo %1$d akcí, smazáno %2$d.', 'kct' ),
+				count( $imported_ids ),
+				count( $removed )
+			)
+		);
+
+		if ( $removed ) {
+			$this->log_import(
+				sprintf(
+					/* translators: %s: seznam db_id */
+					__( 'Smazané akce (v plném exportu už nejsou): %s', 'kct' ),
+					implode( ', ', $removed )
+				)
+			);
+		}
+
 		// import event types to options
 		$this->import_event_types( true );
 		$this->invalidate_sitemap_caches();
@@ -459,8 +576,6 @@ class Events {
 			// update options
 			update_option( 'event_types', $event_types );
 		}
-
-		exit();
 	}
 
 	/**
@@ -477,10 +592,25 @@ class Events {
 	 * @return array An array of events within the specified date range.
 	 */
 	public function get_events( $date_from = '', $date_to = '', $type = '', $department = '' ): array {
+		$cache_key = md5( serialize( array( $date_from, $date_to, $type, $department ) ) );
+
+		if ( isset( $this->events_cache[ $cache_key ] ) ) {
+			return $this->events_cache[ $cache_key ];
+		}
+
 		// Získání všech akcí
 		$post_events = $department ? [] : $this->event_repository->find_all_published_by_date( $date_from, $date_to, $type );
 		$db_events   = $this->db_event_repository->find_all_by_date( $date_from, $date_to, $type );
 		$to_exclude  = [];
+
+		// Index pro párování příspěvek → databázový záznam. Bez něj se na každý
+		// příspěvek volá get_by_db_id() zvlášť (měřeno 16 dotazů na 12
+		// příspěvků). Index pokrývá jen akce v datovém okně, takže spárovaná
+		// akce mimo okno pořád potřebuje dotaz — proto fallback níž.
+		$db_by_id = array();
+		foreach ( $db_events as $db_event ) {
+			$db_by_id[ (int) $db_event->db_id ] = $db_event;
+		}
 
 		// filtr z nastavení
 		$filter_val = $this->settings->get_option( 'id_code' );
@@ -495,13 +625,15 @@ class Events {
 		$events = array();
 		/** @var EventModel $post_event */
 		foreach ( $post_events as $post_event ) {
-			$post_data = $post_event->to_array();
+			$post_data = $post_event->to_array( self::POST_EVENT_PROPS );
 
 			$post_data['details'] = $this->merge_event_details_data( $post_data['details'] );
 
-			$event_db = $post_event->db_id
-				? $this->db_event_repository->get_by_db_id( (int) $post_event->db_id )
-				: null;
+			$event_db = null;
+			if ( $post_event->db_id ) {
+				$event_db = $db_by_id[ (int) $post_event->db_id ]
+					?? $this->db_event_repository->get_by_db_id( (int) $post_event->db_id );
+			}
 
 			// Spárovaná akce v tabulce být nemusí — import ji smaže, jakmile ji
 			// feed označí jako zrušenou (deleted=Y), ale db_id u příspěvku
@@ -509,14 +641,33 @@ class Events {
 			// každý výpis akcí, tedy i titulka. Totéž hlídá get_event()
 			// u /akce-db/{id}. Osiřelý příspěvek se vypíše z vlastních dat.
 			if ( $event_db ) {
-				$event_db_data = $event_db->to_array();
-				$event         = [];
+				$event_db_data            = $event_db->to_array();
+				$event_db_data['details'] = $this->with_type_icons( $event_db_data['details'] ?? array() );
+				$event                    = [];
 				foreach ( $post_data as $key => $value ) {
 					$event[ $key ] = ! empty( $value ) ? $value : ( $event_db_data[ $key ] ?? null );
 				}
+
+				// Identita akce a klíč série. Na identitu se `id` použít nedá —
+				// u položky z příspěvku je to ID příspěvku, u databázové
+				// primární klíč tabulky, takže se čísla napříč zdroji
+				// překrývají (příspěvek 195 a řádek 195 jsou různé akce).
+				//
+				// `db_title` a `db_department` se ze sloučení výš ztratí:
+				// `title` přebije ten z příspěvku (a od databázového se může
+				// lišit) a `department` EventModel vůbec nemá, takže v
+				// $post_data žádný takový klíč není a smyčka ho nevytvoří.
+				$event['post_id']       = (int) $post_event->id;
+				$event['db_title']      = (string) ( $event_db_data['title'] ?? '' );
+				$event['db_department'] = (int) ( $event_db_data['department'] ?? 0 );
+
 				$events[]     = $event;
 				$to_exclude[] = $event_db->db_id;
 			} else {
+				$post_data['post_id']       = (int) $post_event->id;
+				$post_data['db_title']      = '';
+				$post_data['db_department'] = 0;
+
 				$events[] = $post_data;
 			}
 		}
@@ -537,12 +688,20 @@ class Events {
 					continue;
 				}
 
-				$events[] = $db_event->to_array();
+				$db_data                  = $db_event->to_array();
+				$db_data['details']       = $this->with_type_icons( $db_data['details'] ?? array() );
+				$db_data['post_id']       = 0;
+				$db_data['db_title']      = (string) ( $db_data['title'] ?? '' );
+				$db_data['db_department'] = (int) ( $db_data['department'] ?? 0 );
+
+				$events[] = $db_data;
 			}
 		}
 
 // Akce seřadíme podle data
 		usort( $events, fn( $a, $b ) => strtotime( $a['date'] ) - strtotime( $b['date'] ) );
+
+		$this->events_cache[ $cache_key ] = $events;
 
 		return $events;
 	}
@@ -611,7 +770,8 @@ class Events {
 			// import smazal, protože ji feed označil jako zrušenou. Bez téhle
 			// pojistky spadne to_array() na null a stránka vrátí 500.
 			if ( $event_db ) {
-				$event_db_data = $event_db->to_array();
+				$event_db_data            = $event_db->to_array();
+				$event_db_data['details'] = $this->with_type_icons( $event_db_data['details'] ?? array() );
 			}
 		}
 
@@ -656,6 +816,68 @@ class Events {
 		}
 
 		return (array) $event_types;
+	}
+
+	/**
+	 * Doplní k typům akce ikonu z číselníku typů.
+	 *
+	 * Vlastní akce dostávají data typu z číselníku přes
+	 * merge_event_details_data(), databázové ne — ty nesou jen to, co přišlo
+	 * ve feedu. A feed má u části záznamů prvek `<icon>` prázdný: uloží se
+	 * jako prázdné POLE (ne prázdný řetězec, to je stejná vada dat jako
+	 * u ostatních prázdných prvků) a šablona pak ikonu vynechá. Naměřeno
+	 * 7. 11. 2026: ze 319 uložených akcí mělo 68 aspoň jeden typ bez ikony,
+	 * a všech 19 dotčených typů přitom ikonu v číselníku má.
+	 *
+	 * Číselník má přednost i tam, kde feed ikonu pošle. Jeho ikony jsou
+	 * stažené k nám (import_event_types() je ukládá do uploads), kdežto feed
+	 * posílá adresu na server ústředí — bez tohohle by si každý výpis akcí
+	 * tahal ikony odtamtud. Typ, který v číselníku není, si svou ikonu z
+	 * feedu ponechá.
+	 *
+	 * @param mixed $details Typy akce z databázového záznamu.
+	 *
+	 * @return mixed Typy s doplněnými ikonami; vstup beze změny, když není co doplnit.
+	 */
+	private function with_type_icons( $details ) {
+		if ( empty( $details ) || ! is_array( $details ) ) {
+			return $details;
+		}
+
+		$types = $this->get_event_types();
+
+		if ( empty( $types ) ) {
+			return $details;
+		}
+
+		$by_id = array();
+		foreach ( $types as $key => $type ) {
+			$id = is_array( $type ) && isset( $type['detailid'] ) ? $type['detailid'] : $key;
+
+			$by_id[ (string) $id ] = $type;
+		}
+
+		// Jediný typ přijde z feedu jako plochá položka, ne jako pole položek —
+		// stejná vada jako u ostatních opakovaných prvků (viz kct_event_type_ids()).
+		if ( isset( $details['detailid'] ) ) {
+			$details = array( $details );
+		}
+
+		foreach ( $details as $key => $detail ) {
+			if ( ! is_array( $detail ) || ! isset( $detail['detailid'] ) ) {
+				continue;
+			}
+
+			$type = $by_id[ (string) $detail['detailid'] ] ?? null;
+
+			if ( ! is_array( $type ) || empty( $type['icon'] ) || ! is_string( $type['icon'] ) ) {
+				continue;
+			}
+
+			$details[ $key ]['icon'] = $type['icon'];
+		}
+
+		return $details;
 	}
 
 	public function merge_event_details_data( $post_details ) {
@@ -847,6 +1069,73 @@ class Events {
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
 			\WP_CLI::warning( __( 'Adresa exportu z Databáze akcí KČT není vyplněná v Nastavení → KČT. Import se nespustil.', 'kct' ) );
 		}
+	}
+
+	/**
+	 * Hlášení z importu.
+	 *
+	 * Píše se na dvě místa schválně. Na příkazové řádce chce člověk vidět, co
+	 * se stalo, hned; pod cronem je ale výstup zahozený (`>/dev/null 2>&1`),
+	 * takže jediná stopa, která po běhu zůstane, je chybový log PHP.
+	 *
+	 * @param bool $is_error Chyba, kvůli které import neproběhl.
+	 */
+	private function log_import( string $message, bool $is_error = false ): void {
+		error_log( 'KČT import akcí: ' . $message );
+
+		if ( ! defined( 'WP_CLI' ) || ! WP_CLI ) {
+			return;
+		}
+
+		if ( $is_error ) {
+			\WP_CLI::warning( $message );
+		} else {
+			\WP_CLI::log( $message );
+		}
+	}
+
+	/**
+	 * Smaže budoucí akce, které plný export z centrální databáze už nenese.
+	 *
+	 * Zrušení akce se k nám dostane dvěma cestami a ani jedna sama nestačí.
+	 * Delta hlásí `<deleted>Y</deleted>` a ty se mažou rovnou v importní
+	 * smyčce, jenže záznam, který ústředí z databáze prostě odstraní nebo
+	 * nahradí jiným, se v deltě neobjeví vůbec — zůstával pak u nás viset
+	 * jako duch a vypisoval se vedle platné akce jako duplicita.
+	 *
+	 * Mazat se smí jen dopředu a jen po horizont exportu; proč, vysvětluje
+	 * FeedXml::stale_ids() a FeedXml::horizon().
+	 *
+	 * @param array $xml_events   Prvky `event` z exportu.
+	 * @param int[] $imported_ids db_id akcí, které tenhle běh uložil.
+	 *
+	 * @return int[] Smazaná db_id.
+	 */
+	private function remove_stale_events( array $xml_events, array $imported_ids ): array {
+		$today   = current_time( 'Y-m-d' );
+		$horizon = FeedXml::horizon( $xml_events );
+
+		if ( ! $horizon || ! $imported_ids ) {
+			return array();
+		}
+
+		$dates  = array();
+		$models = array();
+
+		foreach ( $this->db_event_repository->find_all_by_date( $today, $horizon ) as $event ) {
+			$db_id = (int) $event->db_id;
+
+			$dates[ $db_id ]  = (string) $event->date;
+			$models[ $db_id ] = $event;
+		}
+
+		$stale = FeedXml::stale_ids( $dates, $imported_ids, $today, $horizon );
+
+		foreach ( $stale as $db_id ) {
+			$this->db_event_repository->delete( $models[ $db_id ] );
+		}
+
+		return $stale;
 	}
 
 }

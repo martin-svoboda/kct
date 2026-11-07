@@ -75,7 +75,12 @@ class EventModel extends Post {
 
 	public function to_array( array $props = array(), array $recursive = array() ): array {
 		$data = parent::to_array( $props, $recursive );
-		if ( $this->featured_image ) {
+		// Záměrně featured_image_id, ne featured_image: ta vlastnost je relace
+		// a sestaví celý model přílohy, přestože tady stačí vědět, že náhled
+		// existuje. Dotazy to neušetří — ty padnou na
+		// get_the_post_thumbnail_url() níž, která přílohu načíst musí — ušetří
+		// jen tu PHP práci navíc.
+		if ( $this->featured_image_id ) {
 			$data['image'] = array(
 				'url' => get_the_post_thumbnail_url( $this->id ),
 			);
