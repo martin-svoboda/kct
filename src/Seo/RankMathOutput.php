@@ -291,7 +291,8 @@ class RankMathOutput implements EventSeoOutput {
 	/**
 	 * Obrázek akce, jinak logo oblasti.
 	 *
-	 * Vlastní obrázek má 6 z 318 akcí, takže záloha je běžný stav. Bez ní by
+	 * Vlastní obrázek má jen pár akcí z celého výpisu, takže záloha je běžný
+	 * stav. Bez ní by
 	 * sdílený odkaz na Facebooku vypadal jako holý text. Výběr obrázku (a
 	 * fallback na custom_logo) je sdílený se StandaloneOutput přes
 	 * EventSeoData::image(), ať se sémantika nepíše na dvou místech zvlášť.

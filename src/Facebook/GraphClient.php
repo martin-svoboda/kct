@@ -52,8 +52,8 @@ class GraphClient {
 	 * Publikuje na zeď stránky fotku s popiskem.
 	 *
 	 * Obrázek se nenahrává — předá se jeho veřejná adresa a Facebook si ho
-	 * stáhne sám. Z toho plyne, že se to nedá vyzkoušet z lokálního vývoje:
-	 * na sokct.test Facebook nedosáhne.
+	 * stáhne sám. Z toho plyne, že se to nedá vyzkoušet z lokálního vývoje —
+	 * na adresu, která není dostupná z internetu, Facebook nedosáhne.
 	 *
 	 * Endpoint vrací dvě různá ID: `id` je identifikátor fotky, `post_id`
 	 * identifikátor příspěvku na zdi. Ukládá se ten druhý, protože z něj

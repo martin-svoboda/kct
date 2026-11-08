@@ -150,8 +150,8 @@ class EventPosterCard implements Card {
 	 * Pozadí horní plochy — mapa akce, když ji máme.
 	 *
 	 * Mapy se generují z mapy.cz při zobrazení detailu akce a leží
-	 * v uploads/maps. Souřadnice má 279 akcí z 319 a všechny svoji mapu na
-	 * disku mají, takže se nic nestahuje — co tam není, prostě není.
+	 * v uploads/maps. Akce se souřadnicemi mají svoji mapu na disku, takže
+	 * se nic nestahuje — co tam není, prostě není.
 	 *
 	 * Mapa je 800×400. Na plnou výšku plochy by se musela zvětšit
 	 * dvojnásobně a popisky by se rozmazaly, proto se roztáhne jen na šířku

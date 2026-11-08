@@ -4,6 +4,32 @@ Plugin se šablonou pro odbory a oblasti KČT. Nasazuje se tagem přes
 `.github/workflows/deploy.yml` na sokct.cz i posazavskastezka.cz a zároveň
 vzniká instalační ZIP jako příloha vydání.
 
+## Šablona mluví univerzálně
+
+**V repozitáři se nemluví o konkrétní síti a neuvádějí se naměřená čísla.**
+Šablona se instaluje na weby odborů, kterým je naše síť stejně cizí jako
+jim navzájem — a to platí pro uživatelskou příručku i pro komentáře v kódu,
+protože `src/` a `themes/` se vydávají v balíčku.
+
+Pryč tedy patří jména konkrétních webů („na kctvltavin.cz“, „web bez Rank
+Mathu (kctpodebrady)“), inventury naší knihovny a databáze („z 318 akcí má
+vlastní příspěvek 12“, „84 MB metadat“) i výsledky jednotlivých měření
+(„278 kB proti 174 kB“). Důvod rozhodnutí se zapisuje slovy, co z měření
+plyne: „u malých náhledů zabírají metadata víc místa než samotný obrázek“.
+Takový text navíc nezastará, kdežto číslo zastará hned.
+
+Zůstávají dvě věci. **Čísla, která jsou vlastností šablony** — strop 2048 px,
+rozměry sdílecích karet, kvalita WebP 82, povolené rozsahy v nastavení; to
+není měření, to je chování. A **adresy vlastních služeb šablony** —
+`Update URI` v `kct.php` a `UpdateChecker::ENDPOINT` (server aktualizací),
+`DocsLinks::DEFAULT_URL` (příručka, přebitelné konstantou `KCT_DOCS_URL`
+nebo filtrem `kct_docs_url`) a `Theme URI` ve `themes/kct/style.css`
+(sablona.sokct.cz, web šablony). Na ty kód skutečně sahá, respektive jimi
+šablona odkazuje sama na sebe.
+
+Jako příklad obce i odboru se používá **Dolní Lhota**, aby se v textu
+nepoznal žádný skutečný odbor.
+
 ## Uživatelská dokumentace
 
 `docs/user/` je uživatelská příručka (Astro Starlight), sestavovaná samostatným

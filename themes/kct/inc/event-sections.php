@@ -31,13 +31,12 @@ if ( ! function_exists( 'kct_event_series_key' ) ) :
 	 *
 	 * Název se bere z databázového záznamu, když existuje: sloučená položka
 	 * spárované akce má v `title` název příspěvku, který se od databázového
-	 * může lišit (akce 1766 „105 let Posázavské stezky…“ vs. databázové
-	 * „105. výročí Posázavské stezky“). Podle názvu příspěvku by se série
-	 * rozpadla.
+	 * může lišit — redaktor si ho v příspěvku přepíše po svém. Podle názvu
+	 * příspěvku by se série rozpadla.
 	 *
-	 * Odbor je v klíči proto, že stejný název nesou i různé akce —
-	 * `Tříkrálový pochod` je Slaný (102045) i Čelákovice (102104).
-	 * U oblastních i čistě vlastních akcí je 0.
+	 * Odbor je v klíči proto, že týž název nese i akce jiného odboru —
+	 * tradiční názvy jako „Tříkrálový pochod“ pořádá víc odborů nezávisle
+	 * na sobě. U oblastních i čistě vlastních akcí je 0.
 	 */
 	function kct_event_series_key( array $event ): string {
 		$title = ! empty( $event['db_title'] ) ? $event['db_title'] : ( $event['title'] ?? '' );

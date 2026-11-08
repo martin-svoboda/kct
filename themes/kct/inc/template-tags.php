@@ -139,7 +139,7 @@ if ( ! function_exists( 'kct_post_thumbnail' ) ) :
 					// jenže takovou velikost nikdo neregistruje (set_post_thumbnail_size()
 					// se nikde nevolá) a jádro na neznámý název odpoví plnou velikostí.
 					// Do dlaždice vysoké 200 px se tak posílaly soubory o šířce
-					// 2560 px — u výpisu aktualit 6,23 MB místo 1,45 MB.
+					// 2560 px — u výpisu aktualit několikanásobek potřebných dat.
 					// Vizuálně se nemění nic: obrázek má v CSS object-fit: cover.
 					the_post_thumbnail(
 						'medium_large',

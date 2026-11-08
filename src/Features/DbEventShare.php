@@ -12,8 +12,8 @@ use Kct\Facebook\ShareSchedule;
  * Sdílení akcí z centrální databáze na Facebook.
  *
  * Tyhle akce nemají příspěvek, takže se jich běžné sdílení (Features\FacebookShare)
- * nedotkne — a je jich drtivá většina: z 319 akcí, které sokct.cz vypisuje, má
- * vlastní příspěvek 12.
+ * nedotkne — a je jich drtivá většina, vlastní příspěvek mívá jen pár akcí
+ * z celého výpisu.
  *
  * Odesílá je denní úloha. Ne plánování jednotlivých akcí dopředu: import akce
  * přepisuje, takže by změna termínu ve feedu nechala viset naplánované

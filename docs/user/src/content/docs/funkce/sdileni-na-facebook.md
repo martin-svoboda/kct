@@ -138,7 +138,7 @@ U **akce** má text pevný tvar:
 ```
 Název akce
 Kdy: sobota 5. 9. 2026, 8:00
-Kde: Rakovník
+Kde: Dolní Lhota
 
 Perex nebo popis akce…
 ```
@@ -150,8 +150,8 @@ potřeba ho opravit, místo aby beze stopy zmizelo.
 ## Akce z centrální databáze
 
 Většina akcí, které web vypisuje, pochází z centrální databáze KČT a **vlastní
-příspěvek nemá** — na sokct.cz je to řádově dvanáct akcí z tří set. Kdyby
-sdílení uměl jen editor příspěvku, drtivá většina pozvánek by nikdy neodešla.
+příspěvek nemá**. Kdyby sdílení uměl jen editor příspěvku, drtivá většina
+pozvánek by nikdy neodešla.
 
 Tyhle akce proto odesílá samostatná denní úloha. Spouští se v hodinu nastavenou
 v poli **V kolik hodin odeslat**, projde akce, kterým právě nastal den odeslání,

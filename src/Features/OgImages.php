@@ -514,8 +514,8 @@ class OgImages {
 	 * themes/kct/template-parts/content-akce.php, kde se generují. Název se
 	 * tady skládá stejně, aby se trefil do už existujícího souboru.
 	 *
-	 * Nic se nestahuje. Souřadnice má 279 akcí z 319 a všechny svoji mapu na
-	 * disku mají, protože ji vyrobí první zobrazení detailu. Kdyby tam nebyla,
+	 * Nic se nestahuje. Akce se souřadnicemi mají mapu na disku, protože ji
+	 * vyrobí první zobrazení detailu. Kdyby tam nebyla,
 	 * karta prostě bude bez mapy — stahovat ji uprostřed kreslení obrázku by
 	 * znamenalo závislost na cizím serveru v nejhorší možnou chvíli.
 	 */
@@ -574,8 +574,8 @@ class OgImages {
 	 *
 	 * Bere pole akce, ne ID příspěvku — sdílení sice obsluhuje jen akce
 	 * s příspěvkem, ale vyrenderovat kartu jde pro kteroukoli akci a bez toho
-	 * by se okrajové případy (tři trasy, dlouhé km, vícedenní) nedaly ověřit:
-	 * z 318 akcí má vlastní příspěvek 12.
+	 * by se okrajové případy (tři trasy, dlouhé km, vícedenní) nedaly ověřit —
+	 * vlastní příspěvek mívá jen pár akcí z celého výpisu.
 	 *
 	 * @param array $event Pole akce z Features\Events::get_event().
 	 *

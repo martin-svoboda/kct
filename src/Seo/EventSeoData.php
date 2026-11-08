@@ -31,7 +31,7 @@ class EventSeoData {
 	/**
 	 * Titulek stránky bez názvu webu — ten doplní Rank Math ze šablony.
 	 *
-	 * Formát: "46. Krajem nezbedného bakaláře — Rakovník, 5. 9. 2026"
+	 * Formát: "12. Podzimní pochod — Dolní Lhota, 5. 9. 2026"
 	 */
 	public function title( array $event ): string {
 		$title = $this->text( $event['title'] ?? '' );
@@ -64,7 +64,7 @@ class EventSeoData {
 	/**
 	 * Popisek složený z dat akce.
 	 *
-	 * Volný text (`content`) má jen 97 z 318 akcí a použitelnou délku 44, takže
+	 * Volný text (`content`) má vyplněná jen menšina akcí a bývá krátký, takže
 	 * popisek stojí na datech a text ho jen doplní, když po nich zbude místo.
 	 *
 	 * @param array $event Pole akce z Events::get_event().
@@ -298,7 +298,7 @@ class EventSeoData {
 			'name'  => $name,
 		);
 
-		// gps_n/gps_e jsou u 79 z 318 akcí prázdné pole, ne řetězec — proto
+		// gps_n/gps_e jsou u části akcí prázdné pole, ne řetězec — proto
 		// text(), ne přímé přetypování. Bez toho by na těch stránkách padalo
 		// "Array to string conversion".
 		$lat = $this->text( $event['start']['gps_n'] ?? '' );
@@ -422,7 +422,7 @@ class EventSeoData {
 		return rtrim( $name . ( $km ? ' ' . $km : '' ), '.' ) . '.';
 	}
 
-	/** Termín a místo: "5. 9. 2026, Rakovník, start 6:00–12:00." */
+	/** Termín a místo: "5. 9. 2026, Dolní Lhota, start 6:00–12:00." */
 	private function when_where_sentence( array $event ): string {
 		$parts = array_filter(
 			array(
@@ -444,7 +444,7 @@ class EventSeoData {
 		return implode( ', ', $parts ) . '.';
 	}
 
-	/** Pořadatel: "Pořádá KČT, odbor Rakovník." */
+	/** Pořadatel: "Pořádá KČT, odbor Dolní Lhota." */
 	private function organiser_sentence( array $event ): string {
 		$name = $this->text( $event['organiser']['name'] ?? '' );
 

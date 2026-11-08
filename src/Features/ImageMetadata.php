@@ -10,7 +10,7 @@ use Kct\Images\MetadataCleaner;
  * Bez toho by se knihovna zaplevelila znovu — fotoaparáty ukládají do EXIF
  * desítky kilobajtů a WordPress ta data kopíruje i do všech odvozených
  * velikostí, takže jeden nahraný snímek zanese balast do dvanácti souborů.
- * V knihovně KČT tvořila metadata 84 MB, u některých náhledů 92 % objemu.
+ * U malých náhledů tvoří taková data často většinu objemu souboru.
  *
  * Proč `wp_generate_attachment_metadata` a ne `wp_handle_upload`:
  * WordPress čte z originálu EXIF ve dvou krocích. Nejdřív si z něj vytáhne

@@ -10,8 +10,8 @@
 // Pravidlo výš řeší rytmus mezi widgety. Postranní sloupec se ale v praxi
 // skládá z jednoho jediného blokového widgetu, do kterého se naskládá víc
 // bloků pod sebe — výpis akcí s tlačítkem, nadpis, seznam článků. Mezi nimi
-// pak nebyla mezera vůbec žádná (naměřeno 0 px na kctricany.cz: tlačítko
-// „Přejít na kalendář akcí“ dosedlo na nadpis „Nejnovější příspěvky“).
+// pak nebyla mezera vůbec žádná — tlačítko výpisu akcí dosedlo přímo na
+// nadpis následujícího bloku.
 //
 // Odstup dostává nadpis, protože nový blok začíná; k seznamu pod sebou
 // zůstává těsně (.wp-block-heading má v sidebaru margin-bottom .5rem, viz

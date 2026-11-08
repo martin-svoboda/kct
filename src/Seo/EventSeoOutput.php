@@ -6,7 +6,7 @@ namespace Kct\Seo;
  * Výstup SEO hodnot do stránky.
  *
  * Dvě implementace: přes filtry Rank Mathu tam, kde je nainstalovaný,
- * a vlastním výpisem do wp_head tam, kde není (kctpodebrady).
+ * a vlastním výpisem do wp_head tam, kde není.
  */
 interface EventSeoOutput {
 

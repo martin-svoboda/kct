@@ -23,9 +23,9 @@ class ImageUploads {
 	/**
 	 * Delší strana nahrávaného obrázku v pixelech.
 	 *
-	 * Jádro má ve výchozím stavu 2560 px. Fotoaparáty dnes běžně dávají
-	 * 5184×3456 (17,9 Mpx) a takový snímek zabere ve 2560 px kolem 1 MB;
-	 * ve 2048 px 585 kB. Pro web, kde je největší zobrazovaná velikost
+	 * Jádro má ve výchozím stavu 2560 px. Snímek z běžného fotoaparátu je
+	 * mnohonásobně větší a mezi 2560 a 2048 px je skoro poloviční rozdíl
+	 * v objemu souboru. Pro web, kde je největší zobrazovaná velikost
 	 * 2048 px, je vyšší rozlišení jen zátěž navíc.
 	 */
 	private const MAX_DIMENSION = 2048;
@@ -39,7 +39,7 @@ class ImageUploads {
 	 * se nekoná: měřeno objektivně (PSNR) je opakovaná komprese znatelná ztráta
 	 * a nestojí za ni. Tenhle filtr se tak uplatní jen na nově nahrávané
 	 * soubory, kde se kóduje z nedotčené předlohy a WebP vyhrává i při 82 —
-	 * naměřeno 278 kB v JPEGu proti 174 kB ve WebP u velikosti „large“.
+	 * u velikosti „large“ vyjde přibližně o třetinu menší než JPEG.
 	 */
 	private const WEBP_QUALITY = 82;
 
@@ -72,17 +72,18 @@ class ImageUploads {
 	/**
 	 * Odvozené velikosti generovat ve WebP.
 	 *
-	 * Naměřeno na fotce 1500×2000: velikost „large“ 278 kB v JPEGu proti
-	 * 174 kB ve WebP, tedy o 37 % méně při stejném rozlišení.
+	 * Naměřeno na fotce z fotoaparátu: velikost „large“ vyjde ve WebP
+	 * přibližně o třetinu menší než v JPEGu při stejném rozlišení.
 	 *
 	 * PNG se dřív vynechávala s odůvodněním, že na webu bývají loga, ikony
 	 * a schémata s ostrými hranami, na kterých ztrátová komprese dělá
-	 * viditelné šmouhy. Zní to rozumně, ale na knihovně KČT to neplatí:
-	 * změřeno na všech 35 PNG nad 512 kB vyšla průměrná odchylka barvy proti
-	 * předloze 0,48–1,70 % na kanál, přičemž grafika a snímky administrace
-	 * na tom nebyly hůř než fotky. Nejhorší kus celé sady je mapa s tenkými
-	 * čarami (1,70 %), a i u ní je rozdíl při běžném zobrazení nerozpoznatelný.
-	 * Objem přitom spadl ze 41,3 MB na 8,3 MB. PNG proto do WebP jdou taky.
+	 * viditelné šmouhy. Zní to rozumně, ale na skutečné knihovně to neplatí:
+	 * změřeno na všech větších PNG vyšla průměrná odchylka barvy proti
+	 * předloze hluboko pod dvěma procenty na kanál, přičemž grafika a snímky
+	 * administrace na tom nebyly hůř než fotky. Nejhorší kus sady je mapa
+	 * s tenkými čarami, a i u ní je rozdíl při běžném zobrazení
+	 * nerozpoznatelný. Objem přitom spadl na zlomek původního. PNG proto
+	 * do WebP jdou taky.
 	 *
 	 * Průhlednost se neztrácí — WebP má alfa kanál a jádro ho při převodu
 	 * zachová.
@@ -93,8 +94,8 @@ class ImageUploads {
 	 * knihovny tu pojistku má (Images\Downscaler), při nahrávání jde o
 	 * jednotky kilobajtů a nestojí za vlastní obrazovou vrstvu.
 	 *
-	 * Proč ne AVIF: na testovaném snímku vyšel větší než WebP (107 kB proti
-	 * 93 kB) a o dvě třetiny pomalejší. Kodér v Imagicku by se musel ladit
+	 * Proč ne AVIF: na testovaném snímku vyšel větší než WebP a o dvě třetiny
+	 * pomalejší. Kodér v Imagicku by se musel ladit
 	 * a tenhle kód má být bezúdržbový.
 	 *
 	 * @param array  $formats   Mapa vstupní MIME typ => výstupní MIME typ.
@@ -135,9 +136,9 @@ class ImageUploads {
 	 *
 	 * Když je nahraný snímek delší než strop výše, WordPress vyrobí zmenšenou
 	 * kopii `…-scaled.…`, servíruje ji — a původní soubor si nechá ležet na
-	 * disku napořád. Strop rozměrů tedy sám o sobě neušetří ani bajt úložiště;
-	 * v síti KČT takhle leželo 673 originálů za 1,7 GB. Nikdo je nečte, jen
-	 * zabírají místo a nafukují zálohy.
+	 * disku napořád. Strop rozměrů tedy sám o sobě neušetří ani bajt úložiště
+	 * a na webu s plnou knihovnou fotek jde o stovky souborů, které nikdo
+	 * nečte — jen zabírají místo a nafukují zálohy.
 	 *
 	 * Klíč `original_image` se musí odstranit spolu se souborem. Jádro podle
 	 * něj skládá cestu ve wp_get_original_image_path(); kdyby zůstal viset nad

@@ -75,12 +75,12 @@ class DepartmentLink {
 	 * a zůstávají svázané s webem, na kterém request skutečně začal. Na
 	 * vedlejším webu (kde `odbory` vůbec nejsou zaregistrované) by tak
 	 * get_permalink() i po switch_to_blog() spadl na ošklivý tvar
-	 * "?p={ID}" místo hezké adresy — ověřeno na kctricany.test.
+	 * "?p={ID}" místo hezké adresy — ověřeno na webu odboru v síti.
 	 *
 	 * Adresa se proto skládá ručně ze slugu. Rewrite slug CPT `odbory` je bez
 	 * vlastního nastavení stejný jako klíč typu (DepartmentPostType::get_args()
 	 * nenastavuje 'rewrite'), což odpovídá i skutečným permalinkům
-	 * (ověřeno: .../odbory/kct-odbor-slany/). Nespoléhá se tak na stav CPT
+	 * (ověřeno na skutečném permalinku odboru). Nespoléhá se tak na stav CPT
 	 * registrace, funguje stejně na hlavním i na vedlejším webu — a pro
 	 * konzistenci se stejnou cestou počítá i tady, ne jen v cross-site větvi.
 	 */

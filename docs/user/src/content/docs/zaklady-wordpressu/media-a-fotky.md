@@ -35,15 +35,15 @@ Tohle je na šabloně KČT nezvyklé a vyplatí se to vědět předem. Fotka se 
 
 Největší velikost, ve které web fotku kdy zobrazí, je 2048 pixelů. Cokoliv nad to už na obrazovku nikdy nedoputuje a čtenáři se to jen stáhne do prohlížeče.
 
-WordPress sám má strop nastavený na 2560 pixelů. Rozdíl není zanedbatelný: běžný snímek z dnešního fotoaparátu má kolem 5184 × 3456 bodů a ve 2560 pixelech zabere zhruba 1 MB, kdežto ve 2048 pixelech 585 kB. Skoro polovina objemu, kterou nikdo neuvidí.
+WordPress sám má strop nastavený na 2560 pixelů. Rozdíl není zanedbatelný — u snímku z běžného fotoaparátu je to téměř polovina objemu souboru, kterou na webu nikdo neuvidí.
 
 Zmenšení se týká jen rozměrů obrazovky, ne kvality — 2048 pixelů je pořád víc, než má většina monitorů na šířku.
 
 ### Proč WebP
 
-WebP je novější obrazový formát, kterému rozumí všechny dnešní prohlížeče. Při stejném rozlišení a prakticky stejné kvalitě vyjde znatelně menší. Naměřeno na fotce z knihovny: velikost používaná v článku měla 278 kB jako JPEG a 174 kB jako WebP — o 37 % méně při shodných rozměrech.
+WebP je novější obrazový formát, kterému rozumí všechny dnešní prohlížeče. Při stejném rozlišení a prakticky stejné kvalitě vyjde znatelně menší — u fotky v článku je to přibližně o třetinu méně.
 
-Převádí se **fotky i obrázky ve formátu PNG**. PNG se dřív vynechávalo s tím, že na webu bývá hlavně v logách, ikonách a schématech s ostrými hranami, kde by komprese udělala viditelné šmouhy. Měření na celé knihovně KČT to nepotvrdilo: u všech PNG nad 512 kB se barva od předlohy odchýlila průměrně o 0,5 až 1,7 %, přičemž snímky administrace a mapy na tom nebyly hůř než fotky. Rozdíl není poznat ani při dvojnásobném zvětšení, a objem spadl ze 41 MB na 8 MB.
+Převádí se **fotky i obrázky ve formátu PNG**. PNG se dřív vynechávalo s tím, že na webu bývá hlavně v logách, ikonách a schématech s ostrými hranami, kde by komprese udělala viditelné šmouhy. Měření na skutečné knihovně to nepotvrdilo: odchylka barvy od předlohy je u schémat a snímků administrace stejně malá jako u fotek a není poznat ani při dvojnásobném zvětšení. Objem přitom spadne na zlomek původního.
 
 Průhlednost se při převodu neztrácí, takže logo s průhledným pozadím zůstane průhledné.
 
@@ -53,7 +53,7 @@ Formát se změní i v názvu souboru — z `dscn1234.jpg` se stane `dscn1234.we
 
 Fotoaparát ukládá do každého snímku technická data: model přístroje, čas expozice, clonu, často i souřadnice místa. Grafické programy k tomu přidávají barevné profily. Pro čtenáře webu z toho není užitečné nic, ale objem to dělá — WordPress ta data kopíruje i do všech zmenšenin, takže se jeden nahraný snímek propíše do víc než deseti souborů.
 
-V knihovně KČT tvořila taková data dohromady 84 MB a u některých náhledů zabírala 92 % celého souboru. Extrémem bylo logo o rozměrech 300 × 53 bodů, kde 551 kB z 557 kB připadalo na tiskový barevný profil a na vlastní obrázek zbývalo 6 kB.
+U malých náhledů zabírají taková data často víc místa než samotný obrázek. Nejhůř jsou na tom loga a schémata vyexportovaná z grafického programu s tiskovým barevným profilem — tam může na obrazová data zbývat zlomek souboru.
 
 Mazání je **bezztrátové** — přepisuje se jen obal souboru, obrazová data se vůbec nedotknou. U souborů, kde by odstranění barevného profilu posunulo barvy, se profil ponechá.
 
@@ -73,7 +73,7 @@ Fotka uložená jako **JPEG** už jednou prošla ztrátovou kompresí. Její př
 
 Obrázek uložený jako **PNG** je na tom jako ta čerstvě nahraná fotka: PNG je bezztrátový formát, takže se nic neztratilo a převod do WebP je teprve první komprese. Proto se starší PNG převést dají a správce sítě to při úklidu knihovny rovnou dělá.
 
-**Zmenšení rozměrů** se zpětně udělat dá vždycky, u obou formátů. Nad 2048 pixelů nese soubor jen data, která se na obrazovku nikdy nedostanou, takže se nic viditelného nezahazuje. V knihovnách KČT takhle leží stovky souborů z doby, než se strop zavedl.
+**Zmenšení rozměrů** se zpětně udělat dá vždycky, u obou formátů. Nad 2048 pixelů nese soubor jen data, která se na obrazovku nikdy nedostanou, takže se nic viditelného nezahazuje. Na webu, který vznikl dřív, než se strop zavedl, takových souborů bývají stovky.
 
 Jestli má web knihovnu plnou velkých fotek z dřívějška, **napište správci sítě** — úklid se spouští jednorázově z příkazové řádky a ze stránky Média se vyvolat nedá. Běží po jednotlivých webech a dá se nejdřív pustit nanečisto, takže je dopředu vidět, kolika souborů se dotkne a kolik místa ušetří.
 
@@ -81,7 +81,7 @@ Váhu starších stránek řeší šablona i bez toho — posílá do stránky m
 
 ## Původní soubor se neuchovává
 
-Když WordPress fotku zmenší, ukládá si vedle zmenšeniny i původní nezmenšený soubor, který ale nikdy nikomu neposílá. V síti KČT takhle leželo 673 nepoužívaných originálů za 1,7 GB, které jen nafukovaly zálohy. Šablona proto po nahrání plnou verzi maže.
+Když WordPress fotku zmenší, ukládá si vedle zmenšeniny i původní nezmenšený soubor, který ale nikdy nikomu neposílá. Na webu s plnou knihovnou fotek jde o podstatnou část obsazeného místa, která jen nafukuje zálohy. Šablona proto po nahrání plnou verzi maže.
 
 Prakticky to znamená jedno: **knihovna médií není fotoarchiv odboru.** Originály z fotoaparátu patří do vlastního úložiště nebo na disk, web slouží k jejich zobrazení. Zpátky z webu se plné rozlišení nedostane.
 

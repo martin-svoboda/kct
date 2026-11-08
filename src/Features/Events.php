@@ -203,11 +203,11 @@ class Events {
 	 *
 	 * Exporty ve složce, jejíž adresu drží nastavení (`db_export_url`):
 	 * Exporty jsou dva a jmenují se obráceně, než by člověk čekal — `1x` NENÍ
-	 * větší `1`. Změřeno 7. 11. 2026:
-	 *   - `1`  plný export budoucích akcí: 1139 akcí, žádné rušení,
-	 *          2026-11-06 … 2028-10-02. Tenhle bere denní cron ($just_updated).
-	 *   - `1x` delta posledních změn: 209 akcí, z toho 33 s `deleted=Y`,
-	 *          sahá i do minulosti. Tenhle bere ruční `wp kct import_events`.
+	 * větší `1`. Ověřeno na obsahu obou:
+	 *   - `1`  plný export budoucích akcí, bez rušení, od dneška do dvou let
+	 *          dopředu. Tenhle bere denní cron ($just_updated).
+	 *   - `1x` delta posledních změn, včetně záznamů s `deleted=Y`, sahá
+	 *          i do minulosti. Tenhle bere ruční `wp kct import_events`.
 	 *
 	 * Z toho plyne i rozdělení práce: zrušené akce se dozvíme jen z delty,
 	 * zatímco záznamy, které ústředí zrušilo bez ohlášení, pozná jen plný
@@ -825,9 +825,8 @@ class Events {
 	 * merge_event_details_data(), databázové ne — ty nesou jen to, co přišlo
 	 * ve feedu. A feed má u části záznamů prvek `<icon>` prázdný: uloží se
 	 * jako prázdné POLE (ne prázdný řetězec, to je stejná vada dat jako
-	 * u ostatních prázdných prvků) a šablona pak ikonu vynechá. Naměřeno
-	 * 7. 11. 2026: ze 319 uložených akcí mělo 68 aspoň jeden typ bez ikony,
-	 * a všech 19 dotčených typů přitom ikonu v číselníku má.
+	 * u ostatních prázdných prvků) a šablona pak ikonu vynechá. Týká se to
+	 * pětiny uložených akcí, přičemž každý dotčený typ ikonu v číselníku má.
 	 *
 	 * Číselník má přednost i tam, kde feed ikonu pošle. Jeho ikony jsou
 	 * stažené k nám (import_event_types() je ukládá do uploads), kdežto feed

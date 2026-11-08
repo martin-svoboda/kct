@@ -114,7 +114,7 @@ class DepartmentSeoData {
 		return $schema;
 	}
 
-	/** Úvodní věta popisku: "Turistický odbor KČT v obci Slaný." — bez obce jen obecná věta. */
+	/** Úvodní věta popisku: "Turistický odbor KČT v obci Dolní Lhota." — bez obce jen obecná věta. */
 	private function intro_sentence( array $department ): string {
 		$town = $this->town( $department );
 
@@ -125,7 +125,7 @@ class DepartmentSeoData {
 
 	/**
 	 * Název obce v čitelném tvaru — data z importu KČT ho mají verzálkami
-	 * ("SLANÝ", "KUTNÁ HORA"), do věty patří normální tvar ("Slaný", "Kutná Hora").
+	 * ("DOLNÍ LHOTA", "KUTNÁ HORA"), do věty patří normální tvar ("Dolní Lhota", "Kutná Hora").
 	 */
 	private function town( array $department ): string {
 		$town = $this->text( $department['town'] ?? '' );

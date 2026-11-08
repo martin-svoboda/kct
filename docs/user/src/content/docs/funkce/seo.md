@@ -18,8 +18,8 @@ a popisek výpisu aktualit. Šablona to za něj udělá správně.
 ### U akcí
 
 - **Titulek stránky** složený z názvu akce, ročníku, obce a data — třeba
-  „46. Krajem nezbedného bakaláře — Rakovník, 5. 9. 2026". Název webu se
-  doplní za něj.
+  „12. Podzimní pochod — Dolní Lhota, 5. 9. 2026". Název webu se doplní
+  za něj.
 - **Popisek** poskládaný z dat akce: druh akce, kdy a kde se koná, kdo ji
   pořádá. Zkrátí se na délku, kterou vyhledávač zobrazí. Volný text má
   vyplněná jen menšina akcí, popisek proto stojí na datech a text ho jen

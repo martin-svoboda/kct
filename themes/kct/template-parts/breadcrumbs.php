@@ -25,7 +25,7 @@ if ( is_front_page() || is_404() ) {
 	return;
 }
 
-// Rank Math nemusí být na webu vůbec aktivní (např. kctpodebrady).
+// Rank Math nemusí být na webu vůbec aktivní.
 if ( ! function_exists( 'rank_math_get_breadcrumbs' ) ) {
 	return;
 }

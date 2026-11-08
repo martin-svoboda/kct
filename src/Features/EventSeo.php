@@ -132,9 +132,9 @@ class EventSeo {
 		// mapu z CanonicalSites — a to záměrně, ne kvůli výkonu (request se
 		// stejně ukončí exitem dřív, než by mapu někdo potřeboval). Je to
 		// sémantický rozdíl: přesměrování smí rozhodovat jen web, kde
-		// spárovaný příspěvek skutečně leží. Proto kctricany.test/akce-db/24065/
-		// správně vrací 200, ne 301, i když je akce spárovaná na oblastním
-		// webu — cizí web má nechat kanonikál na CanonicalSites, ne
+		// spárovaný příspěvek skutečně leží. Adresa `/akce-db/{id}/` na webu
+		// odboru proto správně vrací 200, ne 301, i když je akce spárovaná
+		// na oblastním webu — cizí web má nechat kanonikál na CanonicalSites, ne
 		// přesměrovávat pryč (a mezi doménami v síti by to wp_safe_redirect()
 		// stejně odmítl).
 		$post_id   = $this->event_repository->find_by_db_id( $db_id );
@@ -354,7 +354,7 @@ class EventSeo {
 	 * Implementace výstupu podle toho, jaký SEO plugin má web aktivní.
 	 *
 	 * StandaloneOutput vznikne až v dalším úkolu — do té doby web bez Rank
-	 * Mathu (kctpodebrady) dostane null a setup() render() vůbec nezavolá.
+	 * Mathu dostane null a setup() render() vůbec nezavolá.
 	 * Bez téhle pojistky by kct_container()->get() na neexistující třídu
 	 * skončil fatální chybou a rozbil i stránky, které dnes fungují.
 	 */

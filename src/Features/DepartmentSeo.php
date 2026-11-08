@@ -17,7 +17,7 @@ use Kct\Seo\EventSeoData;
  * `pt_odbory_default_rich_snippet = off` v Rank Mathu vypne i WebSite a
  * WebPage, viz `can_add_global_entities()`. Tahle feature všechny tři doplní.
  *
- * Zatím jen pro weby s Rank Mathem — web bez SEO pluginu (kctpodebrady) dostává
+ * Zatím jen pro weby s Rank Mathem — web bez SEO pluginu dostává
  * aspoň obecné OG tagy z featury OpenGraph (funguje pro libovolný singulární
  * příspěvek, odbor nevyjímaje) a specifický popisek/schema mu chybí stejně,
  * jako dnes chybí úplně všem. Až bude potřeba i tam, přibude druhá

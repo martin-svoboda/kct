@@ -7,8 +7,8 @@ namespace Kct\Images;
  *
  * Features\ImageUploads drží strop 2048 px, ale platí jen na nově nahrávané
  * soubory — knihovna z doby před ním (vydání 2.0.0, 8. 9. 2026) má plná
- * rozlišení z fotoaparátů. Naměřeno v síti KČT: 783 souborů nad stropem za
- * 705 MB, největší 4850×3233 za 7,75 MB.
+ * rozlišení z fotoaparátů. Na webu, který vznikl dřív, jde o stovky souborů
+ * a podstatnou část obsazeného místa.
  *
  * Proč je to bezpečné i podle pravidla „kvalitou se neplatí za bajty“:
  * největší velikost, kterou web kdy zobrazí, je 2048 px (registrovaná
@@ -55,7 +55,8 @@ class Downscaler {
 	 *
 	 * GIF chybí schválně — animovaný GIF by zmenšením přišel o všechny snímky
 	 * kromě prvního a rozpoznat animaci spolehlivě by znamenalo číst strukturu
-	 * souboru. V knihovně je 11 GIFů za 0,5 MB, takže to nestojí za riziko.
+	 * souboru. GIFů bývá v knihovně pár a místa zabírají málo, takže to
+	 * nestojí za riziko.
 	 */
 	private const FORMATS = array( 'image/jpeg', 'image/png', 'image/webp' );
 
@@ -218,8 +219,7 @@ class Downscaler {
 	 * 2048 px obojím způsobem, ale kratší se dopočítává ze dvou různých
 	 * výchozích rozměrů a zaokrouhlením se rozejde o bod či dva: plný soubor
 	 * 2048×1152 a vedle něj velikost `2048x2048` jako 2048×1151 je tentýž
-	 * obrázek dvakrát. V síti KČT to byl případ pěti ze šesti velkých
-	 * obrázků na kctvltavin.cz.
+	 * obrázek dvakrát. Přesná shoda je přitom menšina případů.
 	 *
 	 * Delší strana se proto porovnává přesně a tolerance TOLERANCE platí jen
 	 * pro tu kratší. Volnější pravidlo by sahalo i na velikost, která se
@@ -471,11 +471,10 @@ class Downscaler {
 	 * změnit adresy, nic jiného.
 	 *
 	 * **Projíždí celou síť, ne jen web, kde se převádělo.** Weby odborů si
-	 * navzájem vkládají obrázky z cizí knihovny — úvodní stránka
-	 * kctvltavin.cz zobrazuje osm log nahraných na sokct.cz. Kdyby se
-	 * přepisoval jen vlastní web, převod na sokct.cz by ta loga u sousedů
-	 * utrhl. Proto cesty bez domény (viz urls_of()) a průchod po všech
-	 * webech.
+	 * navzájem vkládají obrázky z cizí knihovny — typicky má web odboru na
+	 * úvodní stránce loga nahraná na webu oblasti. Kdyby se přepisoval jen
+	 * vlastní web, převod na oblastním webu by ta loga u sousedů utrhl.
+	 * Proto cesty bez domény (viz urls_of()) a průchod po všech webech.
 	 *
 	 * @param array<string,string> $mapa  Dvojice stará cesta => nová cesta.
 	 * @param bool                 $write Zapsat. false = jen spočítat.
@@ -567,8 +566,8 @@ class Downscaler {
 	 *    s doménou hlavního webu sítě, ne toho přepnutého — cesta na disku
 	 *    je správně, adresa ne. Příkaz běží přes switch_to_blog(), takže
 	 *    mapa postavená na `baseurl` mířila na cizí doménu a v obsahu se
-	 *    nenašla. Na sablona.sokct.cz tak po převodu zůstaly tři odkazy na
-	 *    soubory, které už neexistovaly.
+	 *    nenašla — po převodu pak ve stránce zůstaly odkazy na soubory,
+	 *    které už neexistovaly.
 	 * 2. I kdyby ta chyba nebyla: v obsahu je táž adresa psaná různě —
 	 *    http i https, s doménou webu i s doménou, ze které se obsah kdysi
 	 *    kopíroval. Cesta je společná všem.
@@ -663,11 +662,11 @@ class Downscaler {
 	 * číslo by znamenalo soubor opravdu překódovat, a běh nanečisto má být
 	 * levný a nic nezapisovat.
 	 *
-	 * Koeficient 1,09 je naměřený, ne odhadnutý. Na osmi fotkách 2560×1920
-	 * z knihovny kctricany.cz vyšel skutečný výsledek po zmenšení o 19–35 %
-	 * větší, než říkal samotný poměr ploch: menší obrázek má po zmenšení
-	 * vyšší podíl detailu na pixel, takže se hůř komprimuje, a režie formátu
-	 * (hlavičky, Huffmanovy tabulky) se zmenšením neubývá vůbec.
+	 * Koeficient 1,09 je naměřený, ne odhadnutý: na vzorku fotek z plného
+	 * rozlišení vycházel skutečný výsledek o pětinu až třetinu větší, než
+	 * říkal samotný poměr ploch. Menší obrázek má po zmenšení vyšší podíl
+	 * detailu na pixel, takže se hůř komprimuje, a režie formátu (hlavičky,
+	 * Huffmanovy tabulky) se zmenšením neubývá vůbec.
 	 *
 	 * Záměrně je spíš pesimistický — raději slíbit menší úsporu a doručit
 	 * větší než naopak.

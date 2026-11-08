@@ -22,15 +22,15 @@ zpětně se nedoplňují — všechno, co uměla, je součástí verze 2.0.0.
   do WebP se mění název souboru a odkazy v obsahu se přepisují. Přepis se ale
   u webu odboru v síti minul cílem a obrázek pak ve stránce zmizel, i když
   soubor na disku byl. Nově se odkazy dohledají na všech webech sítě, takže
-  obstojí i obrázek vložený z knihovny jiného odboru — úvodní stránka
-  Vltavínu takhle zobrazuje loga nahraná na webu oblasti.
+  obstojí i obrázek vložený z knihovny jiného odboru — tak se na web odboru
+  dostanou třeba loga nahraná na webu oblasti.
 
 - **Z knihovny se uklidí i druhá kopie plné velikosti.** WordPress si vedle
   plného souboru drží sadu zmenšenin a ta největší z nich po zmenšení knihovny
   vyjde na tentýž obrázek — někdy přesně, častěji o bod jinak kvůli
   zaokrouhlení. Dřív se poznala jen přesná shoda, takže kopie zůstávaly ležet.
-  V síti KČT jich bylo 25 za 14 MB. Odkaz na smazanou kopii se v obsahu
-  přepíše na plný soubor, takže se ve stránce nic nezmění.
+  Odkaz na smazanou kopii se v obsahu přepíše na plný soubor, takže se ve
+  stránce nic nezmění.
 
 ## 2.1.1 — 7. 11. 2026
 
@@ -66,9 +66,9 @@ zpětně se nedoplňují — všechno, co uměla, je součástí verze 2.0.0.
 - **Obrázky PNG se po nahrání převádějí do WebP, stejně jako fotky.** Dosud
   se převáděly jen soubory JPEG a PNG zůstávalo beze změny, protože se čekalo,
   že na logách a schématech bude komprese dělat viditelné šmouhy. Měření na
-  celé knihovně KČT to nepotvrdilo — u všech PNG nad 512 kB se barva odchýlila
-  průměrně o 0,5 až 1,7 % a rozdíl není poznat ani při dvojnásobném zvětšení.
-  Objem přitom spadl ze 41 MB na 8 MB. Průhlednost se převodem neztrácí,
+  skutečné knihovně to nepotvrdilo — odchylka barvy od předlohy není poznat ani
+  při dvojnásobném zvětšení a objem přitom výrazně spadne. Průhlednost se
+  převodem neztrácí,
   takže logo s průhledným pozadím zůstane průhledné. Podrobnosti popisuje
   stránka [Média a fotky](/zaklady-wordpressu/media-a-fotky/).
 

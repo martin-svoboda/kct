@@ -7,9 +7,9 @@ namespace Kct\Images;
  *
  * Obrázky z fotoaparátů a z grafických programů si s sebou nesou EXIF, XMP,
  * IPTC a barevné profily. Pro web jsou k ničemu a u některých souborů tvoří
- * skoro celý objem — v knihovně KČT je logo, kde 551 kB z 557 kB připadá na
- * tiskový CMYK profil „U.S. Web Coated (SWOP) v2“; vlastní obrázek 300×53 px
- * má 6 kB. WordPress metadata z originálu kopíruje i do všech odvozených
+ * skoro celý objem — u loga vyexportovaného s tiskovým CMYK profilem připadá
+ * na vlastní obrázek jen zlomek souboru a zbytek na profil. WordPress
+ * metadata z originálu kopíruje i do všech odvozených
  * velikostí (WP_Image_Editor_Imagick::strip_meta() barevný profil záměrně
  * zachovává, aby nepokazil barvy), takže se ta zátěž znásobí.
  *
