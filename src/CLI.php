@@ -693,10 +693,14 @@ class CLI extends WP_CLI_Command {
 	 * Strop 2048 px drží Features\ImageUploads, ale jen pro nově nahrávané
 	 * soubory. Tenhle příkaz srovná na stejnou míru i starší knihovnu.
 	 *
-	 * Mění se pouze rozměr, ne formát — převod staré knihovny do WebP je
-	 * druhá ztrátová komprese a vědomě se nedělá (viz Images\Downscaler).
-	 * Odvozené velikosti se negenerují znovu, jsou menší než strop a platí
-	 * dál; maže se jen ta, která by po zmenšení byla kopií plného souboru.
+	 * Ve výchozím stavu se mění pouze rozměr, ne formát: převod už jednou
+	 * zkomprimovaného JPEGu do WebP je druhá ztrátová komprese a na měření
+	 * se neobhájil. U PNG to neplatí a jde zapnout přepínačem --png-webp
+	 * (viz Images\Downscaler).
+	 *
+	 * Odvozené velikosti se po zmenšení negenerují znovu, jsou menší než
+	 * strop a platí dál; maže se jen ta, která by po zmenšení byla kopií
+	 * plného souboru.
 	 *
 	 * Prochází všechny weby sítě. Bez přepínače --write jen spočítá, co by
 	 * se stalo.
