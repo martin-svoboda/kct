@@ -11,10 +11,10 @@
   "docs:preview": "npm --prefix docs/user run preview",
   "docs:install": "npm --prefix docs/user ci"
  },
- "author": "WPify <info@wpify.io>",
+ "author": "Martin Svoboda <info@martin-svoboda.cz>",
  "license": "GPL-2.0-or-later",
  "engines": {
-  "node": ">=v14.17.6"
+  "node": ">=18"
  },
  "sideEffects": [
   "*.scss",

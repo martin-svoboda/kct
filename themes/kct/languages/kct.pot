@@ -1,198 +1,389 @@
-# Copyright (C) 2020 Automattic
+# Copyright (C) 2026 Martin Svoboda
 # This file is distributed under the GNU General Public License v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: _s 1.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/theme/_s\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Project-Id-Version: KČT KCT_VERSION\n"
+"Report-Msgid-Bugs-To: https://github.com/martin-svoboda/kct/issues\n"
+"Last-Translator: Martin Svoboda <info@martin-svoboda.cz>\n"
+"Language-Team: Martin Svoboda <info@martin-svoboda.cz>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2020-04-17T21:03:15+00:00\n"
+"POT-Creation-Date: 2026-11-08T19:19:48+01:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.4.0\n"
-"X-Domain: _s\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: kct\n"
 
 #. Theme Name of the theme
-msgid "_s"
+#: style.css
+#: inc/customizer.php:179
+msgid "KČT"
 msgstr ""
 
 #. Theme URI of the theme
-msgid "https://underscores.me/"
+#: style.css
+msgid "https://sablona.sokct.cz"
 msgstr ""
 
 #. Description of the theme
-msgid "Hi. I'm a starter theme called <code>_s</code>, or <em>underscores</em>, if you like. I'm a theme meant for hacking so don't use me as a <em>Parent Theme</em>. Instead try turning me into the next, most awesome, WordPress theme out there. That's what I'm here for."
+#: style.css
+msgid "Vzhled webu odboru a oblasti Klubu českých turistů. Úvodní stránka s kalendářem akcí, výpisy akcí, zpráv a odborů, barevné rozlišení druhů turistiky a responzivní rozvržení od mobilu po velkou obrazovku. Funkce webu (import akcí, sdílení, SEO) dodává plugin Šablona KČT, bez kterého šablona nedává smysl."
 msgstr ""
 
 #. Author of the theme
-msgid "Automattic"
+#: style.css
+msgid "Martin Svoboda"
 msgstr ""
 
 #. Author URI of the theme
-msgid "https://automattic.com/"
-msgstr ""
-
-#: 404.php:18
-msgid "Oops! That page can&rsquo;t be found."
-msgstr ""
-
-#: 404.php:22
-msgid "It looks like nothing was found at this location. Maybe try one of the links below or a search?"
-msgstr ""
-
-#: 404.php:31
-msgid "Most Used Categories"
-msgstr ""
-
-#. translators: %1$s: smiley
-#: 404.php:49
-msgid "Try looking in the monthly archives. %1$s"
+#: style.css
+msgid "https://martin-svoboda.cz/"
 msgstr ""
 
 #. translators: 1: title.
 #: comments.php:35
-msgid "One thought on &ldquo;%1$s&rdquo;"
+msgid "Jeden komentář k &bdquo;%1$s&ldquo;"
 msgstr ""
 
 #. translators: 1: comment count number, 2: title.
 #: comments.php:41
 msgctxt "comments title"
-msgid "%1$s thought on &ldquo;%2$s&rdquo;"
-msgid_plural "%1$s thoughts on &ldquo;%2$s&rdquo;"
+msgid "%1$s komentář k &bdquo;%2$s&ldquo;"
+msgid_plural "%1$s komentářů k &bdquo;%2$s&ldquo;"
 msgstr[0] ""
 msgstr[1] ""
 
 #: comments.php:68
-msgid "Comments are closed."
-msgstr ""
-
-#: footer.php:18
-msgid "https://wordpress.org/"
-msgstr ""
-
-#. translators: %s: CMS name, i.e. WordPress.
-#: footer.php:21
-msgid "Proudly powered by %s"
+msgid "Komentáře jsou uzavřené."
 msgstr ""
 
 #. translators: 1: Theme name, 2: Theme author.
-#: footer.php:27
-msgid "Theme: %1$s by %2$s."
+#: footer.php:32
+msgid "Postaveno na šabloně %1$s"
 msgstr ""
 
-#: functions.php:53
-msgid "Primary"
+#: functions.php:52
+msgid "Hlavní menu"
 msgstr ""
 
-#: functions.php:130
-msgid "Sidebar"
+#: functions.php:127
+msgid "Postranní sloupec"
 msgstr ""
 
-#: functions.php:132
-msgid "Add widgets here."
+#: functions.php:129
+#: functions.php:140
+msgid "Sem se vkládají widgety."
 msgstr ""
 
-#: header.php:26
-msgid "Skip to content"
+#: functions.php:138
+msgid "Patička"
 msgstr ""
 
-#: header.php:49
-msgid "Primary Menu"
+#: header.php:15
+#: inc/customizer.php:145
+msgid "Stát se členem"
 msgstr ""
 
-#. translators: %s: post date.
-#: inc/template-tags.php:30
-msgctxt "post date"
-msgid "Posted on %s"
+#: header.php:37
+msgid "Přejít k obsahu"
+msgstr ""
+
+#: header.php:77
+msgid "Menu"
+msgstr ""
+
+#: header.php:101
+#: header.php:104
+msgid "Hledat"
+msgstr ""
+
+#: header.php:107
+msgid "Hledat…"
+msgstr ""
+
+#: inc/customizer.php:40
+msgid "Vzhled šablony"
+msgstr ""
+
+#: inc/customizer.php:45
+msgid "Nápověda: Vzhled webu"
+msgstr ""
+
+#: inc/customizer.php:57
+msgid "Styl šablony"
+msgstr ""
+
+#: inc/customizer.php:60
+msgid "Obrazový"
+msgstr ""
+
+#: inc/customizer.php:61
+msgid "Časopisový"
+msgstr ""
+
+#: inc/customizer.php:62
+msgid "Kartový"
+msgstr ""
+
+#: inc/customizer.php:74
+msgid "Průhledné menu přes hero"
+msgstr ""
+
+#: inc/customizer.php:75
+msgid "Menu se u hero sekcí (detail příspěvku) překrývá přes obrázek. Při scrollu se podbarví."
+msgstr ""
+
+#: inc/customizer.php:87
+msgid "Nadpis stránky Akce"
+msgstr ""
+
+#: inc/customizer.php:88
+msgid "Nadpis (H1) na výpisu akcí. Prázdné = výchozí „Akce\"."
+msgstr ""
+
+#: inc/customizer.php:99
+msgid "Nadpis stránky Odbory"
+msgstr ""
+
+#: inc/customizer.php:100
+msgid "Nadpis (H1) na výpisu odborů. Prázdné = výchozí „Odbory\"."
+msgstr ""
+
+#: inc/customizer.php:112
+msgid "Zobrazit mapu ve výpisu akcí"
+msgstr ""
+
+#: inc/customizer.php:113
+msgid "Mapa s akcemi nad výpisem na stránce /akce/. Vypni, pokud ji odbor nechce."
+msgstr ""
+
+#: inc/customizer.php:126
+msgid "Vyhledávání v hlavičce"
+msgstr ""
+
+#: inc/customizer.php:127
+msgid "Ikona lupy vedle menu; po kliknutí se rozbalí vyhledávací pole. Bez ní se dá hledat jen přes adresu /?s=výraz."
+msgstr ""
+
+#: inc/customizer.php:139
+msgid "Odkaz tlačítka v hlavičce"
+msgstr ""
+
+#: inc/customizer.php:140
+msgid "Odkaz tlačítka „Stát se členem\". Když zůstane prázdné, tlačítko se v hlavičce nezobrazí."
+msgstr ""
+
+#: inc/customizer.php:151
+msgid "Text tlačítka v hlavičce"
+msgstr ""
+
+#: inc/customizer.php:164
+msgid "Primární barva"
+msgstr ""
+
+#: inc/customizer.php:174
+msgid "Druhé logo v hlavičce"
+msgstr ""
+
+#: inc/customizer.php:178
+msgid "Žádné"
+msgstr ""
+
+#: inc/customizer.php:180
+msgid "Vaše dobrá značka"
 msgstr ""
 
 #. translators: %s: post author.
-#: inc/template-tags.php:46
+#: inc/template-tags.php:37
 msgctxt "post author"
-msgid "by %s"
+msgid "Napsal %s"
 msgstr ""
 
 #. translators: used between list items, there is a space after the comma
-#: inc/template-tags.php:63
-msgid ", "
-msgstr ""
-
-#. translators: 1: list of categories.
-#: inc/template-tags.php:66
-msgid "Posted in %1$s"
-msgstr ""
-
-#. translators: used between list items, there is a space after the comma
-#: inc/template-tags.php:70
+#: inc/template-tags.php:55
 msgctxt "list item separator"
 msgid ", "
 msgstr ""
 
 #. translators: 1: list of tags.
-#: inc/template-tags.php:73
-msgid "Tagged %1$s"
+#: inc/template-tags.php:58
+msgid "Štítky: %1$s"
 msgstr ""
 
 #. translators: %s: post title
-#: inc/template-tags.php:83
-msgid "Leave a Comment<span class=\"screen-reader-text\"> on %s</span>"
+#: inc/template-tags.php:68
+msgid "Napsat komentář<span class=\"screen-reader-text\"> k %s</span>"
 msgstr ""
 
 #. translators: %s: Name of current post. Only visible to screen readers
-#: inc/template-tags.php:100
-#: template-parts/content-page.php:39
-msgid "Edit <span class=\"screen-reader-text\">%s</span>"
+#: inc/template-tags.php:85
+#: template-parts/content-page.php:40
+msgid "Upravit <span class=\"screen-reader-text\">%s</span>"
 msgstr ""
 
-#: inc/woocommerce.php:186
-msgid "View your shopping cart"
+#: index.php:139
+#: search.php:43
+#: _archive.php:42
+msgid "Předchozí"
 msgstr ""
 
-#. translators: number of items in the mini cart.
-#: inc/woocommerce.php:190
-msgid "%d item"
-msgid_plural "%d items"
-msgstr[0] ""
-msgstr[1] ""
+#: index.php:140
+#: search.php:44
+#: _archive.php:43
+msgid "Další"
+msgstr ""
+
+#: index.php:141
+#: search.php:45
+#: _archive.php:44
+msgid "Navigace v příspěvcích"
+msgstr ""
 
 #. translators: %s: search query.
 #: search.php:22
-msgid "Search Results for: %s"
+msgid "Výsledky hledání: %s"
 msgstr ""
 
-#: single.php:23
-msgid "Previous:"
+#: template-parts/breadcrumbs.php:40
+msgid "Drobečková navigace"
 msgstr ""
 
-#: single.php:24
-msgid "Next:"
+#: template-parts/content-404.php:22
+msgid "Tahle adresa už neplatí"
+msgstr ""
+
+#: template-parts/content-404.php:27
+msgid "Stránka, kterou hledáte, byla pravděpodobně zrušena nebo přesunuta jinam — často jde o starou akci, na kterou už nevede platný odkaz. Zkuste ji najít přes vyhledávání, nebo pokračujte na některou z těchto stránek:"
+msgstr ""
+
+#: template-parts/content-404.php:36
+msgid "Přehled akcí"
+msgstr ""
+
+#: template-parts/content-404.php:44
+msgid "Odbory"
+msgstr ""
+
+#: template-parts/content-404.php:52
+msgid "Aktuality a zprávy"
+msgstr ""
+
+#: template-parts/content-404.php:59
+msgid "Domovská stránka"
+msgstr ""
+
+#. translators: %s: datum konání akce ve tvaru j. n. Y.
+#: template-parts/content-akce.php:66
+msgid "Tato akce už proběhla %s."
 msgstr ""
 
 #: template-parts/content-none.php:14
-msgid "Nothing Found"
+msgid "Nic nenalezeno"
 msgstr ""
 
 #. translators: 1: link to WP admin new post page.
 #: template-parts/content-none.php:24
-msgid "Ready to publish your first post? <a href=\"%1$s\">Get started here</a>."
+msgid "Chystáš se publikovat první příspěvek? <a href=\"%1$s\">Začni tady</a>."
 msgstr ""
 
 #: template-parts/content-none.php:37
-msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
+msgid "Hledanému výrazu nic neodpovídá. Zkus to prosím znovu s jinými slovy."
 msgstr ""
 
 #: template-parts/content-none.php:44
-msgid "It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help."
+msgid "Vypadá to, že tu hledané není. Zkusit to můžeš přes vyhledávání."
 msgstr ""
 
-#: template-parts/content-page.php:25
-#: template-parts/content.php:53
-msgid "Pages:"
+#: template-parts/content-page.php:26
+#: template-parts/content-post.php:22
+#: template-parts/content.php:57
+msgid "Stránky:"
+msgstr ""
+
+#. translators: used between list items, there is a space after the comma
+#: template-parts/content.php:28
+msgid ", "
+msgstr ""
+
+#. translators: 1: list of categories.
+#: template-parts/content.php:31
+msgid " v rubrice %1$s"
 msgstr ""
 
 #. translators: %s: Name of current post. Only visible to screen readers
-#: template-parts/content.php:40
-msgid "Continue reading<span class=\"screen-reader-text\"> \"%s\"</span>"
+#: template-parts/content.php:44
+msgid "Pokračovat ve čtení<span class=\"screen-reader-text\"> \"%s\"</span>"
+msgstr ""
+
+#: template-parts/event-nav.php:34
+msgid "Navigace mezi akcemi"
+msgstr ""
+
+#: template-parts/event-nav.php:38
+msgid "Předchozí akce"
+msgstr ""
+
+#: template-parts/event-nav.php:47
+msgid "Následující akce"
+msgstr ""
+
+#: template-parts/event-related.php:37
+#: template-parts/post-related.php:39
+msgid "Mohlo by vás zajímat"
+msgstr ""
+
+#: template-parts/event-related.php:39
+msgid "Další akce"
+msgstr ""
+
+#: template-parts/event-series.php:41
+msgid "Další ročníky"
+msgstr ""
+
+#: template-parts/event-series.php:53
+msgid "ročník"
+msgstr ""
+
+#: template-parts/event-series.php:53
+msgid "rok"
+msgstr ""
+
+#: template-parts/event-series.php:65
+msgid "Proběhlo"
+msgstr ""
+
+#: template-parts/event-series.php:65
+msgid "Chystá se"
+msgstr ""
+
+#: template-parts/post-hero.php:52
+msgid "%d min čtení"
+msgstr ""
+
+#: template-parts/post-nav.php:16
+msgid "Další příspěvky"
+msgstr ""
+
+#: template-parts/post-nav.php:20
+msgid "Novější"
+msgstr ""
+
+#: template-parts/post-nav.php:29
+msgid "Starší"
+msgstr ""
+
+#: template-parts/post-related.php:41
+msgid "Další aktuality"
+msgstr ""
+
+#: template-parts/post-share.php:25
+msgid "Sdílet"
+msgstr ""
+
+#: template-parts/post-share.php:35
+msgid "Kopírovat odkaz"
+msgstr ""
+
+#: template-parts/post-share.php:43
+msgid "Upravit článek"
 msgstr ""

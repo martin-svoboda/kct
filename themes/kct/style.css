@@ -3,10 +3,14 @@ Theme Name: KČT
 Theme URI: https://sablona.sokct.cz
 Author: Martin Svoboda
 Author URI: https://martin-svoboda.cz/
-Description: Šablona pro Obory a Oblasti KČT
+Description: Vzhled webu odboru a oblasti Klubu českých turistů. Úvodní stránka s kalendářem akcí, výpisy akcí, zpráv a odborů, barevné rozlišení druhů turistiky a responzivní rozvržení od mobilu po velkou obrazovku. Funkce webu (import akcí, sdílení, SEO) dodává plugin Šablona KČT, bez kterého šablona nedává smysl.
 Version: KCT_VERSION
-Tested up to: 6.4
+Requires at least: 6.5
+Tested up to: 7.1
 Requires PHP: 8.0
+License: GNU General Public License v2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: kct
+Tags: blog, news, two-columns, right-sidebar, custom-logo, custom-menu, featured-images, editor-style, translation-ready
 */
 

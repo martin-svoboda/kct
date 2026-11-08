@@ -1,10 +1,11 @@
 <?php
 /*
- * Plugin Name:       Kct
- * Description:       Plugin se šablonou pro Obory a Oblasti KČT
+ * Plugin Name:       Šablona KČT
+ * Plugin URI:        https://sablona.sokct.cz
+ * Description:       Web na klíč pro odbory a oblasti Klubu českých turistů: kalendář akcí z centrální databáze KČT, evidence odborů, sdílení na Facebook, SEO pro akce a zpracování obrázků. Spolu s pluginem se instaluje i vzhled webu (šablona KČT).
  * Version:           KCT_VERSION
+ * Requires at least: 6.5
  * Requires PHP:      8.0
- * Requires at least: 5.3.0
  * Author:            Martin Svoboda
  * Author URI:        https://martin-svoboda.cz
  * License:           GPL v2 or later

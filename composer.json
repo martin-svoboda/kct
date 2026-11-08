@@ -1,7 +1,8 @@
 {
   "name": "martin-svoboda/kct",
-  "description": "KČT theme and functions",
-  "type": "project",
+  "description": "Web na klíč pro odbory a oblasti Klubu českých turistů — plugin i vzhled.",
+  "type": "wordpress-plugin",
+  "homepage": "https://sablona.sokct.cz",
   "license": "GPL-2.0-or-later",
   "config": {
 	"platform-check": false,
