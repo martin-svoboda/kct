@@ -693,14 +693,24 @@ class CLI extends WP_CLI_Command {
 	 * Strop 2048 px drží Features\ImageUploads, ale jen pro nově nahrávané
 	 * soubory. Tenhle příkaz srovná na stejnou míru i starší knihovnu.
 	 *
-	 * Ve výchozím stavu se mění pouze rozměr, ne formát: převod už jednou
-	 * zkomprimovaného JPEGu do WebP je druhá ztrátová komprese a na měření
-	 * se neobhájil. U PNG to neplatí a jde zapnout přepínačem --png-webp
-	 * (viz Images\Downscaler).
+	 * Do WebP se převádí PNG, stejně jako to u nově nahrávaných souborů dělá
+	 * Features\ImageUploads — mezi formáty se nedělá rozdíl. Dělicí čára
+	 * nevede mezi PNG a JPEGem, ale mezi tím, kolikrát už se soubor
+	 * komprimoval: PNG v knihovně je bezztrátové, takže převod je první
+	 * ztrátová komprese, přesně jako u čerstvě nahrané fotky. JPEG, který
+	 * v knihovně leží, má jednu kompresi za sebou a převodem by dostal
+	 * druhou — proto a jen proto se vynechává (viz Images\Downscaler).
+	 *
+	 * Vypnout převod jde přepínačem --no-png-webp, když je potřeba jen
+	 * srovnat rozměry a nesahat na názvy souborů.
 	 *
 	 * Odvozené velikosti se po zmenšení negenerují znovu, jsou menší než
 	 * strop a platí dál; maže se jen ta, která by po zmenšení byla kopií
-	 * plného souboru.
+	 * plného souboru. Kopie se hledají u každé přílohy, i u té, která se
+	 * právě nezmenšovala — zmenšení proběhlo i ve vydání, které kopii
+	 * lišící se o bod na kratší straně nepoznalo a v knihovně ji nechalo.
+	 * Odkaz na smazanou kopii se v obsahu přepíše na plný soubor, takže se
+	 * ve stránce nic neutrhne.
 	 *
 	 * Prochází všechny weby sítě. Bez přepínače --write jen spočítá, co by
 	 * se stalo.
@@ -719,14 +729,14 @@ class CLI extends WP_CLI_Command {
 	 * : Zpracovat nejvýše tolik příloh (na každém webu).
 	 *
 	 * [--png-webp]
-	 * : Převést navíc PNG do WebP, stejně jako to u nově nahrávaných souborů dělá ImageUploads. Mění název souboru, takže příkaz přepíše i odkazy v obsahu.
+	 * : Převádět PNG do WebP. Zapnuto, vypne se zápisem --no-png-webp — pak se jen srovnají rozměry a na názvy souborů se nesahá. Převod totiž mění název souboru, takže příkaz přepisuje i odkazy v obsahu.
 	 *
 	 * ## EXAMPLES
 	 *
 	 *     wp kct shrink_images
 	 *     wp kct shrink_images --site=6
 	 *     wp kct shrink_images --write
-	 *     wp kct shrink_images --write --png-webp
+	 *     wp kct shrink_images --write --no-png-webp
 	 *
 	 * @when after_wp_load
 	 */
@@ -734,7 +744,10 @@ class CLI extends WP_CLI_Command {
 		$write = ! empty( $assoc_args['write'] );
 		$only  = isset( $assoc_args['site'] ) ? (int) $assoc_args['site'] : 0;
 		$limit = isset( $assoc_args['limit'] ) ? (int) $assoc_args['limit'] : 0;
-		$webp  = ! empty( $assoc_args['png-webp'] );
+		// Výchozí je převádět. WP-CLI u přepínače dokumentovaného jako
+		// --no-png-webp uloží do 'png-webp' hodnotu false, takže stačí
+		// brát jako výchozí true.
+		$webp  = (bool) \WP_CLI\Utils\get_flag_value( $assoc_args, 'png-webp', true );
 		$sites = $only ? array( $only ) : get_sites( array( 'number' => 0, 'fields' => 'ids' ) );
 
 		WP_CLI::log( $write
@@ -744,8 +757,15 @@ class CLI extends WP_CLI_Command {
 		$downscaler = kct_container()->get( \Kct\Images\Downscaler::class );
 
 		$celkem_n = 0;
+		$celkem_k = 0;
 		$celkem_b = 0;
 		$chyb     = 0;
+
+		// Mapa přejmenovaných souborů se sbírá přes celou síť a přepisuje se
+		// až nakonec, jedním průchodem. Weby si navzájem vkládají obrázky
+		// z cizí knihovny, takže přepis po jednotlivých webech by se musel
+		// stejně opakovat nad všemi — viz Downscaler::rewrite_urls().
+		$mapa = array();
 
 		foreach ( $sites as $site_id ) {
 			switch_to_blog( (int) $site_id );
@@ -761,7 +781,7 @@ class CLI extends WP_CLI_Command {
 			$n     = 0;
 			$b     = 0;
 			$prevedeno = 0;
-			$mapa  = array();
+			$kopii     = 0;
 
 			foreach ( $ids as $id ) {
 				$vysledek = $downscaler->shrink( (int) $id, $write );
@@ -772,6 +792,18 @@ class CLI extends WP_CLI_Command {
 				} elseif ( 'resized' === $vysledek['status'] ) {
 					$n++;
 					$b += $vysledek['before'] - $vysledek['after'];
+				}
+
+				// Úklid kopií plné velikosti se dělá u každé přílohy, ne jen
+				// u právě zmenšené: zmenšení proběhlo i v dřívějším vydání,
+				// které kopii lišící se o bod na kratší straně nepoznalo.
+				// Běží před převodem, ať se zbytečný soubor nekóduje do WebP.
+				$uklid = $downscaler->tidy_sizes( (int) $id, $write );
+
+				if ( $uklid['count'] ) {
+					$kopii += $uklid['count'];
+					$b     += $uklid['bytes'];
+					$mapa   = $mapa + $uklid['urls'];
 				}
 
 				// Převod formátu až po zmenšení — kóduje se jednou, z už
@@ -794,23 +826,33 @@ class CLI extends WP_CLI_Command {
 				}
 			}
 
-			$prepsano = $mapa ? $downscaler->rewrite_urls( $mapa, $write ) : 0;
-
-			if ( $n || $prevedeno ) {
+			if ( $n || $prevedeno || $kopii ) {
 				WP_CLI::log( sprintf(
-					'  %-30s zmenšeno %4d, převedeno %4d, %10s%s',
+					'  %-30s zmenšeno %4d, převedeno %4d, kopií %4d, %10s',
 					parse_url( get_home_url( (int) $site_id ), PHP_URL_HOST ),
 					$n,
 					$prevedeno,
-					size_format( $b, 1 ),
-					$prepsano ? sprintf( ', odkazů v %d příspěvcích', $prepsano ) : ''
+					$kopii,
+					size_format( $b, 1 )
 				) );
 			}
 
 			$celkem_n += $n + $prevedeno;
+			$celkem_k += $kopii;
 			$celkem_b += $b;
 
 			restore_current_blog();
+		}
+
+		if ( $mapa ) {
+			$prepsano = $downscaler->rewrite_urls( $mapa, $write );
+
+			WP_CLI::log( sprintf(
+				/* translators: 1: počet příspěvků, 2: počet přepsaných adres. */
+				__( 'Odkazů v obsahu: %1$d příspěvků v síti, %2$d přepsaných adres.', 'kct' ),
+				$prepsano,
+				count( $mapa )
+			) );
 		}
 
 		if ( $chyb ) {
@@ -822,9 +864,10 @@ class CLI extends WP_CLI_Command {
 		}
 
 		$message = sprintf(
-			/* translators: 1: počet obrázků, 2: ušetřené místo. */
-			__( 'Zpracovaných obrázků: %1$d, místo: %2$s.', 'kct' ),
+			/* translators: 1: počet obrázků, 2: počet smazaných kopií, 3: ušetřené místo. */
+			__( 'Zpracovaných obrázků: %1$d, kopií plné velikosti: %2$d, místo: %3$s.', 'kct' ),
 			$celkem_n,
+			$celkem_k,
 			size_format( $celkem_b, 1 )
 		);
 

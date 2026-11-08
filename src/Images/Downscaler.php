@@ -15,11 +15,16 @@ namespace Kct\Images;
  * velikost `2048x2048`). Pixely nad ní se nikdy nedostanou k návštěvníkovi,
  * takže se nezahazuje nic, co by kdo viděl.
  *
- * Záměrně se NEMĚNÍ formát. Převod staré knihovny z JPEGu do WebP je druhá
- * ztrátová komprese a ImageUploads ho z toho důvodu odmítá; tahle třída to
- * rozhodnutí respektuje a drží se u čistě rozměrové operace. Plný soubor se
- * překóduje jednou — tomu se při zmenšení vyhnout nedá — a odvozené velikosti
- * se nepřepisují vůbec:
+ * Zmenšení samo formát nemění (shrink()); převod do WebP je samostatný krok
+ * (to_webp()) a týká se PNG, stejně jako u nově nahrávaných souborů. Mezi
+ * formáty se nedělá rozdíl podle přípony — rozhoduje, kolikrát už se soubor
+ * komprimoval. PNG v knihovně je bezztrátové, takže je převod první ztrátová
+ * komprese, přesně jako u čerstvě nahrané fotky. JPEG, který v knihovně leží,
+ * má jednu kompresi za sebou a převodem by dostal druhou; proto a jen proto
+ * ho to_webp() vynechává.
+ *
+ * Plný soubor se při zmenšení překóduje jednou — tomu se vyhnout nedá — a
+ * odvozené velikosti se nepřepisují vůbec:
  *
  * Všechny registrované velikosti (150, 300, 768, 1024, 1536, 2048) jsou menší
  * nebo rovné stropu, takže po zmenšení plného souboru zůstávají platné tak,
@@ -27,7 +32,7 @@ namespace Kct\Images;
  * další ztrátový průchod u každé z nich.
  *
  * Výjimka je velikost shodná s novým plným souborem: ta se po zmenšení stane
- * jeho kopií, takže se maže (viz drop_redundant_size()).
+ * jeho kopií, takže se maže (viz tidy_sizes()).
  *
  * Operace je nevratná. Plné rozlišení se přepíše na disku a zpátky ho nic
  * nedostane; bez $write se jen spočítá, co by se stalo.
@@ -53,6 +58,12 @@ class Downscaler {
 	 * souboru. V knihovně je 11 GIFů za 0,5 MB, takže to nestojí za riziko.
 	 */
 	private const FORMATS = array( 'image/jpeg', 'image/png', 'image/webp' );
+
+	/**
+	 * O kolik pixelů se smí kratší strana odvozené velikosti lišit od plné,
+	 * aby se pořád počítala za její kopii. Viz redundant_sizes().
+	 */
+	private const TOLERANCE = 2;
 
 	/**
 	 * Zmenší plný soubor jedné přílohy.
@@ -175,6 +186,9 @@ class Downscaler {
 	 * Srovná metadata s tím, co je nově na disku.
 	 *
 	 * Odvozené velikosti zůstávají — jsou menší než strop, takže platí dál.
+	 * Tu jedinou, která se zmenšením stala kopií plného souboru, uklidí
+	 * tidy_sizes(); dělá se to zvlášť, protože smazání souboru s sebou nese
+	 * přepsání odkazů v obsahu a to má smysl dělat jednou za celou síť.
 	 *
 	 * @param int $attachment_id ID přílohy.
 	 * @param int $w             Nová šířka.
@@ -194,34 +208,52 @@ class Downscaler {
 		$metadata['height']   = $h;
 		$metadata['filesize'] = $filesize;
 
-		$metadata = $this->drop_redundant_size( $metadata, $w, $h );
-
 		wp_update_attachment_metadata( $attachment_id, $metadata );
 	}
 
 	/**
-	 * Zahodí odvozenou velikost, která je po zmenšení shodná s plným souborem.
+	 * Najde odvozené velikosti, které jsou kopií plného souboru.
 	 *
-	 * Příloha 2500 px má vygenerovanou velikost `2048x2048`; po zmenšení
-	 * plného souboru na 2048 px je to tentýž obrázek dvakrát. `srcset` o nic
-	 * nepřijde — jádro do něj plnou velikost přidává samo.
+	 * Na shodu do posledního bodu se spoléhat nedá. Delší strana vyjde na
+	 * 2048 px obojím způsobem, ale kratší se dopočítává ze dvou různých
+	 * výchozích rozměrů a zaokrouhlením se rozejde o bod či dva: plný soubor
+	 * 2048×1152 a vedle něj velikost `2048x2048` jako 2048×1151 je tentýž
+	 * obrázek dvakrát. V síti KČT to byl případ pěti ze šesti velkých
+	 * obrázků na kctvltavin.cz.
+	 *
+	 * Delší strana se proto porovnává přesně a tolerance TOLERANCE platí jen
+	 * pro tu kratší. Volnější pravidlo by sahalo i na velikost, která se
+	 * opravdu používá: obrázek 1538 px široký má platnou odvozenou velikost
+	 * 1536 px a ta se smazat nesmí.
 	 *
 	 * @param array $metadata Metadata přílohy.
-	 * @param int   $w        Nová šířka plného souboru.
-	 * @param int   $h        Nová výška plného souboru.
+	 * @param int   $w        Šířka plného souboru.
+	 * @param int   $h        Výška plného souboru.
 	 *
-	 * @return array
+	 * @return array<int, array{name: string, path: string, bytes: int}>
 	 */
-	private function drop_redundant_size( array $metadata, int $w, int $h ): array {
-		if ( empty( $metadata['sizes'] ) || ! is_array( $metadata['sizes'] ) || empty( $metadata['file'] ) ) {
-			return $metadata;
+	private function redundant_sizes( array $metadata, int $w, int $h ): array {
+		if ( empty( $metadata['sizes'] ) || ! is_array( $metadata['sizes'] ) || empty( $metadata['file'] ) || ! $w || ! $h ) {
+			return array();
 		}
 
 		$uploads = wp_get_upload_dir();
 		$adresar = trailingslashit( dirname( trailingslashit( $uploads['basedir'] ) . $metadata['file'] ) );
+		$nalezy  = array();
 
 		foreach ( $metadata['sizes'] as $nazev => $velikost ) {
-			if ( (int) ( $velikost['width'] ?? 0 ) !== $w || (int) ( $velikost['height'] ?? 0 ) !== $h ) {
+			$sirka = (int) ( $velikost['width'] ?? 0 );
+			$vyska = (int) ( $velikost['height'] ?? 0 );
+
+			if ( ! $sirka || ! $vyska ) {
+				continue;
+			}
+
+			if ( max( $sirka, $vyska ) !== max( $w, $h ) ) {
+				continue;
+			}
+
+			if ( abs( min( $sirka, $vyska ) - min( $w, $h ) ) > self::TOLERANCE ) {
 				continue;
 			}
 
@@ -233,14 +265,76 @@ class Downscaler {
 
 			$cesta = $adresar . $velikost['file'];
 
-			if ( file_exists( $cesta ) ) {
-				wp_delete_file( $cesta );
-			}
-
-			unset( $metadata['sizes'][ $nazev ] );
+			$nalezy[] = array(
+				'name'  => (string) $nazev,
+				'path'  => $cesta,
+				'bytes' => file_exists( $cesta ) ? (int) filesize( $cesta ) : 0,
+			);
 		}
 
-		return $metadata;
+		return $nalezy;
+	}
+
+	/**
+	 * Uklidí odvozené velikosti, které jsou kopií plného souboru.
+	 *
+	 * Volá se u každé přílohy, ne jen u právě zmenšené. Zmenšení proběhlo
+	 * i ve vydání, které kopii lišící se o bod na kratší straně nepoznalo
+	 * a v knihovně ji nechalo — a tohle je jediná cesta, jak se k ní pak
+	 * ještě dostat: shrink() takovou přílohu přeskočí jako „pod stropem“.
+	 *
+	 * Mazaný soubor může být v obsahu odkázaný přímo — editor do bloku
+	 * ukládá adresu té velikosti, kterou autor vybral. Metoda proto vrací
+	 * v klíči `urls` dvojice `cesta ke kopii => cesta k plnému souboru` a
+	 * nechává přepis na volajícím, stejně jako to_webp(). Bez toho by úklid
+	 * utrhl obrázek ve stránce, byť je na disku vedle bajt na bajt stejný.
+	 *
+	 * @param int  $attachment_id ID přílohy.
+	 * @param bool $write         Smazat. false = jen spočítat.
+	 *
+	 * @return array{count: int, bytes: int, urls: array<string,string>}
+	 */
+	public function tidy_sizes( int $attachment_id, bool $write = false ): array {
+		$prazdne  = array( 'count' => 0, 'bytes' => 0, 'urls' => array() );
+		$metadata = wp_get_attachment_metadata( $attachment_id );
+
+		if ( ! is_array( $metadata ) ) {
+			return $prazdne;
+		}
+
+		$kopie = $this->redundant_sizes( $metadata, (int) ( $metadata['width'] ?? 0 ), (int) ( $metadata['height'] ?? 0 ) );
+
+		if ( ! $kopie ) {
+			return $prazdne;
+		}
+
+		$adresy = $this->urls_of( $attachment_id );
+		$plna   = $adresy['full'] ?? '';
+		$mapa   = array();
+		$bajtu  = 0;
+
+		foreach ( $kopie as $jedna ) {
+			$bajtu += $jedna['bytes'];
+			$stara  = $adresy[ $jedna['name'] ] ?? '';
+
+			if ( $stara && $plna && $stara !== $plna ) {
+				$mapa[ $stara ] = $plna;
+			}
+		}
+
+		if ( $write ) {
+			foreach ( $kopie as $jedna ) {
+				if ( file_exists( $jedna['path'] ) ) {
+					wp_delete_file( $jedna['path'] );
+				}
+
+				unset( $metadata['sizes'][ $jedna['name'] ] );
+			}
+
+			wp_update_attachment_metadata( $attachment_id, $metadata );
+		}
+
+		return array( 'count' => count( $kopie ), 'bytes' => $bajtu, 'urls' => $mapa );
 	}
 
 	/**
@@ -376,14 +470,19 @@ class Downscaler {
 	 * nese značkování, které by kses při uložení ořezal, a tahle operace má
 	 * změnit adresy, nic jiného.
 	 *
-	 * @param array<string,string> $mapa  Dvojice stará adresa => nová adresa.
+	 * **Projíždí celou síť, ne jen web, kde se převádělo.** Weby odborů si
+	 * navzájem vkládají obrázky z cizí knihovny — úvodní stránka
+	 * kctvltavin.cz zobrazuje osm log nahraných na sokct.cz. Kdyby se
+	 * přepisoval jen vlastní web, převod na sokct.cz by ta loga u sousedů
+	 * utrhl. Proto cesty bez domény (viz urls_of()) a průchod po všech
+	 * webech.
+	 *
+	 * @param array<string,string> $mapa  Dvojice stará cesta => nová cesta.
 	 * @param bool                 $write Zapsat. false = jen spočítat.
 	 *
-	 * @return int Počet příspěvků, kterých se to týká.
+	 * @return int Počet příspěvků, kterých se to týká, přes celou síť.
 	 */
 	public function rewrite_urls( array $mapa, bool $write = false ): int {
-		global $wpdb;
-
 		if ( ! $mapa ) {
 			return 0;
 		}
@@ -395,6 +494,39 @@ class Downscaler {
 		foreach ( $mapa as $stara => $nova ) {
 			$mapa[ str_replace( '/', '\\/', $stara ) ] = str_replace( '/', '\\/', $nova );
 		}
+
+		$weby = is_multisite()
+			? get_sites( array( 'number' => 0, 'fields' => 'ids' ) )
+			: array( 0 );
+
+		$dotcenych = 0;
+
+		foreach ( $weby as $web_id ) {
+			if ( $web_id ) {
+				switch_to_blog( (int) $web_id );
+			}
+
+			$dotcenych += $this->rewrite_urls_here( $mapa, $write );
+
+			if ( $web_id ) {
+				restore_current_blog();
+			}
+		}
+
+		return $dotcenych;
+	}
+
+	/**
+	 * Přepsání v obsahu jednoho webu. Volá se z rewrite_urls() za každý web.
+	 *
+	 * @param array<string,string> $mapa  Dvojice stará cesta => nová cesta,
+	 *                                    už i v escapované podobě.
+	 * @param bool                 $write Zapsat. false = jen spočítat.
+	 *
+	 * @return int Počet příspěvků, kterých se to týká.
+	 */
+	private function rewrite_urls_here( array $mapa, bool $write ): int {
+		global $wpdb;
 
 		// Filtr bez lomítek schválně, ať projde obojí tvar.
 		$radky = $wpdb->get_results(
@@ -425,7 +557,21 @@ class Downscaler {
 	}
 
 	/**
-	 * Adresy plné velikosti i všech odvozených, klíčované názvem velikosti.
+	 * Cesty od kořene webu k plné velikosti i ke všem odvozeným,
+	 * klíčované názvem velikosti.
+	 *
+	 * ZÁMĚRNĚ bez schématu a domény, jen `/wp-content/uploads/…`. Dvakrát
+	 * proto:
+	 *
+	 * 1. `wp_get_upload_dir()` uvnitř switch_to_blog() vrací `baseurl`
+	 *    s doménou hlavního webu sítě, ne toho přepnutého — cesta na disku
+	 *    je správně, adresa ne. Příkaz běží přes switch_to_blog(), takže
+	 *    mapa postavená na `baseurl` mířila na cizí doménu a v obsahu se
+	 *    nenašla. Na sablona.sokct.cz tak po převodu zůstaly tři odkazy na
+	 *    soubory, které už neexistovaly.
+	 * 2. I kdyby ta chyba nebyla: v obsahu je táž adresa psaná různě —
+	 *    http i https, s doménou webu i s doménou, ze které se obsah kdysi
+	 *    kopíroval. Cesta je společná všem.
 	 *
 	 * @param int $attachment_id ID přílohy.
 	 *
@@ -433,14 +579,21 @@ class Downscaler {
 	 */
 	private function urls_of( int $attachment_id ): array {
 		$metadata = wp_get_attachment_metadata( $attachment_id );
-		$adresy   = array( 'full' => (string) wp_get_attachment_url( $attachment_id ) );
+		$uploads  = wp_get_upload_dir();
+		$korenu   = untrailingslashit( (string) wp_parse_url( $uploads['baseurl'], PHP_URL_PATH ) );
+		$adresy   = array();
 
-		if ( ! is_array( $metadata ) || empty( $metadata['file'] ) || empty( $metadata['sizes'] ) ) {
+		if ( ! is_array( $metadata ) || empty( $metadata['file'] ) ) {
 			return $adresy;
 		}
 
-		$uploads = wp_get_upload_dir();
-		$zaklad  = trailingslashit( $uploads['baseurl'] ) . trailingslashit( dirname( $metadata['file'] ) );
+		$adresy['full'] = $korenu . '/' . $metadata['file'];
+
+		if ( empty( $metadata['sizes'] ) ) {
+			return $adresy;
+		}
+
+		$zaklad = $korenu . '/' . trailingslashit( dirname( $metadata['file'] ) );
 
 		foreach ( (array) $metadata['sizes'] as $nazev => $velikost ) {
 			if ( ! empty( $velikost['file'] ) ) {

@@ -67,9 +67,13 @@ Fotka nafocená na výšku má správnou orientaci uloženou právě v těch tec
 
 Všechno výše platí **jen pro nově nahrávané soubory**. Co v knihovně leží z dřívějška, zůstává beze změny, dokud se o to někdo neřekne.
 
-U formátu to není opomenutí, ale vědomé rozhodnutí. Fotka uložená jako JPEG už jednou prošla ztrátovou kompresí. Její převod do WebP by znamenal kompresi podruhé, tedy další úbytek kvality — a měření ukázalo, že zisk v bajtech za tu ztrátu nestojí. U části souborů by navíc výsledek vyšel dokonce větší než předloha. U nově nahrávané fotky je situace jiná: kóduje se z nedotčené předlohy z fotoaparátu, takže se komprimuje poprvé a WebP jasně vyhrává.
+U formátu to není opomenutí, ale vědomé rozhodnutí — a nerozhoduje o něm přípona, nýbrž to, kolikrát už se soubor komprimoval.
 
-**Zmenšení rozměrů je jiný případ** a zpětně se udělat dá. Nad 2048 pixelů nese soubor jen data, která se na obrazovku nikdy nedostanou, takže se nic viditelného nezahazuje. V knihovnách KČT takhle leží stovky souborů z doby, než se strop zavedl.
+Fotka uložená jako **JPEG** už jednou prošla ztrátovou kompresí. Její převod do WebP by znamenal kompresi podruhé, tedy další úbytek kvality — a měření ukázalo, že zisk v bajtech za tu ztrátu nestojí. U části souborů by navíc výsledek vyšel dokonce větší než předloha. U nově nahrávané fotky je situace jiná: kóduje se z nedotčené předlohy z fotoaparátu, takže se komprimuje poprvé a WebP jasně vyhrává.
+
+Obrázek uložený jako **PNG** je na tom jako ta čerstvě nahraná fotka: PNG je bezztrátový formát, takže se nic neztratilo a převod do WebP je teprve první komprese. Proto se starší PNG převést dají a správce sítě to při úklidu knihovny rovnou dělá.
+
+**Zmenšení rozměrů** se zpětně udělat dá vždycky, u obou formátů. Nad 2048 pixelů nese soubor jen data, která se na obrazovku nikdy nedostanou, takže se nic viditelného nezahazuje. V knihovnách KČT takhle leží stovky souborů z doby, než se strop zavedl.
 
 Jestli má web knihovnu plnou velkých fotek z dřívějška, **napište správci sítě** — úklid se spouští jednorázově z příkazové řádky a ze stránky Média se vyvolat nedá. Běží po jednotlivých webech a dá se nejdřív pustit nanečisto, takže je dopředu vidět, kolika souborů se dotkne a kolik místa ušetří.
 

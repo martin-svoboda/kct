@@ -16,6 +16,22 @@ Historie začíná u verze 2.0.0, kterou se šablona začala vydávat veřejně.
 Předchozí vydání vznikala jen pro weby provozované přímo autorem šablony a
 zpětně se nedoplňují — všechno, co uměla, je součástí verze 2.0.0.
 
+## 2.1.2 — 8. 11. 2026
+
+- **Úklid knihovny už nerozbije obrázek ve stránce.** Při převodu starších PNG
+  do WebP se mění název souboru a odkazy v obsahu se přepisují. Přepis se ale
+  u webu odboru v síti minul cílem a obrázek pak ve stránce zmizel, i když
+  soubor na disku byl. Nově se odkazy dohledají na všech webech sítě, takže
+  obstojí i obrázek vložený z knihovny jiného odboru — úvodní stránka
+  Vltavínu takhle zobrazuje loga nahraná na webu oblasti.
+
+- **Z knihovny se uklidí i druhá kopie plné velikosti.** WordPress si vedle
+  plného souboru drží sadu zmenšenin a ta největší z nich po zmenšení knihovny
+  vyjde na tentýž obrázek — někdy přesně, častěji o bod jinak kvůli
+  zaokrouhlení. Dřív se poznala jen přesná shoda, takže kopie zůstávaly ležet.
+  V síti KČT jich bylo 25 za 14 MB. Odkaz na smazanou kopii se v obsahu
+  přepíše na plný soubor, takže se ve stránce nic nezmění.
+
 ## 2.1.1 — 7. 11. 2026
 
 - **Stránka akce nabízí, kam jít dál.** Pod obsahem akce je navigace na
@@ -59,7 +75,7 @@ zpětně se nedoplňují — všechno, co uměla, je součástí verze 2.0.0.
 - **Starší knihovnu jde srovnat se současnými pravidly.** Fotky nahrané dřív,
   než šablona zavedla strop 2048 pixelů, zabírají místo navíc, které se na
   obrazovku nikdy nedostane. Nově je správce sítě umí zmenšit jednorázově,
-  i zpětně, a volitelně s nimi převést i PNG do WebP. Ze stránky Média se to
+  i zpětně, a zároveň s tím převést starší PNG do WebP. Ze stránky Média se to
   vyvolat nedá, spouští se to z příkazové řádky a dá se to nejdřív pustit
   nanečisto. Komu se knihovna nafoukla, ať se ozve.
 
