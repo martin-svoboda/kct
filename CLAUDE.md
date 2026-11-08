@@ -74,8 +74,19 @@ Weby mimo nasazení z `deploy.yml` dostávají aktualizace přes
 `plugin-update-checker` (`src/Updates/UpdateChecker.php`) a vlastní endpoint
 na `https://updates.sokct.cz`. Kód endpointu je v repozitáři v
 `server/updates/`, nasazuje ho `.github/workflows/updates-server.yml`.
-`deploy.yml` celou složku `server` vylučuje z rsyncu i z instalačního ZIPu —
-oba seznamy výjimek se mění spolu.
+`deploy.yml` celou složku `server` vylučuje z rsyncu i z instalačního ZIPu.
+
+**Co se nenasazuje, drží jediný seznam: `.github/deploy-exclude.txt`.** Oba
+rsyncy v `deploy.yml` ho načítají přes `--exclude-from`; vlastní `--exclude`
+má každý jen na to, co platí opravdu jen pro něj (`dist`, hotový ZIP). Dva
+oddělené seznamy tu kdysi byly, s komentářem, že se musí držet shodné — a
+právě se rozešly: produkční rsync pak na obě produkce posílal `DOCKER_ENV`,
+výpis prostředí runneru i s platným tokenem GitHubu, veřejně čitelný na
+`/wp-content/plugins/kct/DOCKER_ENV`. Nový soubor do toho seznamu, ne vedle něj.
+
+Druhá věc, která se tím neřeší: **vyloučená cesta je zároveň chráněná před
+`--delete`.** Co už na produkci leží a pak se vyloučí, rsync sám neuklidí —
+musí se smazat ručně.
 
 Instalační ZIP se stahuje z přílohy vydání na GitHubu, ne z našeho serveru.
 Výpadek endpointu tedy znamená jen to, že se nenabídne aktualizace, ne

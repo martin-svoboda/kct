@@ -80,12 +80,13 @@ jobs:
           sed -i "s/KCT_VERSION/${{ env.PLUGIN_VERSION }}/g" themes/kct/style.css
 
       # Instalovatelný balíček pluginu pro weby mimo tenhle deploy. Obsah je
-      # záměrně totožný s tím, co rsync posílá na produkci — jen bez věcí, které
-      # na cizím webu nemají co dělat (dokumentace, konfigurace sestavení).
+      # záměrně totožný s tím, co rsync posílá na produkci.
       # Uvnitř archivu je jedna složka `kct/`, jinak by WordPress instalaci odmítl.
       #
-      # Seznam výjimek je schválně stejný jako u rsyncu níž — balíček má být
-      # totožný s tím, co běží na produkci. Když se jeden mění, musí se i druhý.
+      # Co se vylučuje, drží `.github/deploy-exclude.txt` — jeden seznam pro
+      # tenhle rsync i pro ten na produkci níž. Dřív to byly dva seznamy
+      # s komentářem, že se musí držet shodné; rozešly se a rozdíl skončil
+      # veřejně na webu. Výjimky navíc, které platí jen tady, jsou pod tím.
       - name: Build plugin ZIP
         run: |
           set -euo pipefail
@@ -94,20 +95,8 @@ jobs:
           mkdir -p dist/kct
 
           rsync -a \
-            --exclude="/.*" \
-            --exclude="*.scss" \
-            --exclude="*.sh" \
-            --exclude="node_modules" \
-            --exclude="tests" \
+            --exclude-from=.github/deploy-exclude.txt \
             --exclude="dist" \
-            --exclude="docs" \
-            --exclude="/server" \
-            --exclude="tmp-*" \
-            --exclude="package.json" \
-            --exclude="package-lock.json" \
-            --exclude="webpack.config.js" \
-            --exclude="composer*.json" \
-            --exclude="composer*.lock" \
             ./ dist/kct/
 
           test -f dist/kct/kct.php
@@ -150,14 +139,10 @@ jobs:
             # dist/ a hotový archiv vznikly v předchozím kroku a na produkci
             # nemají co dělat — bez těchhle dvou řádků by se tam poslala celá
             # kopie pluginu navíc.
+            # Pozor: vyloučená cesta je zároveň chráněná před --delete, takže
+            # co se sem jednou dostalo a pak se vyloučilo, rsync sám neuklidí.
             rsync -av --delete \
-              --exclude="/.*" \
-              --exclude="*.scss" \
-              --exclude="*.sh" \
-              --exclude="node_modules" \
-              --exclude="tests" \
-              --exclude="docs" \
-              --exclude="/server" \
+              --exclude-from=.github/deploy-exclude.txt \
               --exclude="/dist" \
               --exclude="/kct-*.zip" \
               . "$SSH_USER@$SSH_SERVER:$SITE_PATH/wp-content/plugins/kct/"

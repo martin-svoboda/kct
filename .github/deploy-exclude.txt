@@ -1,0 +1,40 @@
+# Co se nikdy nedostane na produkci ani do instalačního ZIPu.
+#
+# Jeden seznam pro oba rsyncy v deploy.yml. Dřív to byly dva seznamy
+# s komentářem, že se musí držet shodné — rozešly se a na produkci pak
+# veřejně ležel výpis prostředí buildu i s tokenem. Proto jeden soubor.
+#
+# Sám se nenasazuje: `--exclude="/.*"` níž vylučuje celou složku .github.
+
+# skryté soubory a složky v kořeni (.git, .github, .gitignore …)
+/.*
+
+# zdroje a konfigurace sestavení
+*.scss
+*.sh
+node_modules
+webpack.config.js
+package.json
+package-lock.json
+composer*.json
+composer*.lock
+
+# testy a dokumentace
+tests
+docs
+/server
+
+# zbytky po buildu v kontejneru; DOCKER_ENV je výpis prostředí runneru
+# a obsahuje platný token GitHubu, takže na webu nemá co dělat vůbec
+DOCKER_ENV
+output.log
+docker_tag
+
+# interní poznámky pro vývoj
+CLAUDE.md
+
+# meziprodukty
+tmp-*
+
+# macOS smetí (`/.*` výš platí jen pro kořen)
+.DS_Store
