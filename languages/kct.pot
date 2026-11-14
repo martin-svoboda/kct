@@ -3,13 +3,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Šablona KČT KCT_VERSION\n"
-"Report-Msgid-Bugs-To: https://github.com/martin-svoboda/kct/issues\n"
-"Last-Translator: Martin Svoboda <info@martin-svoboda.cz>\n"
-"Language-Team: Martin Svoboda <info@martin-svoboda.cz>\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/kct\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-08T19:19:47+01:00\n"
+"POT-Creation-Date: 2026-11-14T18:55:38+01:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: kct\n"
@@ -49,6 +49,390 @@ msgstr ""
 msgid "<div class=\"error notice\"><p>Opps! %s is corrupted it seems, please re-install the plugin.</p></div>"
 msgstr ""
 
+#: src/Admin/EventsOverviewTable.php:186
+#: src/Features/AdminMenu.php:86
+msgid "Akce"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:187
+msgid "Termín"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:188
+msgid "Příspěvek"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:189
+msgid "Databáze KČT"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:193
+#: src/Features/AdminMenu.php:87
+#: src/Settings.php:248
+#: src/Turinka/RouteMetabox.php:33
+msgid "Turinka"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:281
+msgid "Všechny akce"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:282
+#: src/Features/AdminMenu.php:137
+msgid "S vlastním příspěvkem"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:283
+msgid "Jen v databázi KČT"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:284
+msgid "Nespárované dvojice"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:289
+msgid "Zná je Turinka"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:290
+msgid "Jen v Turince"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:291
+msgid "Vlastní v Turince"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:292
+#: src/Admin/TurinkaItemsTable.php:134
+msgid "Spravované za odbor"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:293
+msgid "Turinka je nezná"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:294
+msgid "S chybou odeslání"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:299
+msgid "Filtr zdroje"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:305
+#: src/Admin/TurinkaItemsTable.php:148
+#: themes/kct/archive-akce.php:182
+msgid "Filtrovat"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:311
+msgid "Žádné akce — web zatím nemá vlastní akce a z databáze KČT se nic nenaimportovalo."
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:320
+#: src/Admin/TurinkaItemsTable.php:162
+msgid "(bez názvu)"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:329
+msgid "Zobrazit na webu"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:342
+msgid "Převést na vlastní akci"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:353
+#: src/Features/TurinkaOverview.php:65
+#: src/Features/TurinkaOverview.php:66
+#: src/Features/TurinkaOverview.php:88
+#: src/Turinka/EventRoutesMetabox.php:32
+msgid "Trasy v Turince"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:364
+msgid "Tutéž akci má web i jako příspěvek bez čísla akce — nejsou spárované, výpis je ukáže dvakrát."
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:370
+msgid "Doplnit číslo u příspěvku"
+msgstr ""
+
+#. translators: %s: číslo akce v centrální databázi KČT.
+#: src/Admin/EventsOverviewTable.php:376
+msgid "Stejný název i datum má akce č. %s z databáze KČT. Spárujete je tak, že tohle číslo vyplníte u příspěvku do pole „ID akce z kct-db“; do té doby je výpis ukáže dvakrát."
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:413
+msgid "Načítám trasy…"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:453
+msgid "bez příspěvku"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:459
+msgid "Publikovaný"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:459
+msgid "Koncept"
+msgstr ""
+
+#. translators: %s: číslo akce v centrální databázi KČT.
+#: src/Admin/EventsOverviewTable.php:472
+#: src/Admin/EventsOverviewTable.php:482
+msgid "č. %s"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:473
+msgid "web ji z databáze nemá"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:478
+msgid "není v databázi KČT"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:512
+msgid "bez odpovědi Turinky"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:514
+#: src/Admin/EventsOverviewTable.php:516
+msgid "Turinka ji nezná"
+msgstr ""
+
+#. translators: %s: popis chyby.
+#: src/Admin/EventsOverviewTable.php:526
+msgid "Chyba odeslání: %s"
+msgstr ""
+
+#. translators: %s: datum a čas posledního odeslání.
+#: src/Admin/EventsOverviewTable.php:533
+msgid "Obsah odeslán %s"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:549
+msgid "Zrušená"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:563
+#: src/Admin/TurinkaItemsTable.php:240
+msgid "Jen přes odkaz"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:564
+#: src/Admin/TurinkaItemsTable.php:241
+msgid "Zveřejněná"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:596
+#: src/Admin/TurinkaItemsTable.php:343
+msgid "spárovaná, doplňujete prázdná pole"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:601
+msgid "vlastní, bez příspěvku na webu"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:605
+msgid "vlastní, napojená na příspěvek"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:609
+msgid "vlastní, obsah z webu dodaný"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:610
+msgid "vlastní, příspěvek zatím neodeslaný"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:615
+#: src/Admin/TurinkaItemsTable.php:341
+msgid "spravujete za odbor"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:619
+msgid "spravujete za odbor, napojená na příspěvek"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:623
+msgid "spravujete za odbor, obsah z webu dodaný"
+msgstr ""
+
+#: src/Admin/EventsOverviewTable.php:624
+msgid "spravujete za odbor, příspěvek zatím neodeslaný"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:47
+msgid "Název"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:48
+#: src/Features/AdminMenu.php:176
+#: src/Features/AdminMenu.php:195
+#: src/Features/AdminMenu.php:269
+#: src/Features/AdminMenu.php:278
+msgid "Stav"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:53
+msgid "Délka"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:54
+msgid "Převýšení"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:55
+#: assets/blocks/turinka-items/edit.js:41
+msgid "Obtížnost"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:58
+msgid "Kategorie"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:59
+#: src/PostTypes/DepartmentPostType.php:75
+msgid "Obec"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:63
+msgid "Článek na webu"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:64
+msgid "Změněno"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:132
+msgid "Vše"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:133
+msgid "Vlastní"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:135
+msgid "Spárované"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:136
+msgid "Čeká na schválení"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:137
+msgid "S článkem na webu"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:138
+msgid "Bez článku na webu"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:142
+msgid "Filtr"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:156
+msgid "Turinka nemá žádnou trasu vaší organizace."
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:157
+msgid "Turinka nemá žádné místo vaší organizace."
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:192
+#: src/Turinka/RouteMetabox.php:113
+msgid "Upravit v Turince"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:200
+msgid "Otevřít v Turince"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:214
+#: src/Features/Routes.php:452
+#: src/Turinka/RouteMetabox.php:119
+msgid "Odebrat z Turinky"
+msgstr ""
+
+#. translators: %s: délka trasy v kilometrech.
+#: src/Admin/TurinkaItemsTable.php:252
+#: src/Turinka/EventRoutes.php:135
+#: templates/blocks/turinka-items.php:78
+msgid "%s km"
+msgstr ""
+
+#. translators: %s: převýšení v metrech.
+#: src/Admin/TurinkaItemsTable.php:261
+msgid "%s m"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:294
+msgid "bez článku"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:300
+msgid "Zobrazit článek"
+msgstr ""
+
+#: src/Admin/TurinkaItemsTable.php:339
+msgid "vlastní"
+msgstr ""
+
+#: src/Api/KctApi.php:169
+msgid "Nenašli jsme žádnou akci."
+msgstr ""
+
+#: src/Api/TurinkaFormApi.php:230
+msgid "Turinka tuhle položku nezná — nejspíš už odebraná je."
+msgstr ""
+
+#: src/Api/TurinkaFormApi.php:253
+msgid "Položka je v Turince schovaná. Lidé ji nevidí, ale nesmazala se — když ji založíte znovu, vrátí se i s daty."
+msgstr ""
+
+#: src/Api/TurinkaFormApi.php:255
+msgid "Web se od položky odpojil. V Turince zůstává, protože ji založil někdo jiný."
+msgstr ""
+
+#: src/Api/TurinkaFormApi.php:257
+msgid "Položka v Turince zůstává; web na ni od teď nesahá."
+msgstr ""
+
+#: src/Api/TurinkaFormApi.php:260
+msgid "Položka byla z Turinky odebrána."
+msgstr ""
+
+#: src/Api/TurinkaFormApi.php:280
+#: src/Turinka/EventRoutes.php:307
+#: src/Turinka/MineItems.php:210
+#: src/Turinka/PublicItems.php:84
+#: assets/scripts/turinka-route.js:105
+msgid "Turinka neodpověděla."
+msgstr ""
+
+#: src/Api/TurinkaFormApi.php:284
+msgid "Turinka formulář nevydala: položka patří někomu jinému, nebo ji správce zablokoval."
+msgstr ""
+
+#: src/Api/TurinkaFormApi.php:288
+#: src/Turinka/MineItems.php:216
+msgid "Turinka hlásí příliš mnoho dotazů za minutu. Zkuste to za chvíli."
+msgstr ""
+
+#. translators: 1: stavový kód odpovědi, 2: popis chyby.
+#: src/Api/TurinkaFormApi.php:297
+#: src/Turinka/MineItems.php:221
+msgid "Turinka odpověděla %1$d: %2$s"
+msgstr ""
+
+#: src/Api/TurinkaFormApi.php:299
+#: src/Turinka/MineItems.php:223
+msgid "bez bližšího popisu"
+msgstr ""
+
 #: src/Api/TurinkaTokenApi.php:72
 msgid "Doručení nepatří tomuto webu."
 msgstr ""
@@ -62,8 +446,10 @@ msgid "Token patří jiné doméně."
 msgstr ""
 
 #: src/Blocks/InfoboxItemBlock.php:40
-#: src/Managers/BlocksManager.php:59
-#: src/Settings.php:96
+#: src/Features/AdminMenu.php:54
+#: src/Features/AdminMenu.php:55
+#: src/Managers/BlocksManager.php:63
+#: themes/kct/inc/customizer.php:185
 msgid "KČT"
 msgstr ""
 
@@ -75,184 +461,184 @@ msgstr ""
 msgid "Sloupce se třemi info kartami."
 msgstr ""
 
-#: src/CLI.php:49
-#: src/CLI.php:188
-msgid "Chybí Page ID nebo token. Vyplň je v Nastavení → KČT."
+#: src/CLI.php:50
+#: src/CLI.php:189
+msgid "Chybí Page ID nebo token. Vyplň je v KČT → Nastavení."
 msgstr ""
 
 #. translators: %s: popis chyby spojení.
-#: src/CLI.php:58
+#: src/CLI.php:59
 #: src/Features/FacebookShare.php:616
 msgid "Nepodařilo se spojit s Facebookem: %s"
 msgstr ""
 
 #. translators: 1: číselný kód chyby, 2: text chyby vrácený Facebookem.
-#: src/CLI.php:61
+#: src/CLI.php:62
 #: src/Features/FacebookShare.php:623
 msgid "Facebook vrátil chybu %1$d: %2$s"
 msgstr ""
 
-#: src/CLI.php:71
+#: src/CLI.php:72
 msgid "Připojeno ke stránce „%1$s“ (ID %2$s)."
 msgstr ""
 
-#: src/CLI.php:77
+#: src/CLI.php:78
 msgid "Token patří k jinému účtu, než je nastavené Page ID. Vráceno ID %1$s, v nastavení je %2$s."
 msgstr ""
 
-#: src/CLI.php:115
+#: src/CLI.php:116
 msgid "Příspěvek %d neexistuje."
 msgstr ""
 
 #. translators: %s: ID příspěvku na Facebooku.
-#: src/CLI.php:124
+#: src/CLI.php:125
 msgid "Příspěvek už na Facebooku odeslaný je (ID %s). Opakované odeslání vynutíš přepínačem --force."
 msgstr ""
 
-#: src/CLI.php:139
+#: src/CLI.php:140
 msgid "Příspěvek nemá co odeslat — složený text vyšel prázdný."
 msgstr ""
 
-#: src/CLI.php:145
+#: src/CLI.php:146
 msgid "(bez odkazu)"
 msgstr ""
 
-#: src/CLI.php:195
+#: src/CLI.php:196
 msgid "Odeslání tohoto příspěvku právě probíhá jinde — zkus to za chvíli."
 msgstr ""
 
 #. translators: %s: důvod, proč se příspěvek neodeslal.
-#: src/CLI.php:247
+#: src/CLI.php:252
 msgid "Neodesláno: %s"
 msgstr ""
 
-#: src/CLI.php:301
+#: src/CLI.php:306
 msgid "Adresář %s neexistuje."
 msgstr ""
 
-#: src/CLI.php:315
+#: src/CLI.php:320
 msgid "Zapisuji do %s …"
 msgstr ""
 
-#: src/CLI.php:316
+#: src/CLI.php:321
 msgid "Nanečisto nad %s (zápis zapneš přepínačem --write) …"
 msgstr ""
 
-#: src/CLI.php:361
+#: src/CLI.php:366
 msgid "Přeskočeno (potřebují převod barev, řeší se zvlášť):"
 msgstr ""
 
 #. translators: 1: počet upravených, 2: beze změny, 3: přeskočených, 4: chyb.
-#: src/CLI.php:373
+#: src/CLI.php:378
 msgid "upraveno %1$d, beze změny %2$d, přeskočeno %3$d, chyb %4$d"
 msgstr ""
 
 #. translators: 1: původní objem, 2: nový objem, 3: úspora, 4: procenta.
-#: src/CLI.php:382
+#: src/CLI.php:387
 msgid "Objem upravených souborů: %1$s → %2$s, úspora %3$s (%4$s)."
 msgstr ""
 
-#: src/CLI.php:393
+#: src/CLI.php:398
 msgid "Nic se nezapsalo. Spusť znovu s --write."
 msgstr ""
 
-#: src/CLI.php:438
+#: src/CLI.php:443
 msgid "Mažu ponechané originály …"
 msgstr ""
 
-#: src/CLI.php:439
+#: src/CLI.php:444
 msgid "Nanečisto (mazání zapneš přepínačem --write) …"
 msgstr ""
 
 #. translators: %d: počet příloh.
-#: src/CLI.php:496
+#: src/CLI.php:501
 msgid "U %d příloh odkaz na originál ukazoval na neexistující soubor."
 msgstr ""
 
 #. translators: 1: počet souborů, 2: uvolněné místo.
-#: src/CLI.php:503
+#: src/CLI.php:508
 msgid "Originálů: %1$d, místo: %2$s."
 msgstr ""
 
-#: src/CLI.php:512
+#: src/CLI.php:517
 msgid "Nic se nesmazalo. Spusť znovu s --write."
 msgstr ""
 
-#: src/CLI.php:541
+#: src/CLI.php:546
 msgid "Vyrábím sdílecí obrázky …"
 msgstr ""
 
-#: src/CLI.php:542
+#: src/CLI.php:547
 msgid "Nanečisto (vyrobení zapneš přepínačem --write) …"
 msgstr ""
 
 #. translators: %d: počet objektů.
-#: src/CLI.php:603
+#: src/CLI.php:608
 msgid "U %d objektů se obrázek nevyrobil (chybí datum nebo fotka se nedá načíst)."
 msgstr ""
 
 #. translators: %d: počet obrázků.
-#: src/CLI.php:610
+#: src/CLI.php:615
 msgid "Obrázků: %d."
 msgstr ""
 
-#: src/CLI.php:617
+#: src/CLI.php:622
 msgid "Nic se nezapsalo."
 msgstr ""
 
-#: src/CLI.php:641
+#: src/CLI.php:646
 msgid "Odesílám databázové akce …"
 msgstr ""
 
-#: src/CLI.php:642
+#: src/CLI.php:647
 msgid "Nanečisto (odeslání zapneš přepínačem --send) …"
 msgstr ""
 
 #. translators: %d: počet akcí.
-#: src/CLI.php:679
+#: src/CLI.php:684
 msgid "Akcí: %d."
 msgstr ""
 
-#: src/CLI.php:686
+#: src/CLI.php:691
 msgid "Nic se neodeslalo."
 msgstr ""
 
-#: src/CLI.php:754
+#: src/CLI.php:759
 msgid "Zmenšuji obrázky nad stropem …"
 msgstr ""
 
-#: src/CLI.php:755
+#: src/CLI.php:760
 msgid "Nanečisto (zmenšení zapneš přepínačem --write) …"
 msgstr ""
 
 #. translators: 1: počet příspěvků, 2: počet přepsaných adres.
-#: src/CLI.php:852
+#: src/CLI.php:857
 msgid "Odkazů v obsahu: %1$d příspěvků v síti, %2$d přepsaných adres."
 msgstr ""
 
 #. translators: %d: počet příloh.
-#: src/CLI.php:861
+#: src/CLI.php:866
 msgid "U %d příloh se zmenšení nepovedlo."
 msgstr ""
 
 #. translators: 1: počet obrázků, 2: počet smazaných kopií, 3: ušetřené místo.
-#: src/CLI.php:868
+#: src/CLI.php:873
 msgid "Zpracovaných obrázků: %1$d, kopií plné velikosti: %2$d, místo: %3$s."
 msgstr ""
 
-#: src/CLI.php:878
+#: src/CLI.php:883
 msgid "Nic se nezměnilo. Spusť znovu s --write."
 msgstr ""
 
-#: src/Facebook/GraphClient.php:132
+#: src/Facebook/GraphClient.php:145
 msgid "Neplatná odpověď Facebook API."
 msgstr ""
 
-#: src/Facebook/GraphClient.php:142
+#: src/Facebook/GraphClient.php:155
 msgid "Neznámá chyba."
 msgstr ""
 
-#: src/Facebook/GraphClient.php:150
+#: src/Facebook/GraphClient.php:163
 msgid "Odpověď Facebook API neobsahuje očekávaná data."
 msgstr ""
 
@@ -304,6 +690,166 @@ msgstr ""
 msgid "Celá uživatelská příručka"
 msgstr ""
 
+#: src/Features/AdminMenu.php:65
+#: src/Features/AdminMenu.php:81
+msgid "Nástěnka KČT"
+msgstr ""
+
+#: src/Features/AdminMenu.php:66
+msgid "Nástěnka"
+msgstr ""
+
+#: src/Features/AdminMenu.php:76
+#: src/Features/EventsOverview.php:51
+#: src/Features/TurinkaOverview.php:163
+msgid "Na tuhle stránku nemáte přístup."
+msgstr ""
+
+#: src/Features/AdminMenu.php:82
+msgid "Odkud web bere obsah, co kam posílá a co z toho zrovna vázne."
+msgstr ""
+
+#: src/Features/AdminMenu.php:88
+#: src/Features/FacebookShare.php:794
+msgid "Facebook"
+msgstr ""
+
+#: src/Features/AdminMenu.php:136
+msgid "Akcí celkem"
+msgstr ""
+
+#: src/Features/AdminMenu.php:138
+msgid "Jen z databáze KČT"
+msgstr ""
+
+#: src/Features/AdminMenu.php:140
+msgid "Import z databáze"
+msgstr ""
+
+#: src/Features/AdminMenu.php:142
+msgid "nenastavený — akce se neimportují"
+msgstr ""
+
+#. translators: %s: datum a čas příštího importu.
+#: src/Features/AdminMenu.php:146
+msgid "další běh %s"
+msgstr ""
+
+#: src/Features/AdminMenu.php:149
+msgid "naplánovaný není"
+msgstr ""
+
+#: src/Features/AdminMenu.php:152
+msgid "Přehled"
+msgstr ""
+
+#: src/Features/AdminMenu.php:156
+msgid "Otevřít přehled akcí"
+msgstr ""
+
+#: src/Features/AdminMenu.php:178
+msgid "žádost čeká na schválení"
+msgstr ""
+
+#: src/Features/AdminMenu.php:179
+msgid "web propojený není"
+msgstr ""
+
+#: src/Features/AdminMenu.php:182
+msgid "Propojení"
+msgstr ""
+
+#: src/Features/AdminMenu.php:186
+msgid "Zřídit v nastavení"
+msgstr ""
+
+#. translators: %s: název odboru nebo oblasti.
+#: src/Features/AdminMenu.php:198
+msgid "propojeno jako %s"
+msgstr ""
+
+#: src/Features/AdminMenu.php:199
+msgid "neznámý vlastník"
+msgstr ""
+
+#: src/Features/AdminMenu.php:204
+msgid "Akcí v Turince"
+msgstr ""
+
+#: src/Features/AdminMenu.php:204
+msgid "Tras"
+msgstr ""
+
+#: src/Features/AdminMenu.php:204
+msgid "Míst"
+msgstr ""
+
+#: src/Features/AdminMenu.php:210
+msgid "zatím nenačteno"
+msgstr ""
+
+#: src/Features/AdminMenu.php:218
+msgid "Nepovedená odeslání"
+msgstr ""
+
+#. translators: %s: počet akcí s chybou.
+#: src/Features/AdminMenu.php:224
+msgid "%s akce"
+msgid_plural "%s akcí"
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/Features/AdminMenu.php:228
+#: src/Features/Turinka.php:468
+#: src/Settings.php:353
+msgid "žádná"
+msgstr ""
+
+#: src/Features/AdminMenu.php:232
+msgid "Přehledy"
+msgstr ""
+
+#: src/Features/AdminMenu.php:236
+msgid "Trasy"
+msgstr ""
+
+#: src/Features/AdminMenu.php:238
+msgid "Místa"
+msgstr ""
+
+#: src/Features/AdminMenu.php:269
+msgid "sdílení nastavené není"
+msgstr ""
+
+#: src/Features/AdminMenu.php:271
+#: src/Features/AdminMenu.php:281
+#: src/Settings.php:105
+#: assets/blocks/action/edit.js:38
+#: assets/blocks/events/edit.js:17
+#: assets/blocks/image-content/edit.js:35
+#: assets/blocks/news/edit.js:17
+#: assets/blocks/routes/edit.js:17
+#: assets/blocks/turinka-items/edit.js:19
+msgid "Nastavení"
+msgstr ""
+
+#: src/Features/AdminMenu.php:272
+msgid "Nastavit sdílení"
+msgstr ""
+
+#: src/Features/AdminMenu.php:278
+msgid "sdílení je nastavené"
+msgstr ""
+
+#: src/Features/AdminMenu.php:279
+msgid "Stránka"
+msgstr ""
+
+#: src/Features/AdminMenu.php:282
+#: src/Features/FacebookShare.php:682
+msgid "Otevřít nastavení"
+msgstr ""
+
 #: src/Features/DbEventShare.php:206
 msgid "K této akci nemáte oprávnění."
 msgstr ""
@@ -312,7 +858,8 @@ msgstr ""
 #: src/Features/Events.php:105
 #: src/Features/FacebookShare.php:533
 #: src/Features/FacebookShare.php:588
-#: src/Features/Turinka.php:507
+#: src/Features/Routes.php:475
+#: src/Features/Turinka.php:511
 msgid "Chyba v ověření zabezpečení."
 msgstr ""
 
@@ -329,6 +876,7 @@ msgid "Na Facebook se neodešle."
 msgstr ""
 
 #: src/Features/DbEventShare.php:265
+#: themes/kct/template-parts/post-share.php:25
 msgid "Sdílet"
 msgstr ""
 
@@ -354,8 +902,21 @@ msgid "Na Facebook se odešle %s."
 msgstr ""
 
 #: src/Features/Departments.php:130
-#: src/Features/Events.php:1069
-msgid "Adresa exportu z Databáze akcí KČT není vyplněná v Nastavení → KČT. Import se nespustil."
+#: src/Features/Events.php:1073
+msgid "Adresa exportu z Databáze akcí KČT není vyplněná v KČT → Nastavení. Import se nespustil."
+msgstr ""
+
+#: src/Features/EventRoutes.php:76
+msgid "Nepovedlo se to. Zkuste to prosím znovu."
+msgstr ""
+
+#: src/Features/EventRoutes.php:77
+#: src/Features/TurinkaOverview.php:150
+msgid "Nepodařilo se načíst formulář Turinky. Zkuste stránku načíst znovu."
+msgstr ""
+
+#: src/Features/EventRoutes.php:78
+msgid "Žádná trasa nenalezena."
 msgstr ""
 
 #. translators: %d: počet opravených znaků &
@@ -382,6 +943,34 @@ msgstr ""
 msgid "Tato akce už v Databázi akcí KČT není, příspěvek z ní nejde založit."
 msgstr ""
 
+#: src/Features/EventsOverview.php:41
+#: src/Features/EventsOverview.php:42
+#: src/Features/EventsOverview.php:93
+#: themes/kct/template-parts/content-404.php:36
+msgid "Přehled akcí"
+msgstr ""
+
+#. translators: %s: důvod, proč se akce z Turinky nenačetly.
+#: src/Features/EventsOverview.php:81
+msgid "Akce z Turinky se nepodařilo načíst: %s Sloupec Turinka ukazuje poslední známý stav, nebo zůstane prázdný."
+msgstr ""
+
+#: src/Features/EventsOverview.php:96
+msgid "Načíst z Turinky znovu"
+msgstr ""
+
+#: src/Features/EventsOverview.php:102
+msgid "Všechny akce, které web zná — vlastní příspěvky, akce z databáze KČT i akce, které o vaší organizaci ví Turinka. Jedna akce je jeden řádek, i když je ve všech třech zdrojích."
+msgstr ""
+
+#: src/Features/EventsOverview.php:103
+msgid "Všechny akce, které web zná — vlastní příspěvky i akce z databáze KČT. Jedna akce je jeden řádek, i když je v obou zdrojích."
+msgstr ""
+
+#: src/Features/EventsOverview.php:112
+msgid "Hledat akci"
+msgstr ""
+
 #. translators: %s: ID příspěvku na Facebooku.
 #: src/Features/FacebookShare.php:424
 msgid "Příspěvek byl odeslán na Facebook (ID %s)."
@@ -402,6 +991,7 @@ msgid "Odeslání selhalo, Facebook vrátil chybu %1$d: %2$s"
 msgstr ""
 
 #: src/Features/FacebookShare.php:481
+#: src/Features/Routes.php:124
 msgid "Příspěvek neexistuje."
 msgstr ""
 
@@ -458,14 +1048,6 @@ msgstr ""
 #. translators: %s: text chyby vrácený Facebookem.
 #: src/Features/FacebookShare.php:674
 msgid "Sdílení na Facebook nefunguje — token je neplatný nebo vypršel. Facebook hlásí: %s"
-msgstr ""
-
-#: src/Features/FacebookShare.php:682
-msgid "Otevřít nastavení"
-msgstr ""
-
-#: src/Features/FacebookShare.php:794
-msgid "Facebook"
 msgstr ""
 
 #: src/Features/FacebookShare.php:815
@@ -546,66 +1128,185 @@ msgid "%1$s: %2$s"
 msgstr ""
 
 #. translators: %s: hledaný výraz.
+#. translators: %s: search query.
 #: src/Features/OpenGraph.php:161
+#: themes/kct/search.php:22
 msgid "Výsledky hledání: %s"
 msgstr ""
 
+#: src/Features/Routes.php:187
+msgid "Trasa v Turince propojená není, odebírat není co."
+msgstr ""
+
+#: src/Features/Routes.php:291
+msgid "Trasa v Turince už není. Propojení bylo zrušeno; novou trasu lze založit tlačítkem."
+msgstr ""
+
+#: src/Features/Routes.php:360
+msgid "Do Turinky se tuhle trasu nepodařilo odeslat:"
+msgstr ""
+
+#. translators: %s: název trasy.
+#: src/Features/Routes.php:448
+msgid "Článek je pryč z webu. Trasa „%s“ v Turince zůstala viditelná."
+msgstr ""
+
+#. translators: %s: název trasy v uvozovkách, nebo nic.
+#: src/Features/Routes.php:543
+msgid "Trasa %sje v Turince schovaná a lidé ji už nenajdou. Další uložení příspěvku ji vrátí."
+msgstr ""
+
+#. translators: %s: název trasy v uvozovkách, nebo nic.
+#: src/Features/Routes.php:548
+msgid "Web se od trasy %sodpojil. Trasa v Turince zůstává — patří někomu jinému a web ji jen doplňoval."
+msgstr ""
+
+#. translators: %s: název trasy v uvozovkách, nebo nic.
+#: src/Features/Routes.php:553
+msgid "Trasa %sv Turince už není propojená s tímhle webem."
+msgstr ""
+
+#. translators: %s: popis chyby spojení.
+#: src/Features/Routes.php:567
+#: src/Features/Turinka.php:480
+msgid "Turinku se nepodařilo zastihnout: %s"
+msgstr ""
+
+#: src/Features/Routes.php:573
+msgid "Trasu v Turince stáhl její správce. Zápis se neprovede, dokud ji neobnoví."
+msgstr ""
+
 #. translators: %s: číslo akce v centrální databázi KČT.
-#: src/Features/Turinka.php:222
+#: src/Features/Turinka.php:226
 msgid "Turinka tuhle akci zná z centrální databáze KČT pod číslem %s. Doplňte ho do pole „ID akce z kct-db“ — obsah pak půjde k té existující akci a nevznikne duplicita."
 msgstr ""
 
-#: src/Features/Turinka.php:303
+#: src/Features/Turinka.php:307
 msgid "Do Turinky se tuhle akci nepodařilo odeslat:"
 msgstr ""
 
-#: src/Features/Turinka.php:327
+#: src/Features/Turinka.php:331
 msgid "K žádosti o přístup k Turince nemáte oprávnění."
 msgstr ""
 
-#: src/Features/Turinka.php:333
+#: src/Features/Turinka.php:337
 msgid "Nejdřív vyplňte kód oblasti nebo odboru — bez něj nemá Turinka žádost k čemu přiřadit."
 msgstr ""
 
 #. translators: %s: doména webu.
-#: src/Features/Turinka.php:347
+#: src/Features/Turinka.php:351
 msgid "Žádost o přístup pro doménu %s odešla. Až ji správce Turinky schválí, token dorazí sám; když se to nepovede, vloží se ručně níž."
 msgstr ""
 
-#: src/Features/Turinka.php:360
+#: src/Features/Turinka.php:364
 msgid "K ověření připojení k Turince nemáte oprávnění."
 msgstr ""
 
-#: src/Features/Turinka.php:363
+#: src/Features/Turinka.php:367
 msgid "Web zatím nemá token k Turince."
 msgstr ""
 
 #. translators: %s: důvod, proč se token nepodařilo ověřit.
-#: src/Features/Turinka.php:409
+#: src/Features/Turinka.php:413
 msgid "Vložený token se nepodařilo ověřit a nebyl uložen. %s"
 msgstr ""
 
 #. translators: 1: doména, 2: jméno vlastníka, 3: seznam oprávnění.
-#: src/Features/Turinka.php:461
+#: src/Features/Turinka.php:465
 msgid "Připojeno k Turince. Doména %1$s, vlastník %2$s, oprávnění: %3$s."
 msgstr ""
 
-#: src/Features/Turinka.php:463
-#: src/Settings.php:312
+#: src/Features/Turinka.php:467
+#: src/Settings.php:352
 msgid "nepřiřazen"
 msgstr ""
 
-#: src/Features/Turinka.php:464
-#: src/Settings.php:313
-msgid "žádná"
+#: src/Features/TurinkaOverview.php:75
+#: src/Features/TurinkaOverview.php:76
+#: src/Features/TurinkaOverview.php:97
+msgid "Místa v Turince"
 msgstr ""
 
-#. translators: %s: popis chyby spojení.
-#: src/Features/Turinka.php:476
-msgid "Turinku se nepodařilo zastihnout: %s"
+#: src/Features/TurinkaOverview.php:89
+msgid "Trasy, které Turinka vede pod vaší organizací. Data i úpravy patří aplikaci — web je odsud jen vidí a může k nim odkázat článek."
 msgstr ""
 
-#: src/Help/DocsLinks.php:151
+#: src/Features/TurinkaOverview.php:98
+msgid "Místa, která Turinka vede pod vaší organizací. Nové místo vzniká ke schválení, takže chvíli po založení bývá ve stavu „Čeká na schválení“."
+msgstr ""
+
+#: src/Features/TurinkaOverview.php:149
+msgid "Formulář se nepodařilo otevřít."
+msgstr ""
+
+#. translators: %s: název trasy nebo místa.
+#: src/Features/TurinkaOverview.php:152
+msgid "Odebrat „%s“ z Turinky? Položka se neztratí — Turinka ji schová a vrátí se, když ji založíte znovu."
+msgstr ""
+
+#. translators: %s: důvod, proč se data nenačetla.
+#: src/Features/TurinkaOverview.php:195
+msgid "Data z Turinky se nepodařilo načíst: %s Níž je poslední známý stav, nebo prázdná tabulka."
+msgstr ""
+
+#: src/Features/TurinkaOverview.php:210
+#: src/Turinka/RouteMetabox.php:78
+msgid "Založit trasu v Turince"
+msgstr ""
+
+#: src/Features/TurinkaOverview.php:211
+msgid "Založit místo v Turince"
+msgstr ""
+
+#: src/Features/TurinkaOverview.php:216
+msgid "Načíst znovu"
+msgstr ""
+
+#: src/Features/TurinkaOverview.php:223
+#: themes/kct/header.php:101
+#: themes/kct/header.php:104
+msgid "Hledat"
+msgstr ""
+
+#: src/Frontend.php:80
+msgid "Hledat odbor"
+msgstr ""
+
+#: src/Frontend.php:81
+msgid "Název nebo obec"
+msgstr ""
+
+#. translators: %d je počet odborů (1).
+#: src/Frontend.php:84
+#: themes/kct/archive-odbory.php:61
+msgid "%d odbor"
+msgstr ""
+
+#. translators: %d je počet odborů (2 až 4).
+#: src/Frontend.php:86
+#: themes/kct/archive-odbory.php:63
+msgid "%d odbory"
+msgstr ""
+
+#. translators: %d je počet odborů (0 a 5 a více).
+#: src/Frontend.php:88
+#: themes/kct/archive-odbory.php:65
+msgid "%d odborů"
+msgstr ""
+
+#: src/Frontend.php:123
+msgid "Filtr se nepodařilo použít. Zkuste to prosím znovu."
+msgstr ""
+
+#: src/Frontend.php:124
+msgid "Načítám…"
+msgstr ""
+
+#: src/Frontend.php:125
+msgid "Další akce se nenačetly. Zkuste to prosím znovu."
+msgstr ""
+
+#: src/Help/DocsLinks.php:175
 msgid "Nápověda"
 msgstr ""
 
@@ -640,10 +1341,6 @@ msgstr ""
 
 #: src/PostTypes/DepartmentPostType.php:70
 msgid "PSČ"
-msgstr ""
-
-#: src/PostTypes/DepartmentPostType.php:75
-msgid "Obec"
 msgstr ""
 
 #: src/PostTypes/DepartmentPostType.php:80
@@ -845,6 +1542,7 @@ msgid "Přidat typ akce"
 msgstr ""
 
 #: src/PostTypes/EventPostType.php:179
+#: themes/kct/archive-akce.php:172
 msgid "Typ akce"
 msgstr ""
 
@@ -934,187 +1632,187 @@ msgstr ""
 msgid "U krátké aktuality se ve výpise zobrazí celý obsah a nemá proklik na detail."
 msgstr ""
 
-#: src/PostTypes/RoadPostType.php:26
-msgid "GPX soubor trasy"
-msgstr ""
-
-#: src/PostTypes/RoadPostType.php:32
-msgid "Data trasy"
-msgstr ""
-
-#: src/Settings.php:68
+#: src/Settings.php:72
 msgid "Co která volba dělá, popisuje uživatelská příručka:"
 msgstr ""
 
-#: src/Settings.php:69
+#: src/Settings.php:73
 msgid "První nastavení webu"
 msgstr ""
 
-#: src/Settings.php:73
+#: src/Settings.php:77
 msgid "Kód oblasti / odboru"
 msgstr ""
 
-#: src/Settings.php:74
+#: src/Settings.php:78
 msgid "Zadejte kód vaší oblasti (3 číslice) nebo odboru (6 číslic)."
 msgstr ""
 
-#: src/Settings.php:79
+#: src/Settings.php:83
 msgid "Adresa exportu z Databáze akcí KČT"
 msgstr ""
 
-#: src/Settings.php:80
+#: src/Settings.php:84
 msgid "Adresa složky s XML exporty centrální Databáze akcí. Není veřejná a v pluginu proto není předvyplněná — sdělí vám ji na vyžádání ústředí KČT. Dokud je pole prázdné, akce se neimportují."
 msgstr ""
 
-#: src/Settings.php:95
+#: src/Settings.php:104
 msgid "Nastavení funkcí KČT"
 msgstr ""
 
-#: src/Settings.php:136
-#: src/Settings.php:142
+#: src/Settings.php:145
+#: src/Settings.php:151
 msgid "ID Facebook stránky"
 msgstr ""
 
-#: src/Settings.php:137
+#: src/Settings.php:146
 msgid "hodnotu přebíjí konstanta KCT_FB_PAGE_ID ve wp-config.php."
 msgstr ""
 
-#: src/Settings.php:143
+#: src/Settings.php:152
 msgid "Číselné ID stránky, na kterou se budou odesílat příspěvky."
 msgstr ""
 
-#: src/Settings.php:157
-#: src/Settings.php:163
+#: src/Settings.php:166
+#: src/Settings.php:172
 msgid "Page access token"
 msgstr ""
 
-#: src/Settings.php:158
+#: src/Settings.php:167
 msgid "hodnota je nastavena konstantou KCT_FB_PAGE_TOKEN ve wp-config.php. Případná dříve uložená hodnota byla z databáze odstraněna."
 msgstr ""
 
-#: src/Settings.php:164
+#: src/Settings.php:173
 msgid "Dlouhodobý token stránky z Meta aplikace. Pozor: token uložený zde leží v autoloadované databázové option, načítá se při každém requestu webu a je součástí každé zálohy databáze. Bezpečnější je definovat konstantu KCT_FB_PAGE_TOKEN ve wp-config.php."
 msgstr ""
 
-#: src/Settings.php:173
+#: src/Settings.php:182
 msgid "Sdílení na Facebook"
 msgstr ""
 
-#: src/Settings.php:179
+#: src/Settings.php:188
 msgid "Sdílet automaticky — aktuality"
 msgstr ""
 
-#: src/Settings.php:180
+#: src/Settings.php:189
 msgid "Nové aktuality mají sdílení ve výchozím stavu zapnuté."
 msgstr ""
 
-#: src/Settings.php:185
+#: src/Settings.php:194
 msgid "Sdílet automaticky — akce"
 msgstr ""
 
-#: src/Settings.php:186
+#: src/Settings.php:195
 msgid "Nové akce mají sdílení ve výchozím stavu zapnuté."
 msgstr ""
 
-#: src/Settings.php:191
+#: src/Settings.php:200
 msgid "Kolik dní před akcí odeslat"
 msgstr ""
 
-#: src/Settings.php:192
+#: src/Settings.php:201
 msgid "Pozvánka se odešle s tímto odstupem před začátkem akce. Výchozích 12 dní není náhodné číslo: sobotní akce tím vyjde na pondělí a nedělní na úterý, tedy na začátek týdne, kdy lidé plánují další víkend. Nula znamená odeslat v den akce."
 msgstr ""
 
-#: src/Settings.php:199
+#: src/Settings.php:208
 msgid "V kolik hodin odeslat"
 msgstr ""
 
-#: src/Settings.php:200
+#: src/Settings.php:209
 msgid "Hodina, ve které se pozvánka na akci odešle. Bez ní by odešla v tu denní dobu, kdy byla akce náhodou publikována."
 msgstr ""
 
-#: src/Settings.php:207
+#: src/Settings.php:216
 msgid "Připojení k Facebooku"
 msgstr ""
 
-#: src/Settings.php:208
-#: src/Settings.php:275
+#: src/Settings.php:217
+#: src/Settings.php:314
 msgid "Ověřit připojení"
 msgstr ""
 
-#: src/Settings.php:209
+#: src/Settings.php:218
 msgid "Zkusí se připojit k Facebooku a vypíše název stránky, ke které token patří."
 msgstr ""
 
-#: src/Settings.php:235
-msgid "Turinka"
-msgstr ""
-
-#: src/Settings.php:248
+#: src/Settings.php:261
 msgid "Widget Turinky u akcí"
 msgstr ""
 
-#: src/Settings.php:249
+#: src/Settings.php:262
 msgid "Na stránce akce zobrazit rámeček z Turinky s tlačítky Plánovat, Oblíbit a Sdílet."
 msgstr ""
 
-#: src/Settings.php:250
+#: src/Settings.php:263
 msgid "Funguje i bez propojení — zobrazí se u každé akce, kterou Turinka zná. Vypnutím zmizí i odchozí odkaz na Turinku."
 msgstr ""
 
-#: src/Settings.php:258
-msgid "Přístup k Turince"
+#: src/Settings.php:272
+msgid "Předpověď počasí u akcí"
 msgstr ""
 
-#: src/Settings.php:259
-msgid "Požádat o přístup"
-msgstr ""
-
-#: src/Settings.php:260
-msgid "Odešle žádost s doménou tohoto webu a kódem oblasti nebo odboru. Schvaluje ji člověk, takže to není hned."
-msgstr ""
-
-#: src/Settings.php:267
-msgid "Token vložený ručně"
-msgstr ""
-
-#: src/Settings.php:268
-msgid "Používá se, jen když se token nepodařilo doručit automaticky — pak ho správce Turinky vidí na obrazovce a předá ho sem. Po uložení se ověří a z tohoto pole zmizí."
+#: src/Settings.php:273
+msgid "V postranním sloupci akce zobrazit předpověď počasí z Turinky."
 msgstr ""
 
 #: src/Settings.php:274
+msgid "Zobrazí se jen u akce, která teprve bude, má souřadnice startu v Česku a je v dosahu předpovědi — tedy nejvýš šestnáct dní dopředu."
+msgstr ""
+
+#: src/Settings.php:294
+msgid "Přístup k Turince"
+msgstr ""
+
+#: src/Settings.php:295
+msgid "Požádat o přístup"
+msgstr ""
+
+#: src/Settings.php:296
+msgid "Odešle žádost s doménou tohoto webu a kódem oblasti nebo odboru. Schvaluje ji člověk, takže to není hned."
+msgstr ""
+
+#: src/Settings.php:306
+msgid "Token vložený ručně"
+msgstr ""
+
+#: src/Settings.php:307
+msgid "Používá se, jen když se token nepodařilo doručit automaticky — pak ho správce Turinky vidí na obrazovce a předá ho sem. Po uložení se ověří a z tohoto pole zmizí."
+msgstr ""
+
+#: src/Settings.php:313
 msgid "Připojení k Turince"
 msgstr ""
 
-#: src/Settings.php:276
+#: src/Settings.php:315
 msgid "Zkusí se připojit k Turince a vypíše, komu přístup patří a co smí."
 msgstr ""
 
-#: src/Settings.php:288
+#: src/Settings.php:328
 msgid "Výchozí stav u akcí"
 msgstr ""
 
-#: src/Settings.php:289
+#: src/Settings.php:329
 msgid "Platí pro akce, u kterých volbu nikdo nenastavil — tedy i pro ty založené dřív, než se web propojil. U jednotlivé akce se dá kdykoli přebít."
 msgstr ""
 
 #. translators: 1: doména, 2: jméno vlastníka, 3: seznam oprávnění.
-#: src/Settings.php:310
+#: src/Settings.php:350
 msgid "Propojeno. Doména %1$s, vlastník %2$s, oprávnění: %3$s."
 msgstr ""
 
-#: src/Settings.php:318
+#: src/Settings.php:358
 msgid "Žádost odeslána, čeká na schválení správcem Turinky."
 msgstr ""
 
-#: src/Settings.php:321
+#: src/Settings.php:361
 msgid "Nepropojeno. Bez přístupu se do Turinky nic neodesílá."
 msgstr ""
 
-#: src/Settings.php:410
+#: src/Settings.php:450
 msgid "Načtení akcí z centrální Databáze akcí KČT byla úspěšná."
 msgstr ""
 
-#: src/Settings.php:418
+#: src/Settings.php:458
 msgid "Načtení typů akcí z centrální Databáze akcí KČT byla úspěšná."
 msgstr ""
 
@@ -1140,12 +1838,14 @@ msgstr ""
 msgid "Book publishers are responsible for overseeing the selection, production, marketing and distribution processes involved with new works of writing."
 msgstr ""
 
-#: src/Turinka/Client.php:163
+#: src/Turinka/Client.php:321
 msgid "Turinka odpověděla HTTP %d."
 msgstr ""
 
 #. translators: %s: název akce.
+#. translators: %s: název trasy.
 #: src/Turinka/Embed.php:105
+#: src/Turinka/RouteEmbed.php:112
 msgid "%s — Turinka KČT"
 msgstr ""
 
@@ -1154,23 +1854,643 @@ msgstr ""
 msgid "Zobrazit v Turince akci %s"
 msgstr ""
 
-#: src/Turinka/EventState.php:45
+#: src/Turinka/EventRoutes.php:71
+msgid "Vazby na trasy spravuje pořadatel akce — tahle akce webu nepatří."
+msgstr ""
+
+#. translators: %s: převýšení v metrech.
+#. translators: %s: nastoupané převýšení v metrech.
+#: src/Turinka/EventRoutes.php:142
+#: templates/blocks/turinka-items.php:86
+msgid "↑ %s m"
+msgstr ""
+
+#: src/Turinka/EventRoutes.php:246
+msgid "Turinka tuhle akci nezná."
+msgstr ""
+
+#: src/Turinka/EventRoutes.php:256
+msgid "Chybí trasa nebo akce."
+msgstr ""
+
+#. translators: %d: stavový kód odpovědi.
+#: src/Turinka/EventRoutes.php:311
+msgid "Turinka odpověděla %d."
+msgstr ""
+
+#: src/Turinka/EventRoutesPanel.php:34
+msgid "Turinka tuhle akci zatím nezná. Jakmile ji bude znát, dají se tu k ní přivázat trasy."
+msgstr ""
+
+#: src/Turinka/EventRoutesPanel.php:49
+msgid "Hledat trasu"
+msgstr ""
+
+#: src/Turinka/EventRoutesPanel.php:50
+msgid "Hledat trasu v Turince…"
+msgstr ""
+
+#: src/Turinka/EventRoutesPanel.php:55
+msgid "Založit trasu k této akci"
+msgstr ""
+
+#: src/Turinka/EventRoutesPanel.php:60
+msgid "Přivázat jde i trasu, kterou založil někdo jiný — rozhoduje, že akce patří vašemu webu."
+msgstr ""
+
+#: src/Turinka/EventRoutesPanel.php:95
+msgid "Zatím tu není žádná trasa."
+msgstr ""
+
+#. translators: %s: název trasy.
+#: src/Turinka/EventRoutesPanel.php:114
+msgid "Odebrat vazbu na trasu %s"
+msgstr ""
+
+#: src/Turinka/EventRoutesPublic.php:73
+msgid "Trasy akce"
+msgstr ""
+
+#: src/Turinka/EventState.php:32
 msgid "Neposílat"
 msgstr ""
 
-#: src/Turinka/EventState.php:46
+#: src/Turinka/EventState.php:33
 msgid "Veřejně"
 msgstr ""
 
-#: src/Turinka/EventState.php:47
+#: src/Turinka/EventState.php:34
 msgid "Jen na odkaz (mimo výpisy)"
 msgstr ""
 
-#: assets/blocks/action/edit.js:38
-#: assets/blocks/events/edit.js:17
-#: assets/blocks/image-content/edit.js:35
-#: assets/blocks/news/edit.js:17
-msgid "Nastavení"
+#: src/Turinka/MineItems.php:64
+#: src/Turinka/PublicItems.php:56
+msgid "Neznámý typ obsahu."
+msgstr ""
+
+#: src/Turinka/MineItems.php:68
+#: src/Turinka/PublicItems.php:60
+msgid "Web není propojený s Turinkou."
+msgstr ""
+
+#. translators: %s: název trasy.
+#: src/Turinka/RouteEmbed.php:136
+msgid "Zobrazit v Turince trasu %s"
+msgstr ""
+
+#: src/Turinka/RouteMetabox.php:55
+msgid "Web ještě není propojený s Turinkou. Propojení se zřizuje v KČT → Nastavení → Turinka."
+msgstr ""
+
+#: src/Turinka/RouteMetabox.php:65
+msgid "Poslední odeslání se nepovedlo:"
+msgstr ""
+
+#: src/Turinka/RouteMetabox.php:73
+msgid "Trasa v Turince ještě není. Stopa, obtížnost a další údaje se zadávají v jejím formuláři."
+msgstr ""
+
+#: src/Turinka/RouteMetabox.php:82
+msgid "Nejdřív příspěvek ulož — formulář potřebuje jeho adresu."
+msgstr ""
+
+#: src/Turinka/RouteMetabox.php:95
+msgid "Zobrazit trasu v Turince"
+msgstr ""
+
+#. translators: %s: datum a čas posledního odeslání.
+#: src/Turinka/RouteMetabox.php:104
+msgid "Název a text odeslány %s."
+msgstr ""
+
+#: src/Turinka/RouteMetabox.php:107
+msgid "Název a text se odešlou do minuty po uložení příspěvku."
+msgstr ""
+
+#: src/Turinka/Weather.php:102
+msgid "Předpověď počasí"
+msgstr ""
+
+#: templates/blocks/routes.php:32
+msgid "Žádné trasy tu zatím nejsou."
+msgstr ""
+
+#. translators: %s: klesání v metrech.
+#: templates/blocks/turinka-items.php:93
+msgid "↓ %s m"
+msgstr ""
+
+#: templates/blocks/turinka-items.php:144
+msgid "Tip"
+msgstr ""
+
+#: templates/blocks/turinka-items.php:219
+#: templates/blocks/turinka-items.php:257
+msgid "Turinka KČT"
+msgstr ""
+
+#: templates/blocks/turinka-items.php:221
+msgid "Otevře se v Turince"
+msgstr ""
+
+#. translators: %s: počet lidí, kteří si položku uložili mezi oblíbené.
+#: templates/blocks/turinka-items.php:231
+msgid "%s oblíbení"
+msgid_plural "%s oblíbení"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: odkaz na aplikaci Turinka.
+#: templates/blocks/turinka-items.php:253
+msgid "Data poskytuje %s; odkazy z karet vedou do aplikace."
+msgstr ""
+
+#: themes/kct/archive-akce.php:75
+msgid "Mapa akcí"
+msgstr ""
+
+#. translators: 1: datum od, 2: datum do.
+#: themes/kct/archive-akce.php:106
+msgid "%1$s – %2$s"
+msgstr ""
+
+#: themes/kct/archive-akce.php:134
+#: themes/kct/archive-akce.php:160
+msgid "Filtr akcí"
+msgstr ""
+
+#: themes/kct/archive-akce.php:139
+msgid "Rychlá volba"
+msgstr ""
+
+#: themes/kct/archive-akce.php:148
+msgid "Zrušit filtr"
+msgstr ""
+
+#: themes/kct/archive-akce.php:163
+msgid "Od"
+msgstr ""
+
+#: themes/kct/archive-akce.php:167
+msgid "Do"
+msgstr ""
+
+#: themes/kct/archive-akce.php:174
+#: assets/blocks/turinka-items/edit.js:44
+msgid "Všechny"
+msgstr ""
+
+#: themes/kct/archive-odbory.php:41
+msgid "Mapa odborů"
+msgstr ""
+
+#: themes/kct/archive-odbory.php:51
+msgid "Nebyly nalezeny žádné odbory."
+msgstr ""
+
+#: themes/kct/archive-trasa.php:39
+#: themes/kct/index.php:144
+#: themes/kct/search.php:50
+#: themes/kct/_archive.php:42
+msgid "Předchozí"
+msgstr ""
+
+#: themes/kct/archive-trasa.php:40
+#: themes/kct/index.php:145
+#: themes/kct/search.php:51
+#: themes/kct/_archive.php:43
+msgid "Další"
+msgstr ""
+
+#: themes/kct/archive-trasa.php:41
+#: themes/kct/index.php:146
+#: themes/kct/search.php:52
+#: themes/kct/_archive.php:44
+msgid "Navigace v příspěvcích"
+msgstr ""
+
+#. translators: 1: title.
+#: themes/kct/comments.php:35
+msgid "Jeden komentář k &bdquo;%1$s&ldquo;"
+msgstr ""
+
+#. translators: 1: comment count number, 2: title.
+#: themes/kct/comments.php:41
+msgctxt "comments title"
+msgid "%1$s komentář k &bdquo;%2$s&ldquo;"
+msgid_plural "%1$s komentářů k &bdquo;%2$s&ldquo;"
+msgstr[0] ""
+msgstr[1] ""
+
+#: themes/kct/comments.php:68
+msgid "Komentáře jsou uzavřené."
+msgstr ""
+
+#. translators: 1: Theme name, 2: Theme author.
+#: themes/kct/footer.php:32
+msgid "Postaveno na šabloně %1$s"
+msgstr ""
+
+#: themes/kct/functions.php:52
+#: themes/kct/header.php:81
+msgid "Hlavní menu"
+msgstr ""
+
+#: themes/kct/functions.php:127
+msgid "Postranní sloupec"
+msgstr ""
+
+#: themes/kct/functions.php:129
+#: themes/kct/functions.php:140
+msgid "Sem se vkládají widgety."
+msgstr ""
+
+#: themes/kct/functions.php:138
+msgid "Patička"
+msgstr ""
+
+#: themes/kct/header.php:15
+#: themes/kct/inc/customizer.php:151
+msgid "Stát se členem"
+msgstr ""
+
+#: themes/kct/header.php:37
+msgid "Přejít k obsahu"
+msgstr ""
+
+#: themes/kct/header.php:77
+msgid "Menu"
+msgstr ""
+
+#: themes/kct/header.php:107
+msgid "Hledat…"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:40
+msgid "Vzhled šablony"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:45
+msgid "Nápověda: Vzhled webu"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:57
+msgid "Styl šablony"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:60
+msgid "Obrazový"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:61
+msgid "Časopisový"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:62
+msgid "Kartový"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:74
+msgid "Průhledné menu přes hero"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:75
+msgid "Menu se u hero sekcí (detail příspěvku) překrývá přes obrázek. Při scrollu se podbarví."
+msgstr ""
+
+#: themes/kct/inc/customizer.php:87
+msgid "Nadpis stránky Akce"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:88
+msgid "Nadpis (H1) na výpisu akcí. Prázdné = výchozí „Akce\"."
+msgstr ""
+
+#: themes/kct/inc/customizer.php:99
+msgid "Nadpis stránky Odbory"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:100
+msgid "Nadpis (H1) na výpisu odborů. Prázdné = výchozí „Odbory\"."
+msgstr ""
+
+#: themes/kct/inc/customizer.php:118
+msgid "Zobrazit mapu ve výpisu akcí"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:119
+msgid "Mapa s akcemi nad výpisem na stránce /akce/. Vypni, pokud ji odbor nechce."
+msgstr ""
+
+#: themes/kct/inc/customizer.php:132
+msgid "Vyhledávání v hlavičce"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:133
+msgid "Ikona lupy vedle menu; po kliknutí se rozbalí vyhledávací pole. Bez ní se dá hledat jen přes adresu /?s=výraz."
+msgstr ""
+
+#: themes/kct/inc/customizer.php:145
+msgid "Odkaz tlačítka v hlavičce"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:146
+msgid "Odkaz tlačítka „Stát se členem\". Když zůstane prázdné, tlačítko se v hlavičce nezobrazí."
+msgstr ""
+
+#: themes/kct/inc/customizer.php:157
+msgid "Text tlačítka v hlavičce"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:170
+msgid "Primární barva"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:180
+msgid "Druhé logo v hlavičce"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:184
+msgid "Žádné"
+msgstr ""
+
+#: themes/kct/inc/customizer.php:186
+msgid "Vaše dobrá značka"
+msgstr ""
+
+#. translators: %s: post author.
+#: themes/kct/inc/template-tags.php:37
+msgctxt "post author"
+msgid "Napsal %s"
+msgstr ""
+
+#. translators: used between list items, there is a space after the comma
+#: themes/kct/inc/template-tags.php:55
+msgctxt "list item separator"
+msgid ", "
+msgstr ""
+
+#. translators: 1: list of tags.
+#: themes/kct/inc/template-tags.php:58
+msgid "Štítky: %1$s"
+msgstr ""
+
+#. translators: %s: post title
+#: themes/kct/inc/template-tags.php:68
+msgid "Napsat komentář<span class=\"screen-reader-text\"> k %s</span>"
+msgstr ""
+
+#. translators: %s: Name of current post. Only visible to screen readers
+#: themes/kct/inc/template-tags.php:85
+#: themes/kct/template-parts/content-page.php:40
+msgid "Upravit <span class=\"screen-reader-text\">%s</span>"
+msgstr ""
+
+#: themes/kct/inc/template-tags.php:272
+msgid "Akce má propozice"
+msgstr ""
+
+#. translators: %d: počet akcí, které ještě nejsou vypsané.
+#: themes/kct/inc/template-tags.php:344
+msgid "Zobrazit další akci (zbývá %d)"
+msgid_plural "Zobrazit další akce (zbývá %d)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: themes/kct/inc/template-tags.php:386
+msgid "Tento víkend"
+msgstr ""
+
+#: themes/kct/inc/template-tags.php:391
+msgid "Tento měsíc"
+msgstr ""
+
+#: themes/kct/inc/template-tags.php:396
+msgid "Rok dopředu"
+msgstr ""
+
+#: themes/kct/inc/template-tags.php:492
+msgid "Žádná akce nevyhovuje"
+msgstr ""
+
+#. translators: %d je počet akcí (1).
+#: themes/kct/inc/template-tags.php:498
+msgid "Nalezena %d akce"
+msgstr ""
+
+#. translators: %d je počet akcí (2 až 4).
+#: themes/kct/inc/template-tags.php:500
+msgid "Nalezeny %d akce"
+msgstr ""
+
+#. translators: %d je počet akcí (5 a více).
+#: themes/kct/inc/template-tags.php:502
+msgid "Nalezeno %d akcí"
+msgstr ""
+
+#. translators: %d je počet výsledků (1).
+#: themes/kct/inc/template-tags.php:518
+msgid "Nalezen %d výsledek"
+msgstr ""
+
+#. translators: %d je počet výsledků (2 až 4).
+#: themes/kct/inc/template-tags.php:520
+msgid "Nalezeny %d výsledky"
+msgstr ""
+
+#. translators: %d je počet výsledků (0 a 5 a více).
+#: themes/kct/inc/template-tags.php:522
+msgid "Nalezeno %d výsledků"
+msgstr ""
+
+#. translators: 1: datum nejbližší akce („21. listopadu“), 2: odkaz s názvem akce.
+#: themes/kct/inc/template-tags.php:574
+msgid "Nejbližší akce je %1$s: %2$s"
+msgstr ""
+
+#: themes/kct/inc/template-tags.php:584
+msgid "Zobrazit všechny nadcházející akce"
+msgstr ""
+
+#: themes/kct/inc/template-tags.php:587
+msgid "Žádná nadcházející akce zatím není."
+msgstr ""
+
+#: themes/kct/template-parts/breadcrumbs.php:40
+msgid "Drobečková navigace"
+msgstr ""
+
+#: themes/kct/template-parts/content-404.php:22
+msgid "Tahle adresa už neplatí"
+msgstr ""
+
+#: themes/kct/template-parts/content-404.php:27
+msgid "Stránka, kterou hledáte, byla pravděpodobně zrušena nebo přesunuta jinam — často jde o starou akci, na kterou už nevede platný odkaz. Zkuste ji najít přes vyhledávání, nebo pokračujte na některou z těchto stránek:"
+msgstr ""
+
+#: themes/kct/template-parts/content-404.php:44
+msgid "Odbory"
+msgstr ""
+
+#: themes/kct/template-parts/content-404.php:52
+msgid "Aktuality a zprávy"
+msgstr ""
+
+#: themes/kct/template-parts/content-404.php:59
+msgid "Domovská stránka"
+msgstr ""
+
+#. translators: %s: datum konání akce ve tvaru j. n. Y.
+#: themes/kct/template-parts/content-akce.php:66
+msgid "Tato akce už proběhla %s."
+msgstr ""
+
+#: themes/kct/template-parts/content-akce.php:262
+msgid "Otevřít propozice v PDF"
+msgstr ""
+
+#: themes/kct/template-parts/content-akce.php:264
+msgid "Náhled dokumentu"
+msgstr ""
+
+#: themes/kct/template-parts/content-akce.php:267
+msgid "Náhled PDF tento prohlížeč nezobrazí."
+msgstr ""
+
+#: themes/kct/template-parts/content-akce.php:268
+msgid "Otevřít PDF"
+msgstr ""
+
+#: themes/kct/template-parts/content-none.php:14
+msgid "Nic nenalezeno"
+msgstr ""
+
+#. translators: 1: link to WP admin new post page.
+#: themes/kct/template-parts/content-none.php:24
+msgid "Chystáte se publikovat první příspěvek? <a href=\"%1$s\">Začněte tady</a>."
+msgstr ""
+
+#: themes/kct/template-parts/content-none.php:37
+msgid "Hledanému výrazu nic neodpovídá. Zkuste to prosím znovu s jinými slovy."
+msgstr ""
+
+#: themes/kct/template-parts/content-none.php:44
+msgid "Vypadá to, že tu hledané není. Zkuste to prosím přes vyhledávání."
+msgstr ""
+
+#: themes/kct/template-parts/content-page.php:26
+#: themes/kct/template-parts/content-post.php:22
+#: themes/kct/template-parts/content.php:57
+msgid "Stránky:"
+msgstr ""
+
+#. translators: used between list items, there is a space after the comma
+#: themes/kct/template-parts/content.php:28
+msgid ", "
+msgstr ""
+
+#. translators: 1: list of categories.
+#: themes/kct/template-parts/content.php:31
+msgid " v rubrice %1$s"
+msgstr ""
+
+#. translators: %s: Name of current post. Only visible to screen readers
+#: themes/kct/template-parts/content.php:44
+msgid "Pokračovat ve čtení<span class=\"screen-reader-text\"> \"%s\"</span>"
+msgstr ""
+
+#: themes/kct/template-parts/event-nav.php:34
+msgid "Navigace mezi akcemi"
+msgstr ""
+
+#: themes/kct/template-parts/event-nav.php:38
+msgid "Předchozí akce"
+msgstr ""
+
+#: themes/kct/template-parts/event-nav.php:47
+msgid "Následující akce"
+msgstr ""
+
+#: themes/kct/template-parts/event-related.php:37
+#: themes/kct/template-parts/post-related.php:39
+#: themes/kct/template-parts/route-related.php:28
+msgid "Mohlo by vás zajímat"
+msgstr ""
+
+#: themes/kct/template-parts/event-related.php:39
+msgid "Další akce"
+msgstr ""
+
+#: themes/kct/template-parts/event-series.php:41
+msgid "Další ročníky"
+msgstr ""
+
+#: themes/kct/template-parts/event-series.php:53
+msgid "ročník"
+msgstr ""
+
+#: themes/kct/template-parts/event-series.php:53
+msgid "rok"
+msgstr ""
+
+#: themes/kct/template-parts/event-series.php:65
+msgid "Proběhlo"
+msgstr ""
+
+#: themes/kct/template-parts/event-series.php:65
+msgid "Chystá se"
+msgstr ""
+
+#: themes/kct/template-parts/post-hero.php:52
+msgid "%d min čtení"
+msgstr ""
+
+#: themes/kct/template-parts/post-nav.php:16
+msgid "Další příspěvky"
+msgstr ""
+
+#: themes/kct/template-parts/post-nav.php:20
+msgid "Novější"
+msgstr ""
+
+#: themes/kct/template-parts/post-nav.php:29
+msgid "Starší"
+msgstr ""
+
+#: themes/kct/template-parts/post-related.php:41
+msgid "Další aktuality"
+msgstr ""
+
+#: themes/kct/template-parts/post-share.php:35
+msgid "Kopírovat odkaz"
+msgstr ""
+
+#: themes/kct/template-parts/post-share.php:43
+msgid "Upravit článek"
+msgstr ""
+
+#: themes/kct/template-parts/route-nav.php:20
+msgid "Navigace mezi trasami"
+msgstr ""
+
+#: themes/kct/template-parts/route-nav.php:24
+msgid "Novější trasa"
+msgstr ""
+
+#: themes/kct/template-parts/route-nav.php:33
+msgid "Starší trasa"
+msgstr ""
+
+#: themes/kct/template-parts/route-others.php:30
+msgid "Trasy na webu"
+msgstr ""
+
+#: themes/kct/template-parts/route-others.php:46
+msgid "Všechny trasy"
+msgstr ""
+
+#: themes/kct/template-parts/route-related.php:30
+msgid "Další trasy"
 msgstr ""
 
 #: assets/blocks/action/edit.js:40
@@ -1190,7 +2510,7 @@ msgstr ""
 #: assets/blocks/action/edit.js:66
 #: assets/blocks/cover/edit.js:70
 #: assets/blocks/image-content/edit.js:59
-#: assets/blocks/infobox-item/edit.js:77
+#: assets/blocks/infobox-item/edit.js:94
 msgid "Změnit obrázek"
 msgstr ""
 
@@ -1216,7 +2536,7 @@ msgstr ""
 
 #: assets/blocks/action/edit.js:87
 #: assets/blocks/cover/edit.js:53
-#: assets/blocks/infobox-item/edit.js:60
+#: assets/blocks/infobox-item/edit.js:77
 #: assets/blocks/infobox/edit.js:80
 msgid "Otevřít v novém okně"
 msgstr ""
@@ -1234,14 +2554,14 @@ msgstr ""
 
 #: assets/blocks/action/edit.js:127
 #: assets/blocks/cover/edit.js:91
-#: assets/blocks/infobox-item/edit.js:99
+#: assets/blocks/infobox-item/edit.js:116
 #: assets/blocks/infobox/edit.js:105
 msgid "Nadpis"
 msgstr ""
 
 #: assets/blocks/action/edit.js:135
 #: assets/blocks/cover/edit.js:98
-#: assets/blocks/infobox-item/edit.js:106
+#: assets/blocks/infobox-item/edit.js:123
 #: assets/blocks/infobox/edit.js:112
 msgid "Text"
 msgstr ""
@@ -1267,47 +2587,43 @@ msgstr ""
 msgid "Předtitulek…"
 msgstr ""
 
-#: assets/blocks/infobox-item/edit.js:19
-msgid "Výchozí (primární)"
+#: assets/blocks/infobox-item/edit.js:33
+msgid "Primární barva webu"
 msgstr ""
 
-#: assets/blocks/infobox-item/edit.js:20
-msgid "Primární barva"
+#: assets/blocks/infobox-item/edit.js:34
+msgid "Modrá značka"
 msgstr ""
 
-#: assets/blocks/infobox-item/edit.js:21
-msgid "Sekundární barva"
+#: assets/blocks/infobox-item/edit.js:35
+msgid "Červená značka"
 msgstr ""
 
-#: assets/blocks/infobox-item/edit.js:22
-msgid "Červená"
+#: assets/blocks/infobox-item/edit.js:36
+msgid "Zelená značka"
 msgstr ""
 
-#: assets/blocks/infobox-item/edit.js:23
-msgid "Modrá"
+#: assets/blocks/infobox-item/edit.js:37
+msgid "Žlutá značka"
 msgstr ""
 
-#: assets/blocks/infobox-item/edit.js:24
-msgid "Zelená"
+#: assets/blocks/infobox-item/edit.js:38
+msgid "Tmavá"
 msgstr ""
 
-#: assets/blocks/infobox-item/edit.js:25
-msgid "Žlutá"
-msgstr ""
-
-#: assets/blocks/infobox-item/edit.js:44
+#: assets/blocks/infobox-item/edit.js:61
 msgid "Nastavení karty"
 msgstr ""
 
-#: assets/blocks/infobox-item/edit.js:46
-msgid "Barva boxu"
+#: assets/blocks/infobox-item/edit.js:63
+msgid "Barva proužku nad kartou"
 msgstr ""
 
-#: assets/blocks/infobox-item/edit.js:53
+#: assets/blocks/infobox-item/edit.js:70
 msgid "URL odkazu"
 msgstr ""
 
-#: assets/blocks/infobox-item/edit.js:88
+#: assets/blocks/infobox-item/edit.js:105
 #: assets/blocks/infobox/edit.js:37
 msgid "Obrázek / ikona"
 msgstr ""
@@ -1329,8 +2645,76 @@ msgstr ""
 msgid "Text tlačítka na archiv"
 msgstr ""
 
-#: assets/scripts/block-editor.js:21
+#: assets/blocks/routes/edit.js:19
+msgid "Počet zobrazených tras"
+msgstr ""
+
+#: assets/blocks/routes/edit.js:27
+msgid "Řazení"
+msgstr ""
+
+#: assets/blocks/routes/edit.js:37
+msgid "Text tlačítka na výpis tras"
+msgstr ""
+
+#: assets/blocks/turinka-items/edit.js:21
+msgid "Co vypsat"
+msgstr ""
+
+#: assets/blocks/turinka-items/edit.js:24
+msgid "Jen obsah našeho odboru nebo oblasti"
+msgstr ""
+
+#: assets/blocks/turinka-items/edit.js:25
+msgid "Celou oblast"
+msgstr ""
+
+#: assets/blocks/turinka-items/edit.js:26
+msgid "Vše veřejné v Turince"
+msgstr ""
+
+#: assets/blocks/turinka-items/edit.js:32
+msgid "Počet tras"
+msgstr ""
+
+#: assets/blocks/turinka-items/edit.js:32
+msgid "Počet míst"
+msgstr ""
+
+#: assets/blocks/turinka-items/edit.js:45
+msgid "Snadná"
+msgstr ""
+
+#: assets/blocks/turinka-items/edit.js:46
+msgid "Střední"
+msgstr ""
+
+#: assets/blocks/turinka-items/edit.js:47
+msgid "Náročná"
+msgstr ""
+
+#: assets/blocks/turinka-items/edit.js:54
+msgid "Nadpis nad výpisem"
+msgstr ""
+
+#: assets/scripts/block-editor.js:23
 msgid "Karty stejné výšky"
+msgstr ""
+
+#: assets/scripts/turinka-route.js:83
+msgid "Formulář Turinky se nepodařilo otevřít."
+msgstr ""
+
+#: assets/scripts/turinka-route.js:96
+msgid "Uloženou trasu se nepodařilo dočíst."
+msgstr ""
+
+#: assets/scripts/turinka-route.js:115
+msgid "Odebrat trasu z Turinky? Lidé ji tam přestanou vidět."
+msgstr ""
+
+#: assets/scripts/turinka-route.js:127
+msgid "Odebrání se nepovedlo."
 msgstr ""
 
 #: blocks/action/block.json
@@ -1390,7 +2774,7 @@ msgstr ""
 
 #: blocks/infobox-item/block.json
 msgctxt "block description"
-msgid "Jedna info karta – obrázek, nadpis, text, odkaz a barva. Ideální do sloupců."
+msgid "Jedna info karta – obrázek, nadpis, text, odkaz a barva proužku. Ideální do sloupců."
 msgstr ""
 
 #: blocks/infobox/block.json
@@ -1411,4 +2795,34 @@ msgstr ""
 #: blocks/news/block.json
 msgctxt "block description"
 msgid "Výpis nejnovějších příspěvků (dynamický blok)."
+msgstr ""
+
+#: blocks/routes/block.json
+msgctxt "block title"
+msgid "Trasy"
+msgstr ""
+
+#: blocks/routes/block.json
+msgctxt "block description"
+msgid "Výpis tras z webu (dynamický blok)."
+msgstr ""
+
+#: blocks/turinka-places/block.json
+msgctxt "block title"
+msgid "Místa z Turinky"
+msgstr ""
+
+#: blocks/turinka-places/block.json
+msgctxt "block description"
+msgid "Výpis míst z aplikace Turinka (dynamický blok)."
+msgstr ""
+
+#: blocks/turinka-routes/block.json
+msgctxt "block title"
+msgid "Trasy z Turinky"
+msgstr ""
+
+#: blocks/turinka-routes/block.json
+msgctxt "block description"
+msgid "Výpis tras z aplikace Turinka (dynamický blok)."
 msgstr ""

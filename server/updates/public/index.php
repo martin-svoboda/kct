@@ -54,7 +54,7 @@ if ( trim( $path, '/' ) !== $config['slug'] ) {
 
 try {
 	$latest   = kct_latest_release( $config );
-	$metadata = kct_build_metadata( $latest['release'], $latest['plugin_file'], $config );
+	$metadata = kct_build_metadata( $latest['release'], $latest['plugin_file'], $config, (string) ( $latest['readme'] ?? '' ) );
 } catch ( Throwable $e ) {
 	error_log( 'kct-updates: metadata se nepodařilo složit — ' . $e->getMessage() );
 

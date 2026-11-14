@@ -341,7 +341,7 @@ if ( ! function_exists( 'kct_events_more' ) ) :
 			esc_html(
 				sprintf(
 					/* translators: %d: počet akcí, které ještě nejsou vypsané. */
-					_n( 'Zobrazit další akci', 'Zobrazit další akce (zbývá %d)', $rest, 'kct' ),
+					_n( 'Zobrazit další akci (zbývá %d)', 'Zobrazit další akce (zbývá %d)', $rest, 'kct' ),
 					$rest
 				)
 			)

@@ -48,6 +48,8 @@ function kct_read_cache( string $file ): ?array {
 
 	$data = json_decode( (string) file_get_contents( $file ), true );
 
+	// `readme` se nevyžaduje: cache uložená dřív, než se changelog začal brát
+	// z readme.txt, je pořád platná — jen se z ní changelog poskládá postaru.
 	return is_array( $data ) && isset( $data['fetched_at'], $data['release'], $data['plugin_file'] )
 		? $data
 		: null;
@@ -94,10 +96,22 @@ function kct_latest_release( array $config ): array {
 			'text/plain'
 		);
 
+		// readme.txt nese changelog. Vydání starší než readme ho nemá, a to není
+		// chyba — proto se jeho nedostupnost nepropisuje do celé odpovědi.
+		try {
+			$readme = kct_github_get(
+				'https://raw.githubusercontent.com/' . $config['repo'] . '/' . rawurlencode( $tag ) . '/readme.txt',
+				'text/plain'
+			);
+		} catch ( Throwable $e ) {
+			$readme = '';
+		}
+
 		$fresh = array(
 			'fetched_at'  => time(),
 			'release'     => $release,
 			'plugin_file' => $plugin_file,
+			'readme'      => $readme,
 		);
 
 		if ( ! is_dir( $config['data_dir'] ) ) {

@@ -154,6 +154,13 @@ rsyncem na verzi posledního tagu, takže se jim žádná aktualizace nenabídne
 a v přehledu instalací je chceme vidět — mimo jiné proto, že zaseknutá verze
 tam prozradí nepovedené nasazení.
 
+**Changelog píšeme ručně do `readme.txt`** ve formátu, jaký WordPress u pluginů
+čeká (`== Changelog ==`, `= 2.1.0 =`, odrážky `*`). Endpoint ho z readme daného
+tagu vytáhne a pošle do okna „Zobrazit detaily". Tělo vydání na GitHubu, které
+se skládá z názvů commitů, slouží už jen jako záloha pro vydání starší než
+readme. Stejný text v rozepsané podobě patří na stránku „Změny v šabloně"
+v `docs/user/`.
+
 Změny v `server/updates/` ověřuje `php server/updates/public/test.php` —
 testuje čistou logiku, bez sítě a databáze. Workflow ho spouští před
 nasazením.

@@ -62,11 +62,86 @@ function kct_mysql_time( string $iso ): string {
 }
 
 /**
+ * Changelog z `readme.txt` převedený do HTML.
+ *
+ * Changelog píšeme ručně do `readme.txt` ve formátu, jaký má WordPress
+ * u pluginů zvykem (`== Changelog ==`, `= 2.1.0 =`, odrážky `*`). Dřív se bralo
+ * tělo vydání na GitHubu, jenže to se skládá automaticky z názvů commitů —
+ * v okně „Zobrazit detaily" pak správce webu četl větu psanou vývojářem sobě,
+ * ne přehled toho, co se na jeho webu změní.
+ *
+ * Převádí se jen to, co se v changelogu opravdu vyskytuje: nadpis verze,
+ * odrážky a obyčejný odstavec. Markdown se tu nehledá — kdo píše odkaz,
+ * napíše adresu, a ta je čitelná i jako text.
+ *
+ * Prázdný řetězec znamená „changelog v readme není" a volající si poradí jinak.
+ */
+function kct_changelog_from_readme( string $readme ): string {
+	if ( ! preg_match( '/^==[ \t]*Changelog[ \t]*==[ \t]*$(.*?)(?=^==[ \t]|\z)/msi', $readme, $match ) ) {
+		return '';
+	}
+
+	$html  = '';
+	$items = array();
+	$text  = array();
+
+	$flush = static function () use ( &$html, &$items, &$text ): void {
+		if ( $text ) {
+			$html .= '<p>' . implode( ' ', $text ) . '</p>';
+			$text  = array();
+		}
+
+		if ( $items ) {
+			$html .= '<ul><li>' . implode( '</li><li>', $items ) . '</li></ul>';
+			$items = array();
+		}
+	};
+
+	foreach ( preg_split( '/\R/', trim( (string) $match[1] ) ) as $line ) {
+		$line = trim( (string) $line );
+
+		if ( '' === $line ) {
+			continue;
+		}
+
+		$safe = htmlspecialchars( $line, ENT_QUOTES, 'UTF-8' );
+
+		if ( preg_match( '/^=[ \t]*(.+?)[ \t]*=$/', $line, $heading ) ) {
+			$flush();
+			$html .= '<h4>' . htmlspecialchars( trim( $heading[1] ), ENT_QUOTES, 'UTF-8' ) . '</h4>';
+			continue;
+		}
+
+		if ( preg_match( '/^\*[ \t]+(.*)$/', $line, $item ) ) {
+			$items[] = htmlspecialchars( trim( $item[1] ), ENT_QUOTES, 'UTF-8' );
+			continue;
+		}
+
+		// Odstavec mimo odrážky: nejdřív se uzavře rozepsaný seznam, aby text
+		// nespadl dovnitř poslední odrážky.
+		if ( $items ) {
+			$flush();
+		}
+
+		$text[] = $safe;
+	}
+
+	$flush();
+
+	return $html;
+}
+
+/**
  * Metadata pro plugin-update-checker.
+ *
+ * @param array  $release     Vydání z GitHub API.
+ * @param string $plugin_file Obsah `kct.php` v daném tagu.
+ * @param array  $config      Konfigurace endpointu.
+ * @param string $readme      Obsah `readme.txt` v daném tagu; prázdný u starších vydání.
  *
  * @throws RuntimeException Vydání bez verze nebo bez instalačního ZIPu.
  */
-function kct_build_metadata( array $release, string $plugin_file, array $config ): array {
+function kct_build_metadata( array $release, string $plugin_file, array $config, string $readme = '' ): array {
 	$version = kct_version_from_tag( (string) ( $release['tag_name'] ?? '' ) );
 	$zip     = kct_find_asset( (array) ( $release['assets'] ?? array() ), $config['asset_pattern'] );
 
@@ -76,10 +151,16 @@ function kct_build_metadata( array $release, string $plugin_file, array $config 
 		throw new RuntimeException( 'Vydání nemá použitelný tag nebo instalační ZIP.' );
 	}
 
-	// GitHub posílá changelog jako HTML, když se o to požádá hlavičkou Accept
-	// (viz github.php). Když ne, projde se aspoň surový Markdown — modál
-	// s detaily má být čitelný, i kdyby GitHub media type přestal podporovat.
-	$changelog = (string) ( $release['body_html'] ?? '' );
+	// Changelog se bere z `readme.txt` daného vydání. Vydání starší než readme
+	// ho nemají, a proto zůstává původní cesta: GitHub posílá tělo vydání jako
+	// HTML, když se o to požádá hlavičkou Accept (viz github.php), a když ani
+	// to ne, projde se aspoň surový Markdown — okno s detaily má být čitelné
+	// vždycky.
+	$changelog = kct_changelog_from_readme( $readme );
+
+	if ( $changelog === '' ) {
+		$changelog = (string) ( $release['body_html'] ?? '' );
+	}
 
 	if ( $changelog === '' ) {
 		$changelog = '<pre>' . htmlspecialchars( (string) ( $release['body'] ?? '' ), ENT_QUOTES, 'UTF-8' ) . '</pre>';
@@ -95,6 +176,8 @@ function kct_build_metadata( array $release, string $plugin_file, array $config 
 		'author_homepage' => $config['author_homepage'],
 		'requires'        => kct_plugin_header( $plugin_file, 'Requires at least' ),
 		'requires_php'    => kct_plugin_header( $plugin_file, 'Requires PHP' ),
+		// „Tested up to" v hlavičce pluginu není, WordPress ho čte z readme.
+		'tested'          => kct_plugin_header( $readme, 'Tested up to' ),
 		'last_updated'    => kct_mysql_time( (string) ( $release['published_at'] ?? '' ) ),
 		'sections'        => array(
 			'description' => $config['description'],

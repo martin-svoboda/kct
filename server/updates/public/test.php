@@ -74,6 +74,23 @@ $fallback = kct_build_metadata(
 );
 check( 'metadata: changelog bez HTML', $fallback['sections']['changelog'], '<pre># Opraveno</pre>' );
 
+// Changelog z readme.txt: nadpis verze, odrážky a odstavec mimo ně. Je to to,
+// co uvidí správce cizího webu v okně „Zobrazit detaily", takže na pořadí
+// a uzavírání značek záleží.
+$readme = "=== Šablona KČT ===\nTested up to: 7.1\n\n== Changelog ==\n\nÚvodní věta.\n\n= 2.2.0 =\n\n* První změna\n* Druhá změna\n\n= 2.1.2 =\n\n* Starší oprava\n\n== Něco dalšího ==\n\n* Tohle už do changelogu nepatří\n";
+
+check(
+	'readme: changelog do HTML',
+	kct_changelog_from_readme( $readme ),
+	'<p>Úvodní věta.</p><h4>2.2.0</h4><ul><li>První změna</li><li>Druhá změna</li></ul><h4>2.1.2</h4><ul><li>Starší oprava</li></ul>'
+);
+check( 'readme: bez changelogu', kct_changelog_from_readme( "=== Šablona KČT ===\n\n== Description ==\n\nNic.\n" ), '' );
+check( 'readme: escapování', kct_changelog_from_readme( "== Changelog ==\n\n= 1.0 =\n\n* <b>tučně</b> & spol.\n" ), '<h4>1.0</h4><ul><li>&lt;b&gt;tučně&lt;/b&gt; &amp; spol.</li></ul>' );
+
+$from_readme = kct_build_metadata( $release, $header, $config, $readme );
+check( 'metadata: changelog z readme', $from_readme['sections']['changelog'], '<p>Úvodní věta.</p><h4>2.2.0</h4><ul><li>První změna</li><li>Druhá změna</li></ul><h4>2.1.2</h4><ul><li>Starší oprava</li></ul>' );
+check( 'metadata: tested z readme', $from_readme['tested'], '7.1' );
+
 $threw = false;
 try {
 	kct_build_metadata( array( 'tag_name' => '2.1.0', 'assets' => array() ), $header, $config );

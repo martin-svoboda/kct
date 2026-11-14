@@ -71,6 +71,10 @@ a jestli někde neběží dávno zastaralá verze s chybou, která je už oprave
 
 Samotný balíček se stahuje přímo z GitHubu, ne z `updates.sokct.cz`.
 
+U nabídnuté aktualizace je odkaz **Zobrazit detaily**. V okně, které se otevře,
+je na záložce **Changelog** přehled toho, co nová verze přináší — totéž, co
+shrnuje stránka [Změny v šabloně](/spravce/zmeny-v-sablone/).
+
 Kontroly se dají vypnout — do `wp-config.php` nad řádek
 `require_once ABSPATH . 'wp-settings.php';` patří:
 

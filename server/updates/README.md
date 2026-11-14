@@ -36,6 +36,12 @@ provozní data: `--exclude='/data/'` a `--exclude='.htpasswd'`.
 Vlastnictví se nehádá, kopíruje se ze sousední `www`
 (`chown -R --reference=…/www`).
 
+Přehled změn v okně „Zobrazit detaily" se bere z **`readme.txt`** pluginu
+v daném tagu (sekce `== Changelog ==`), ne z těla vydání na GitHubu. To se
+skládá automaticky z názvů commitů, takže správce cizího webu v něm četl větu
+psanou vývojářem sobě. Vydání starší než `readme.txt` ho nemají — pro ně zůstává
+tělo vydání jako záloha.
+
 Instalační ZIP se **neservíruje odsud**: `download_url` míří na přílohu
 vydání na GitHubu. Výpadek tohoto endpointu tedy znamená jen to, že se na
 webech neukáže nabídka aktualizace, ne přerušenou instalaci.

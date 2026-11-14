@@ -16,7 +16,7 @@ Historie začíná u verze 2.0.0, kterou se šablona začala vydávat veřejně.
 Předchozí vydání vznikala jen pro weby provozované přímo autorem šablony a
 zpětně se nedoplňují — všechno, co uměla, je součástí verze 2.0.0.
 
-## Připravuje se
+## 2.2.0 — 14. 11. 2026
 
 - **Nastavení šablony se přestěhovalo.** Dřív bylo v *Nastavení → KČT*, nově má
   šablona vlastní menu **KČT** v levém sloupci (nad Vzhledem) a nastavení je
@@ -32,7 +32,47 @@ zpětně se nedoplňují — všechno, co uměla, je součástí verze 2.0.0.
   databáze KČT i Turinka — a umí najít nespárované dvojice.
 
 - **Trasy a místa z Turinky.** Propojený web má v menu KČT přehledy tras a míst,
-  které aplikace vede pod jeho organizací.
+  které aplikace vede pod jeho organizací, a novým blokem je vypíše do
+  libovolné stránky. Na stránce akce přibyly trasy, po kterých akce vede,
+  a předpověď počasí na den konání.
+
+- **Hledání ve výpisu odborů.** Od osmi odborů výš je nad seznamem políčko,
+  které hledá v názvu i obci. Diakritika ani velikost písmen nevadí, takže
+  „ricany“ najde i Říčany.
+
+- **Barva proužku u bloku Info karta.** Vedle primární barvy webu se dají
+  vybrat čtyři barvy turistického značení, takže kartou jde odkázat na
+  konkrétní barvu značené trasy.
+
+- **Výpis akcí se nestránkuje.** Další akce se dotáhnou samy, jakmile se
+  k nim dočtete, a přidají se pod ty načtené — seznam se tím nehne a nic
+  v něm neuskočí. Pod výpisem zůstává tlačítko *Zobrazit další akce*, které
+  udělá totéž kliknutím.
+
+- **Filtr akcí je sbalitelný a nabízí rychlou volbu.** Místo vyplňování dvou
+  dat jde kliknout na hotový rozsah; na telefonu je filtr zavřený a v záhlaví
+  píše, podle čeho se zrovna filtruje. Nad výpisem stojí počet nalezených akcí
+  a prázdný výsledek nabídne nejbližší akci za koncem zvoleného rozmezí.
+
+- **Propozice se na telefonu nestahují zbytečně.** Nahoře je tlačítko
+  *Otevřít propozice v PDF*, náhled dokumentu je pod ním a na úzké obrazovce
+  sbalený — soubor se stáhne, až když si ho někdo rozbalí.
+
+- **Výsledky hledání se dají přelétnout.** Nad každým výsledkem je štítek
+  s typem obsahu, nadpis je menší než titulek stránky a náhled zkrácený na
+  pruh, takže se na obrazovku vejde víc než jeden a půl výsledku.
+
+- **Výpisy a stránky akcí jsou přístupnější a lehčí.** Nadpisy mají správné
+  úrovně, orientační body popisky, položky v patičce větší cíl pro palec
+  a obrázek na stránce akce se stahuje ve velikosti, v jaké se opravdu
+  zobrazí, místo originálu z fotoaparátu.
+
+- **Opraveno: příspěvek sdílený na Facebook s fotkou končil v albu stránky**
+  místo ve výpisu příspěvků. Fotka se nově nahraje zvlášť a příspěvek na ni
+  odkáže, takže je na zdi vidět jako ostatní příspěvky.
+
+- **Nápověda.** Přibyl návod, jak zřídit vlastní facebookovou aplikaci, a
+  kapitola o tom, proč odeslaný příspěvek nemusí být pro ostatní vidět.
 
 ## 2.1.2 — 8. 11. 2026
 

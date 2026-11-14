@@ -78,6 +78,9 @@ jobs:
         run: |
           sed -i "s/KCT_VERSION/${{ env.PLUGIN_VERSION }}/g" kct.php
           sed -i "s/KCT_VERSION/${{ env.PLUGIN_VERSION }}/g" themes/kct/style.css
+          # readme.txt drží changelog a `Stable tag`; ten se doplňuje stejně
+          # jako verze v hlavičce, aby se čísla nemohla rozejít.
+          sed -i "s/KCT_VERSION/${{ env.PLUGIN_VERSION }}/g" readme.txt
 
       # Instalovatelný balíček pluginu pro weby mimo tenhle deploy. Obsah je
       # záměrně totožný s tím, co rsync posílá na produkci.
