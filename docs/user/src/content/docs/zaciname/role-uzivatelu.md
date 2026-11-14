@@ -28,7 +28,7 @@ vždy jen pro ten jeden web. Je-li web součástí sítě více webů, neplynou 
   média, komentáře, a to i cizí. Nedostane se ale k nastavení webu, vzhledu,
   menu ani k uživatelům.
 - **Administrátor** — vedle obsahu má i celý web: vzhled, menu, widgety,
-  uživatele a nastavení včetně **Nastavení → KČT**.
+  uživatele a nastavení včetně **KČT → Nastavení**.
 
 ## Co komu přidělit na webu odboru
 
@@ -50,7 +50,7 @@ Kdo se s publikováním teprve seznamuje, najde postup na stránce
 
 ## Nastavení, která vyžadují administrátora
 
-Stránka **Nastavení → KČT** — tedy kód odboru nebo oblasti a celé nastavení
+Stránka **KČT → Nastavení** — tedy kód odboru nebo oblasti a celé nastavení
 sdílení na Facebook — je přístupná jen administrátorům. Šéfredaktor ji v menu
 vůbec neuvidí.
 

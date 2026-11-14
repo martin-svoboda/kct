@@ -44,6 +44,49 @@ Z toho plyne jediné rozumné pravidlo: **opravy termínu, místa, kontaktů, ty
 
 Připomíná to i editor: u akce navázané na centrální databázi se místo běžných polí zobrazí upozornění, že se veškerá data načítají z databáze akcí a že se mají upravit tam.
 
+## Přehled akcí v administraci
+
+**Akce → Přehled akcí** je jediné místo, kde je vidět, kde všude akce je. Táž akce bývá ve třech zdrojích naráz — jako příspěvek na webu, jako záznam v centrální databázi KČT a jako položka v Turince — a přehled je dává do jednoho řádku:
+
+| sloupec | co říká |
+|---|---|
+| Příspěvek | akce má na webu vlastní příspěvek (publikovaný, nebo koncept), nebo nemá |
+| Databáze KČT | číslo akce v centrální databázi, nebo pomlčka u akce, která v ní není |
+| Turinka | co o akci ví aplikace — stav píše sama Turinka (*Publikováno*, *Skrytá ze seznamů*, *Čeká na schválení*…), nebo je tam *Turinka ji nezná*; pod tím, co s akcí smíte dělat, a kdy web naposled odeslal obsah |
+
+Turinka zná i akce, které jí web nikdy neposlal — bere si je z databáze KČT podle čísla vašeho odboru nebo oblasti. Proto je ve sloupci stav i u akcí, se kterými jste nic nedělali. Název stavu je zároveň odkaz na akci v Turince.
+
+Druhý řádek ve sloupci říká, jak k akci přistupujete:
+
+- **vlastní, napojená na příspěvek** — akci dodal tenhle web a ví o tom i Turinka;
+- **vlastní, obsah z webu dodaný** — akci zná Turinka z databáze KČT a web k ní poslal svůj text;
+- **vlastní, příspěvek zatím neodeslaný** — příspěvek na webu je, ale Turinka o něm zatím neví;
+- **vlastní, bez příspěvku na webu** — akce vaší organizace, ke které na webu příspěvek není;
+- **spravujete za odbor** — akce odboru z databáze KČT; obsah k ní smíte dodávat jako web oblasti do chvíle, než ho dodá web odboru. Pak má přednost odbor;
+- **spárovaná, doplňujete prázdná pole** — cizí akce, ke které web něco doplnil.
+
+Turinka zná jen ty akce z databáze KČT, které si sama naimportovala — starší ročníky a akce hodně dopředu v ní být nemusí. U takové akce je ve sloupci pomlčka a *Turinka ji nezná*; není to chyba webu.
+
+Web, který s Turinkou propojený není, sloupec ani filtry Turinky vůbec nemá — propojení je dobrovolné a přehled kvůli němu nikoho neotravuje.
+
+### Nespárované dvojice
+
+Filtr **Nespárované dvojice** najde akce, které má web dvakrát: jednou jako vlastní příspěvek a podruhé jako záznam z databáze KČT se stejným názvem i datem. Stává se to, když redakce napsala příspěvek sama a akce přibyla do databáze až potom — příspěvek pak nemá číslo akce, podle kterého se obě strany párují, a **výpis akcí na webu takovou akci ukáže dvakrát**.
+
+Tabulka je sama nespojí: shoda názvu a data je domněnka, ne fakt. **Spraví se to vyplněním čísla akce u příspěvku** — v panelu akce je pole *ID akce z kct-db*, kam se zapíše číslo z přehledu (třeba 22863). Po uložení je z toho jeden řádek a výpis na webu ukáže akci jednou; data se pak berou z databáze a doplňují tím, co je v příspěvku.
+
+Datum v příspěvku musí souhlasit s databází, jinak se akce ve výpisu neukáže. Druhá možnost je příspěvek smazat a akci nechat vypisovat jen z databáze.
+
+Nad tabulkou se dá hledat podle názvu a filtrovat: s vlastním příspěvkem, jen v databázi KČT, zná je Turinka, jen v Turince, vlastní v Turince, spravované za odbor, Turinka je nezná, s chybou odeslání. U akce bez příspěvku je v řádku odkaz **Převést na vlastní akci**, stejný jako na stránce akce.
+
+U akce, kterou web spravuje v Turince, je v řádku i odkaz **Trasy v Turince** — rozbalí pod řádkem panel, ve kterém se k akci přivazují trasy; viz [Turinka](/funkce/turinka/). Funguje i u akcí, které na webu příspěvek nemají.
+
+Akce, kterou zná jen Turinka a web ji z databáze nemá, má v přehledu vlastní řádek — u čísla akce se napíše, že ji web z databáze nemá.
+
+Akce z Turinky se načítají na deset minut dopředu; tlačítkem **Načíst z Turinky znovu** si vynutíte čerstvá data. Když aplikace neodpoví, přehled funguje dál — ukáže poslední známý stav a nahoře hlášku, proč jsou data starší.
+
+Je to pohled, ne nástroj: přehled sám nic neodesílá ani nemění.
+
 ## Převod importované akce na vlastní
 
 Občas je potřeba u importované akce doplnit něco, co centrální databáze nemá — delší pozvánku, vlastní fotku, odkazy. K tomu slouží převod na vlastní akci.
@@ -79,6 +122,8 @@ Akce, která v centrální databázi není (pole s číslem akce zůstane na nul
 
 Typy akcí se nabízejí podle číselníku, který se stahuje spolu s akcemi. Na webu, kde ještě žádný import neproběhl, může být výběr prázdný.
 
+Je-li web propojený s Turinkou, je v postranním panelu navíc rámeček **Trasy v Turince**, kterým se k akci přivazují trasy; viz [Turinka](/funkce/turinka/). Přivázané trasy se pak na stránce akce vypíšou kartami hned pod obsahem a nad propozicemi.
+
 
 <Image src={dminkceetail} alt="Editor akce s rozbaleným panelem Data akce a poli termínu, místa a startu" />
 
@@ -86,7 +131,25 @@ Typy akcí se nabízejí podle číselníku, který se stahuje spolu s akcemi. N
 
 **Výpis akcí** na adrese `/akce/` sdružuje oba zdroje do jednoho seznamu seřazeného podle data. Nad seznamem je filtr podle rozsahu dat a typu akce; ve výchozím stavu ukazuje rok dopředu od dnešního dne. Filtr funguje i bez JavaScriptu, jen se stránka načte znovu.
 
+Nad seznamem stojí **věta s počtem nalezených akcí**, která se po každé změně filtru přepíše. Není to ozdoba: výpis se mění bez načtení stránky, takže tahle věta je jediné, co o změně řekne odečítači obrazovky — a když se filtrování nepovede, napíše se na její místo, že to nevyšlo. Dřív zůstal na obrazovce starý seznam a nic nenapovědělo, že s filtrem nesouhlasí.
+
+Pole **Od** a **Do** jsou svázaná, takže konec rozsahu nejde nastavit před jeho začátek. Při pokusu to prohlížeč odmítne vlastní hláškou místo toho, aby výpis beze slova vyšel prázdný.
+
+Nad polemi je **rychlá volba** — *Tento víkend*, *Tento měsíc*, *Rok dopředu* — a když je filtr nastavený na něco jiného než výchozí rok dopředu, přibude k ní **Zrušit filtr**. Jsou to odkazy, každý se svou adresou, takže se dají poslat i uložit do oblíbených. „Tento víkend“ nikdy nezačíná v minulosti: v sobotu a v neděli se myslí ode dneška.
+
+Když filtru nevyhovuje žádná akce, výpis to **neodbude omluvou**. Nad seznamem zůstane věta s počtem a pod ní se napíše datum a název **nejbližší akce za koncem zvoleného rozmezí** spolu s odkazem na ni a na celý výpis nadcházejících akcí. Vybraný typ akce se do toho výhledu přenáší, takže kdo filtroval cykloturistiku, nedostane nabídnutý pochod. Prázdný výsledek je u rychlé volby běžný — víkend bez akce není chyba — a tohle z něj udělá rozcestník místo slepé uličky.
+
+Výpis se načítá **po pětadvaceti akcích**, které se dotahují samy, jakmile se k nim člověk dočte. Seznam přitom jen roste — už načtené akce zůstávají na místě a stránka se neskáče na začátek, jako by to udělalo stránkování. Pod seznamem je i tlačítko *Zobrazit další akce*, které udělá totéž kliknutím (a v prohlížeči bez JavaScriptu načte další část jako novou stránku). Mapa ukazuje značky všech nalezených akcí, ne jen těch už načtených — je to přehled oblasti, ne obsah výpisu.
+
+Na **telefonu** je celý filtr jeden sbalený box. V jeho záhlaví stojí *Filtr akcí* a vedle toho, co je zrovna nastavené — třeba „Tento měsíc“ nebo rozsah dat — takže zavřený filtr pořád říká, čím je výpis zúžený. Rozbalí se kliknutím na to záhlaví a uvnitř je totéž a ve stejném pořadí jako na velké obrazovce — rychlá volba, datumová pole, typ akce. Mapa je na telefonu nižší, protože v plné výšce zabrala celou první obrazovku a výpis začínal až za ní.
+
+Na tabletu a větší obrazovce je filtr rozbalený rovnou a žádné záhlaví se nenabízí. Bez JavaScriptu je vidět všechno, jen pod sebou.
+
+Pořadí prvků filtru je na všech šířkách stejné a klávesa Tab po nich chodí odshora dolů. Dřív byla rychlá volba na velké obrazovce až pod poli, takže fokus skákal z poloviny karty nahoru a zase zpátky.
+
 **Mapa nad výpisem** vykresluje akce, které mají souřadnice. Ty pocházejí z centrální databáze — u ručně založené akce se souřadnice nikde nezadávají, takže se na mapě neobjeví, přestože v seznamu je. Mapu jde na webu vypnout, viz [Vzhled webu](/funkce/vzhled-webu/); tam se mění i nadpis stránky s výpisem.
+
+Značky v mapě se **neprocházejí klávesou Tab**. Každá akce je odkaz ve výpisu pod mapou, takže kdo chodí po webu klávesnicí, dostane se k ní tudy. Dokud značky zastávkami byly, muselo se jich před prvním odkazem ve výpisu přeskákat tolik, kolik bylo na mapě akcí. Myší i prstem se značky chovají stejně jako dřív.
 
 **Blok Kalendář akcí** vloží výpis nejbližších akcí na libovolnou stránku, například na úvodní. Popisuje ho [Kalendář akcí](/funkce/bloky/kalendar-akci/).
 
@@ -94,9 +157,13 @@ Typy akcí se nabízejí podle číselníku, který se stahuje spolu s akcemi. N
 
 **Stránka jedné akce** skládá dohromady pořadatele (s odkazem na jeho stránku odboru, pokud existuje), místo konání, termín, typy akce s kilometry, kontakty a případné propozice v PDF. U akce, která už proběhla, se do záhlaví přidá poznámka s datem konání.
 
+**Propozice** mají na stránce tlačítko *Otevřít propozice v PDF* a pod ním náhled dokumentu. Na telefonu je náhled sbalený a soubor se nestahuje, dokud si ho někdo nerozbalí — stránka A4 zmenšená na šířku telefonu se nepřečte a stahovat kvůli ní megabajty by bylo plýtvání. Propozice se čtou v prohlížeči PDF, kde se dá přibližovat a listovat, a k tomu vede právě to tlačítko.
+
 Pod obsahem akce je **navigace na předchozí a další akci**. Řadí se podle data konání, ne podle data vložení — vlevo je akce s dřívějším datem, vpravo s pozdějším. Jde jí projít i historie, protože zahrnuje i akce, které už proběhly.
 
 Pod navigací je **Mohlo by vás zajímat** — tři nejbližší budoucí akce. Přednost mají akce stejného typu jako ta zobrazená; když takových není dost, doplní se nejbližšími bez ohledu na typ. Jiné ročníky téže akce se tam neukazují, ty má vedle sebe postranní oddíl.
+
+V postranním oddílu se u akce, která teprve bude a má souřadnice startu, ukáže **předpověď počasí** z Turinky na den konání; viz [Turinka](/funkce/turinka/).
 
 Na konci postranního oddílu akce je **Další ročníky** — tatáž akce v jiných letech, od nejnovějšího ročníku k nejstaršímu. Každý ročník se vypíše jako řádek s číslem ročníku, názvem, štítkem „Proběhlo“ nebo „Chystá se“ a datem konání; u akce, která číslo ročníku vyplněné nemá, je v boxíku místo něj rok konání. Ročníky se poznají podle názvu akce a pořádajícího odboru, takže fungují i u akce, kterou v centrální databázi vůbec nemáte. Vypnete-li postranní oddíl v poli „Umístění podrobností“, skryjí se s ním i ročníky.
 

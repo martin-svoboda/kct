@@ -19,8 +19,10 @@
 @import "components/articles";
 @import "components/departmentpost";
 @import "components/eventpost";
+@import "components/routepost";
 @import "components/posthero";
 @import "components/single-post";
+@import "components/search";
 @import "components/widgets";
 @import "components/error-404";
 @import "components/events-filter";
@@ -34,4 +36,5 @@
 @import "blocks/infoboxes";
 @import "blocks/events";
 @import "blocks/news";
+@import "blocks/turinka";
 @import "~react-datepicker/dist/react-datepicker.css";

@@ -8,7 +8,6 @@
 
 const config = {
 	entry: {
-		'theme': ['./assets/scripts/theme.js'],
 		'photo': ['./assets/styles/skins/photo.scss'],
 		'magazine': ['./assets/styles/skins/magazine.scss'],
 		'cards': ['./assets/styles/skins/cards.scss'],
@@ -16,6 +15,9 @@ const config = {
 		'map': ['./assets/apps/map.js'],
 		'events-archive': ['./assets/apps/events-archive.js'],
 		'block-editor': './assets/scripts/block-editor.js',
+		'turinka-route': './assets/scripts/turinka-route.js',
+		'turinka-admin': './assets/scripts/turinka-admin.js',
+		'turinka-event': './assets/scripts/turinka-event.js',
 		'editor-style': './assets/styles/editor-style.scss',
 	},
 	output: {

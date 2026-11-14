@@ -9,6 +9,7 @@ use Kct\Turinka\Client;
 use Kct\Turinka\Config;
 use Kct\Turinka\EventPayload;
 use Kct\Turinka\Embed;
+use Kct\Turinka\Weather;
 use Kct\Turinka\EventState;
 use Kct\Turinka\TokenStore;
 use WP_Post;
@@ -53,7 +54,8 @@ class Turinka {
 		private EventState $state,
 		private EventPayload $payload,
 		private Events $events,
-		private Embed $embed
+		private Embed $embed,
+		private Weather $weather
 	) {
 		add_action( 'admin_init', array( $this, 'handle_request' ) );
 		add_action( 'admin_init', array( $this, 'handle_verify' ) );
@@ -79,10 +81,12 @@ class Turinka {
 	 * 320 px a obsah v něm scrolluje. Skript vedle rámu s `async` je závod, který
 	 * se prohrává tím častěji, čím rychleji se rám načte.
 	 *
-	 * Načítá se jen na stránce akce — jinde žádný rám není.
+	 * Načítá se jen na stránce akce — jinde žádný rám není. Rámy jsou tam dva
+	 * a každý se dá vypnout zvlášť, takže stačí, aby o výšku stál jeden z nich;
+	 * bez skriptu by druhý zůstal na výchozích 320 px.
 	 */
 	public function enqueue_embed_host(): void {
-		if ( ! $this->embed->is_enabled() ) {
+		if ( ! $this->embed->is_enabled() && ! $this->weather->is_enabled() ) {
 			return;
 		}
 

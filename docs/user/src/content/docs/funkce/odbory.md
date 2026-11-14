@@ -44,7 +44,11 @@ Odbor, který se má z webu ztratit, se přesune do koše jako každý jiný př
 
 ## Výpis odborů
 
-Výpis je na adrese `/odbory/`. Nad seznamem je mapa se značkami všech odborů, pod ní seznam s logem, názvem, číslem odboru a obcí. Nadpis stránky se dá změnit v Přizpůsobení, viz [Vzhled webu](/funkce/vzhled-webu/); bez vyplnění se použije výchozí „Odbory“.
+Výpis je na adrese `/odbory/`. Nad seznamem je mapa se značkami všech odborů, pod ní seznam s logem, názvem, číslem odboru a obcí. Značky se neprocházejí klávesou Tab — každý odbor je odkaz v seznamu pod mapou. Nadpis stránky se dá změnit v Přizpůsobení, viz [Vzhled webu](/funkce/vzhled-webu/); bez vyplnění se použije výchozí „Odbory“.
+
+Seznam je **řazený abecedně podle názvu**, česky — tedy Čáslav hned za Cheb, ne až za Zruč, jak by vyšlo při řazení podle písmen bez diakritiky.
+
+Od osmi odborů výš je nad seznamem **políčko pro hledání** v názvu a obci. Hledá se bez ohledu na diakritiku a velikost písmen, takže „ricany“ najde i Říčany, a počet nad seznamem se podle napsaného průběžně mění. Políčko přidává teprve JavaScript: kde není, je seznam celý na stránce a dá se v něm hledat prohlížečem.
 
 ## Stránka odboru
 

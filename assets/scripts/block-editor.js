@@ -9,6 +9,8 @@ import '../blocks/cover';
 import '../blocks/action';
 import '../blocks/image-content';
 import '../blocks/events';
+// import '../blocks/routes';   trasy vypnuté, viz src/Managers/PostTypesManager.php
+import '../blocks/turinka-items';
 import '../blocks/news';
 import '../blocks/infobox';
 import '../blocks/infobox-item';

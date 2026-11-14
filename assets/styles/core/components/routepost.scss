@@ -1,0 +1,150 @@
+// Detail trasy. Stavba i rozměry jsou záměrně tytéž jako u detailu akce
+// (eventpost.scss) a odboru — návštěvník má ze všech tří typů obsahu poznat
+// jeden web, ne tři. Proto se tu neopakuje jen podobné rozvržení, ale přesně
+// stejné poměry sloupců i mezery.
+.route-post {
+	width: 100%;
+
+	.entry-header {
+		padding-top: 2rem;
+		padding-bottom: 4rem;
+		margin-bottom: 0;
+
+		.container {
+			flex-flow: column;
+			align-content: center;
+			gap: 0;
+			position: relative;
+			z-index: 1;
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+	}
+
+	.route-content-wrap {
+		width: 100%;
+		margin-top: 3rem;
+		margin-bottom: 2rem;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 3rem;
+
+		@media (min-width: $large-screen) {
+			gap: 4rem;
+		}
+
+		.entry-content {
+			@media (min-width: $medium-screen) {
+				flex: 1;
+			}
+		}
+
+		.route-sidebar {
+			// Na mobilu celá šířka: bez toho by se flexový sloupec smrskl na
+			// šířku obsahu a karta s údaji by zůstala užší než text nad ní.
+			width: 100%;
+
+			@media (min-width: $medium-screen) {
+				width: 32%;
+				flex: 0 0 auto;
+				min-width: 250px;
+			}
+
+			& > * {
+				margin-bottom: 1rem;
+			}
+		}
+	}
+}
+
+// ── Rámy Turinky na stránce trasy ──────────────────────────────────────────
+// Výšku si rám hlásí sám skriptem hostitele; tady je jen odsazení od textu.
+// Platí i pro widget akce, který má stejnou třídu.
+.kct-turinka-embed {
+	margin-bottom: 2rem;
+
+	// Spodní rám (profil a tlačítka) odděluje od textu linka — je to přechod
+	// od slova webu k údajům aplikace, stejně jako u propozic akce.
+	&--details {
+		margin-top: 2.5rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--line);
+		margin-bottom: 0.5rem;
+	}
+
+	&__link {
+		margin: 0 0 2rem;
+		color: var(--text-muted);
+	}
+}
+
+// Údaje o trase v postranním oddílu: rám stojí sám o sobě, odsazení mu dává
+// postranní oddíl (.route-sidebar > * { margin-bottom }).
+.kct-turinka-embed--facts {
+	margin-bottom: 0;
+}
+
+// ── Rozcestník tras v postranním oddílu ────────────────────────────────────
+// Stavba je stejná jako u „Dalších ročníků“ akce (.event-series): položka je
+// odkaz přes celou šířku, položky odděluje linka.
+.route-others {
+	&__title {
+		margin: 0 0 0.75rem;
+	}
+
+	&__list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	&__item {
+		display: block;
+		margin: 0;
+		border-bottom: 1px solid var(--line);
+
+		&:last-child {
+			border-bottom: 0;
+		}
+	}
+
+	&__link {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 10px 0;
+		color: var(--text);
+		text-decoration: none;
+
+		&:hover {
+			filter: none;
+			background: var(--surface);
+		}
+	}
+
+	&__thumb {
+		flex: 0 0 auto;
+		width: 56px;
+		height: 56px;
+		object-fit: cover;
+		border-radius: var(--radius-card);
+	}
+
+	&__name {
+		font-family: var(--font-head);
+		font-weight: 700;
+		font-size: 1rem;
+		line-height: 1.25;
+	}
+}
+
+// ── „Další trasy“ pod článkem ──────────────────────────────────────────────
+// Symetrická mezera nahoře i dole (padding, ne margin → bez kolapsu), stejně
+// jako .post-related u aktualit a .event-related u akcí.
+.route-related {
+	padding: 56px 0;
+
+	.wp-block-heading {
+		margin: 0 0 24px;
+	}
+}

@@ -3,10 +3,40 @@
 //   Plochy:      --page-bg  --surface  --surface-alt  --surface-invert
 //   Text:        --text  --text-muted  --text-faint
 //   Akcent:      --primary  --primary-contrast  --hero-eyebrow  --line
-//   Tvar:        --radius-container  --radius-card  --btn-radius  --chip-radius  --shadow-card
+//   Tvar:        --radius-container  --radius-card  --btn-radius  --chip-radius
+//                --shadow-card  --shadow-overlay
 //   Hero/nadpis: --hero-size  --hero-align  --h2-size
-//   Členství:    --members-bg  --members-text  --members-accent
+//
+// --shadow-overlay je pro to, co leží NAD obsahem (rozbalené menu, vyhledávání
+// v hlavičce), ne v jeho toku. Je oddělený od --shadow-card schválně: plochý
+// skin chce plochý panel, kdežto skin se stíny chce u plovoucího panelu stín
+// silnější než u karty, protože panel překrývá text.
+//
+// Tokeny --members-* tu bývaly taky. Žádný styl je nečetl (grep přes celý
+// repozitář), takže je nic nekreslilo; nový skin je nenastavuje.
 //
 // Fallbacky pro všechny jsou v core/_variables.scss (skin funguje i bez kompletní sady,
-// ale pro věrný vzhled nastav všechny). Trikolóra (--kct-red/-yellow/-green) je sdílená,
-// NEnastavuj ji ve skinu.
+// ale pro věrný vzhled nastav všechny). Barvy značek (--kct-blue/-red/-yellow/-green) jsou
+// sdílené — jsou to středové pruhy turistických značek, ne dekorace, a skin je NEnastavuje.
+//
+// ── Hranice kontrastu, kterou musí skin splnit ────────────────────────────────
+// Trojice --text / --text-muted / --text-faint a --primary nejsou libovolné
+// odstíny: text ve šabloně vychází na --surface i --surface-alt, a WCAG AA žádá
+// u drobného textu 4,5:1. Platí tedy:
+//
+//   --text-muted a --text-faint  … 4,5:1 proti --surface, --surface-alt
+//                                  I --page-bg
+//   --primary                    … 4,5:1 proti týmž třem plochám
+//                                  (je i textem — odkazy, položka v dropdownu)
+//                                  a 4,5:1 proti --primary-contrast
+//                                  (bílý text na tlačítku)
+//
+// --page-bg v tom seznamu je schválně, i když se tváří jako pouhý rám kolem
+// obsahu: skin, který obsah do karet nedává, ho má pod textem. Kdo ho ztmaví,
+// musí přepočítat obě šedé i akcent — ne jen podívat se, jak to vypadá.
+//
+// Trojice odstínů šedi, které by všechny prošly a přitom se od sebe daly poznat
+// jako tři stupně, na světlém podkladu neexistuje. --text-faint proto NENÍ třetí,
+// světlejší šedá: hierarchii nese velikostí, tloušťkou a verzálkami, barvou ne.
+//
+// Změna --surface-alt mění i tyhle poměry. Kdo ji ztmaví, musí ztmavit i text.

@@ -3,13 +3,13 @@
 
 // Tokeny AŽ ZA core, aby přebily jeho fallbacky.
 :root {
-	--page-bg:#e4e2db; --surface:#fbfaf6; --surface-alt:#f1efe8; --surface-invert:#141311;
-	--text:#1b1b17; --text-muted:#6a655b; --text-faint:#9c968a;
-	--primary:#009640; --primary-contrast:#ffffff; --hero-eyebrow:#7fe0a3; --line:#e6e3da;
+	--page-bg:#f1efe8; --surface:#fbfaf6; --surface-alt:#f6f4ee; --surface-invert:#141311;
+	--text:#1b1b17; --text-muted:#5f5a51; --text-faint:#635e55;
+	--primary:#007e37; --primary-contrast:#ffffff; --hero-eyebrow:#7fe0a3; --line:#e6e3da;
 	--radius-container:6px; --radius-card:4px; --btn-radius:3px; --chip-radius:3px;
 	--shadow-card:0 0 0 1px var(--line);
+	--shadow-overlay:0 0 0 1px var(--line);
 	--hero-size:100px; --hero-align:left; --h2-size:40px;
-	--members-bg:#12261a; --members-text:#e4ede7; --members-accent:#7fe0a3;
 }
 
 // ── Layout modifikátory: Časopisový ──

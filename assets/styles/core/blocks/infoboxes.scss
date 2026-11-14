@@ -32,7 +32,11 @@
     object-fit: contain;
   }
 
-  .content h3 {
+  // Selektor na TŘÍDU, ne na `h3`: úroveň nadpisu se v kartě řídí tím, kde
+  // karta na stránce stojí (na detailu akce je to oddíl pod titulkem, tedy h2),
+  // kdežto vzhled má zůstat stejný.
+  .content h3,
+  .content .event-section__title {
     font-family: var(--font-head);
     font-weight: 600;
     font-size: 18px;

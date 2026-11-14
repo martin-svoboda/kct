@@ -82,8 +82,14 @@ a {
   color: var(--primary);
   transition: color 0.2s, opacity 0.2s;
 
-  &:focus {
-	outline: thin dotted;
+  // Tečkovaná linka o jednom pixelu v barvě textu (dědictví _s) nesplňuje
+  // WCAG 2.2 Focus Appearance — ten chce obrys aspoň dva pixely silný.
+  // `currentColor` drží kontrast v kontextu: na světlém pozadí je obrys modrý,
+  // na fotce a v tmavé patičce bílý. `:focus-visible` navíc obrys nevykreslí
+  // po kliknutí myší, jen při ovládání klávesnicí.
+  &:focus-visible {
+	outline: 2px solid currentColor;
+	outline-offset: 2px;
   }
 }
 

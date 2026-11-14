@@ -30,6 +30,17 @@ nebo filtrem `kct_docs_url`) a `Theme URI` ve `themes/kct/style.css`
 Jako příklad obce i odboru se používá **Dolní Lhota**, aby se v textu
 nepoznal žádný skutečný odbor.
 
+**Totéž platí pro kód, ne jen pro texty: co naše weby nepoužívají, není
+mrtvý kód.** Podpora, kterou u nás nikdo nemá zapnutou — Jetpack, Rank Math,
+kterákoli další integrace — tady může ležet roky nevyužitá a pořád dávat
+smysl, protože šablonu si nainstaluje odbor, který ji používá. Nepoužívanost
+v naší síti tedy není důvod ke smazání; důvodem je jedině to, že na funkci
+nic nestojí ani jinde, nebo že ji rozbilo jádro.
+
+Tím se nemyslí doslova mrtvý kód — soubor, který se nikde nenačítá, nebo
+funkce, kterou nikdo nevolá. Ten se smazat dá, a důkazem je grep přes celý
+repozitář, ne pohled do našich webů.
+
 ## Uživatelská dokumentace
 
 `docs/user/` je uživatelská příručka (Astro Starlight), sestavovaná samostatným

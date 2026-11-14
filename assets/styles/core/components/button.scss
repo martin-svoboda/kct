@@ -25,8 +25,13 @@ button, input[type="button"], input[type="reset"], input[type="submit"],
 		filter: brightness(.96);
 	}
 
-	&:focus {
-		outline: thin dotted;
+	// Viz base.scss. U tlačítka je `currentColor` barva jeho textu — u modrého
+	// tlačítka tedy bílá, která by sama na světlé stránce zmizela. Druhý,
+	// ztmavující prsten pod ní ji ukotví; na tmavém pásu zůstane vidět bílá.
+	&:focus-visible {
+		outline: 2px solid currentColor;
+		outline-offset: 2px;
+		box-shadow: 0 0 0 4px rgba(9, 16, 26, .35);
 	}
 }
 

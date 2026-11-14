@@ -18,17 +18,22 @@ a ne do skupiny. Odesílá dvě věci:
 - **pozvánky na akce** s předstihem před termínem konání, ne hned po vložení
   akce do kalendáře.
 
-Příspěvek se posílá jako fotka se sdílecím obrázkem, který si šablona sama
-vykreslí (viz [Sdílecí obrázky](/funkce/sdileci-obrazky/)). Odkaz na web je
-u fotopříspěvku součástí textu, protože u fotky Facebook klikací náhledovou
-kartu nezobrazuje. Když fotku z nějakého důvodu odmítne, odešle se místo ní
+Příspěvek se posílá se sdílecím obrázkem, který si šablona sama vykreslí (viz
+[Sdílecí obrázky](/funkce/sdileci-obrazky/)). Odkaz na web je součástí textu,
+protože u příspěvku s vlastním obrázkem Facebook klikací náhledovou kartu
+nezobrazuje. Když obrázek z nějakého důvodu odmítne, odešle se místo něj
 obyčejný odkaz, aby sdílení proběhlo aspoň takhle.
+
+Obrázek se přitom na Facebook nahrává zvlášť a teprve pak se na něj příspěvek
+odkáže. Je to krok navíc, ale nutný: fotka publikovaná rovnou skončí jako
+fotopříspěvek v albu stránky a ve výpisu příspěvků se čtenářům většinou vůbec
+neukáže.
 
 Nic se neodešle u příspěvku chráněného heslem — jeho obsah je záměrně neveřejný.
 
 ## Nastavení
 
-Všechno je v administraci pod **Nastavení → KČT**, na záložce
+Všechno je v administraci pod **KČT → Nastavení**, na záložce
 **Facebook**.
 
 ### ID Facebook stránky
@@ -41,8 +46,11 @@ Dlouhodobý token stránky z aplikace v Metě. Bez ID stránky i tokenu se
 neodešle nic a v editoru se nezobrazí ani ovládání sdílení u jednotlivých
 příspěvků — nemá smysl slibovat něco, co se stejně nestane.
 
-Kde token vzít a proč ho radši nedržet v databázi, řeší
-[Bezpečnost](/spravce/bezpecnost/) a poslední oddíl téhle stránky.
+Token vydává aplikace registrovaná v Metě; jak se zakládá a proč se musí
+zveřejnit, popisuje
+[Aplikace v Metě pro sdílení](/spravce/facebook-aplikace/). Proč token radši
+nedržet v databázi, řeší [Bezpečnost](/spravce/bezpecnost/) a poslední oddíl
+téhle stránky.
 
 ### Sdílet automaticky — aktuality
 
@@ -193,7 +201,7 @@ Další rady jsou v kapitole [Řešení problémů](/spravce/reseni-problemu/).
 
 ## Kam patří token
 
-Token vyplněný v **Nastavení → KČT** na záložce **Facebook** leží v databázi
+Token vyplněný v **KČT → Nastavení** na záložce **Facebook** leží v databázi
 webu. To znamená, že se načítá při každém požadavku na web a že je v každé
 záloze databáze — kdokoli se
 k záloze dostane, dostane se i k oprávnění publikovat na facebookovou stránku

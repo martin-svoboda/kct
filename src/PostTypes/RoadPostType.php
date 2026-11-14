@@ -2,39 +2,22 @@
 
 namespace Kct\PostTypes;
 
-use KctDeps\Wpify\CustomFields\CustomFields;
 use KctDeps\Wpify\PostType\AbstractCustomPostType;
 use KctDeps\Wpify\PostType\PostTypeException;
 
 class RoadPostType extends AbstractCustomPostType {
 	const KEY = 'trasa';
 
-	/** @var CustomFields */
-	protected $wcf;
-
-	public function __construct( CustomFields $wcf ) {
-		$this->wcf = $wcf;
-
+	public function __construct() {
 		parent::__construct();
 	}
 
+	/**
+	 * Vlastní pole trasa nemá — data drží Turinka a zadávají se jejím
+	 * formulářem. Metabox propojení staví Features\Routes, protože není
+	 * z polí, ale ze stavu a tlačítek.
+	 */
 	public function setup() {
-		$items = array(
-			array(
-				'type'  => 'attachment',
-				'id'    => 'gpx',
-				'title' => __( 'GPX soubor trasy', 'kct' ),
-			),
-		);
-
-		$this->wcf->create_metabox( array(
-			'id'         => 'data',
-			'title'      => __( 'Data trasy', 'kct' ),
-			'post_types' => array( $this->get_post_type_key() ),
-			'context'    => 'side',
-			'priority'   => 'high',
-			'items'      => $items
-		) );
 	}
 
 	public function get_post_type_key(): string {

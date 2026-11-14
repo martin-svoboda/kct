@@ -88,6 +88,14 @@
 		padding-top: 20vw;
 		color: $white-color;
 
+		// Ztmavení pod titulkem je úhlopříčné (viz `:after` níž), takže na
+		// světlém snímku vyjde bílý titulek až na 1,35:1 — pod hranicí 3:1,
+		// kterou velký text potřebuje. Stín ho drží čitelný bez ohledu na to,
+		// co je na fotce pod ním; hero článku ho má z téhož důvodu.
+		.entry-title {
+			text-shadow: 0 4px 40px rgba(0, 0, 0, .5);
+		}
+
 		// Ztmavení odspodu kvůli čitelnosti bílého titulku přes fotku.
 		// Platí vždy, když má hero fotku — na průhledné hlavičce nezávisí.
 		&:after {

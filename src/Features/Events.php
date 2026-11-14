@@ -1044,7 +1044,11 @@ class Events {
 
 		$this->event_repository->save( $event );
 
-		$url = get_edit_post_link( $event->id );
+		// Kontext 'raw' je tu nutnost, ne úklid: výchozí 'display' vrací adresu
+		// s `&amp;`, takže z `action=edit` se v přesměrování stane parametr
+		// `amp;action` a post.php bez známé akce pošle správce na výpis
+		// příspěvků — akce se založila, ale nikdo ji neviděl.
+		$url = get_edit_post_link( $event->id, 'raw' );
 		if ( ! $url ) {
 			$url = add_query_arg( array(
 				'post'   => $event->id,
@@ -1066,7 +1070,7 @@ class Events {
 	 */
 	private function warn_missing_export_url(): void {
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			\WP_CLI::warning( __( 'Adresa exportu z Databáze akcí KČT není vyplněná v Nastavení → KČT. Import se nespustil.', 'kct' ) );
+			\WP_CLI::warning( __( 'Adresa exportu z Databáze akcí KČT není vyplněná v KČT → Nastavení. Import se nespustil.', 'kct' ) );
 		}
 	}
 

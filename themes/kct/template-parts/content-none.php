@@ -21,7 +21,7 @@
 			printf(
 				'<p>' . wp_kses(
 					/* translators: 1: link to WP admin new post page. */
-					__( 'Chystáš se publikovat první příspěvek? <a href="%1$s">Začni tady</a>.', 'kct' ),
+					__( 'Chystáte se publikovat první příspěvek? <a href="%1$s">Začněte tady</a>.', 'kct' ),
 					array(
 						'a' => array(
 							'href' => array(),
@@ -34,14 +34,14 @@
 		elseif ( is_search() ) :
 			?>
 
-			<p><?php esc_html_e( 'Hledanému výrazu nic neodpovídá. Zkus to prosím znovu s jinými slovy.', 'kct' ); ?></p>
+			<p><?php esc_html_e( 'Hledanému výrazu nic neodpovídá. Zkuste to prosím znovu s jinými slovy.', 'kct' ); ?></p>
 			<?php
 			get_search_form();
 
 		else :
 			?>
 
-			<p><?php esc_html_e( 'Vypadá to, že tu hledané není. Zkusit to můžeš přes vyhledávání.', 'kct' ); ?></p>
+			<p><?php esc_html_e( 'Vypadá to, že tu hledané není. Zkuste to prosím přes vyhledávání.', 'kct' ); ?></p>
 			<?php
 			get_search_form();
 

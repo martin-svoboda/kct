@@ -1,0 +1,20 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "kct/routes",
+	"title": "Trasy",
+	"category": "kct",
+	"icon": "location-alt",
+	"description": "Výpis tras z webu (dynamický blok).",
+	"textdomain": "kct",
+	"supports": {
+		"html": false,
+		"customClassName": false,
+		"reusable": true
+	},
+	"attributes": {
+		"count": { "type": "number", "default": 6 },
+		"order": { "type": "string", "default": "date" },
+		"button": { "type": "string", "default": "" }
+	}
+}

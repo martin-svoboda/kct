@@ -38,11 +38,30 @@ class DocsLinks {
 		'plugins'                   => array(
 			'/spravce/aktualizace/' => 'Aktualizace šablony',
 		),
-		'settings_page_kct_options' => array(
+		// Obrazovky vlastního menu. Identifikátor dává WordPress podle toho, kde
+		// stránka v menu visí — po přesunu nastavení pod menu KČT se změnil ze
+		// `settings_page_` na `kct_page_`. Kdyby tu zůstal starý, záložka
+		// Nápověda by na nastavení tiše zmizela.
+		'toplevel_page_kct'            => array(
+			'/zaciname/prvni-nastaveni/'      => 'První nastavení webu',
+			'/funkce/akce/'                   => 'Akce',
+			'/funkce/turinka/'                => 'Propojení s Turinkou',
+		),
+		'kct_page_kct_options'         => array(
 			'/zaciname/prvni-nastaveni/'      => 'První nastavení webu',
 			'/funkce/sdileni-na-facebook/'    => 'Sdílení na Facebook',
 			'/funkce/turinka/'                => 'Propojení s Turinkou',
 			'/spravce/bezpecnost/'            => 'Kam bezpečně uložit token',
+		),
+		'kct_page_kct-turinka-trasy'   => array(
+			'/funkce/turinka/'                => 'Propojení s Turinkou',
+		),
+		'kct_page_kct-turinka-mista'   => array(
+			'/funkce/turinka/'                => 'Propojení s Turinkou',
+		),
+		'akce_page_kct-prehled-akci'   => array(
+			'/funkce/akce/'                   => 'Akce',
+			'/funkce/turinka/'                => 'Propojení s Turinkou',
 		),
 		'edit-akce'                 => array(
 			'/funkce/akce/'                   => 'Akce',
@@ -52,6 +71,11 @@ class DocsLinks {
 			'/funkce/sdileni-na-facebook/'    => 'Sdílení na Facebook',
 			'/funkce/turinka/'                => 'Propojení s Turinkou',
 		),
+		// Obrazovky `edit-trasa` a `trasa` tu měly odkaz na stránku tras
+		// v příručce. Trasy jsou vypnuté (viz Managers/PostTypesManager)
+		// a stránka příručky je nepublikovaná, takže by odkaz mířil na 404.
+		// Cesty tu schválně nejsou ani v komentáři: kontrola odkazů z CLAUDE.md
+		// čte tenhle soubor grepem a hlásila by chybějící stránku.
 		'edit-odbory'               => array(
 			'/funkce/odbory/'                 => 'Odbory',
 		),

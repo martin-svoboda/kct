@@ -5,6 +5,7 @@ namespace Kct;
 use Kct\Facebook\Credentials;
 use Kct\Facebook\GraphClient;
 use Kct\Facebook\MessageComposer;
+use Kct\Facebook\Publisher;
 use Kct\Facebook\ShareState;
 use Kct\Features\Departments;
 use Kct\Features\Events;
@@ -46,7 +47,7 @@ class CLI extends WP_CLI_Command {
 		$credentials = kct_container()->get( Credentials::class );
 
 		if ( ! $credentials->is_configured() ) {
-			WP_CLI::error( __( 'Chybí Page ID nebo token. Vyplň je v Nastavení → KČT.', 'kct' ) );
+			WP_CLI::error( __( 'Chybí Page ID nebo token. Vyplň je v KČT → Nastavení.', 'kct' ) );
 		}
 
 		$result = kct_container()->get( GraphClient::class )->verify( $credentials->token() );
@@ -185,7 +186,7 @@ class CLI extends WP_CLI_Command {
 		$credentials = kct_container()->get( Credentials::class );
 
 		if ( ! $credentials->is_configured() ) {
-			WP_CLI::error( __( 'Chybí Page ID nebo token. Vyplň je v Nastavení → KČT.', 'kct' ) );
+			WP_CLI::error( __( 'Chybí Page ID nebo token. Vyplň je v KČT → Nastavení.', 'kct' ) );
 		}
 
 		$state = kct_container()->get( ShareState::class );
@@ -201,11 +202,15 @@ class CLI extends WP_CLI_Command {
 				? $images->social_for_post( $post_id )
 				: $images->social_for_event_post( $post_id );
 
-			$client = kct_container()->get( GraphClient::class );
-
-			$result = empty( $image['url'] )
-				? $client->publish( $credentials->page_id(), $credentials->token(), $message, $link )
-				: $client->publish_photo( $credentials->page_id(), $credentials->token(), $photo_message, $image['url'] );
+			// Přes Publisher, ne přes GraphClient napřímo: odeslání fotkou je
+			// dvoukrokové a má vlastní záložní cestu odkazem. Kopie té logiky
+			// tady by se od běžného sdílení rozešla nepozorovaně.
+			$result = kct_container()->get( Publisher::class )->send(
+				$message,
+				$photo_message,
+				$link,
+				$image['url'] ?? null
+			);
 
 			if ( empty( $result['ok'] ) ) {
 				$state->mark_error( $post_id, (int) $result['code'], (string) $result['message'] );

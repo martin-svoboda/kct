@@ -5,6 +5,7 @@ namespace Kct\Managers;
 use Kct\Repositories\DbEventRepository;
 use Kct\Repositories\DepartmentRepository;
 use Kct\Repositories\EventRepository;
+// use Kct\Repositories\RoadRepository;   trasy vypnuté, viz PostTypesManager
 use KctDeps\DI\Container;
 use KctDeps\Wpify\Model\Manager;
 
@@ -15,8 +16,8 @@ class RepositoryManager {
 		DbEventRepository $db_event_repository,
 		EventRepository $event_repository,
 		DepartmentRepository $department_repository
-		// RoadRepository $road_repository,     trasy a místa vypnuté,
-		// PlaceRepository $place_repository    viz PostTypesManager
+		// RoadRepository $road_repository      trasy vypnuté, viz PostTypesManager
+		// PlaceRepository $place_repository    místa vypnutá, viz PostTypesManager
 	) {
 		foreach ( $manager->get_repositories() as $repository ) {
 			$container->set( $repository::class, $repository );

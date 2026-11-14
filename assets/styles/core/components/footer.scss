@@ -38,6 +38,16 @@
 			min-width: 220px;
 			flex: 1 0 0;
 		}
+
+		// Odkaz v rozcestníku patičky je sám o sobě vysoký jako řádek textu,
+		// takže položky stály tak těsně, že se do nich na telefonu trefuje
+		// palcem jen přes sousední. Odsazení uvnitř odkazu je zvětší i jako
+		// cíl, ne jen jako mezeru mezi řádky — to je celý rozdíl proti
+		// zvětšení `gap` o stejný kus.
+		li a {
+			display: inline-block;
+			padding: .45rem 0;
+		}
 	}
 
 	.site-info {

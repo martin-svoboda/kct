@@ -51,6 +51,45 @@ class Config {
 	}
 
 	/**
+	 * Absolutní adresu z odpovědi API přepíše na adresu pro prohlížeč.
+	 *
+	 * Lokálně se plugin ptá kontejneru (`http://ddev-turi-web`) a hostitele mu
+	 * říká hlavičkou, takže adresy v odpovědi přijdou buď s adresou kontejneru,
+	 * kam se prohlížeč návštěvníka nedostane, nebo se správným jménem, ale po
+	 * HTTP — a to by https stránka do rámu nepustila. Obojí se proto převede na
+	 * `public_url()`. Mění se jen adresy hostitele, kterého se plugin ptal:
+	 * cizí adresa z odpovědi patří někomu jinému a přepsat ji by znamenalo
+	 * poslat návštěvníka jinam.
+	 *
+	 * Na produkci je `base_url()` i `public_url()` tatáž adresa a metoda
+	 * nedělá nic.
+	 */
+	public function rebase( string $url ): string {
+		$public = $this->public_url();
+
+		if ( '' === $url || $public === $this->base_url() ) {
+			return $url;
+		}
+
+		$known = array_filter( array(
+			strtolower( (string) wp_parse_url( $this->base_url(), PHP_URL_HOST ) ),
+			strtolower( $this->host_header() ),
+		) );
+
+		$parts = (array) wp_parse_url( $url );
+		$host  = strtolower( (string) ( $parts['host'] ?? '' ) );
+
+		if ( '' === $host || ! in_array( $host, $known, true ) ) {
+			return $url;
+		}
+
+		return $public
+			. (string) ( $parts['path'] ?? '' )
+			. ( isset( $parts['query'] ) ? '?' . $parts['query'] : '' )
+			. ( isset( $parts['fragment'] ) ? '#' . $parts['fragment'] : '' );
+	}
+
+	/**
 	 * Doména tohoto webu tak, jak se posílá do Turinky.
 	 *
 	 * Host bez `www.`, protože právě na tuhle adresu Turinka doručuje token —

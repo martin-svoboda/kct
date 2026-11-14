@@ -14,7 +14,11 @@
 }
 
 .screen-reader-text:focus {
-  background-color: #f1f1f1;
+  // Token, ne pevná šedá ze _s: odkaz „Přejít k obsahu" je barevný text na
+  // téhle ploše, a na #f1f1f1 primární barva na kontrast podle WCAG AA
+  // nedosahovala. Na --surface ano, a drží to i ve skinu s tmavším pozadím
+  // stránky.
+  background-color: var(--surface);
   border-radius: var(--radius-sm);
   box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
   clip: auto !important;

@@ -2,12 +2,16 @@
 
 namespace Kct;
 
+use Kct\Features\AdminMenu;
+
 use Kct\Facebook\Credentials;
 use Kct\Features\FacebookShare;
 use Kct\Help\DocsLinks;
 use Kct\Repositories\SettingsRepository;
 use Kct\Features\Turinka as TurinkaFeature;
 use Kct\Turinka\Embed;
+use Kct\Turinka\Weather;
+// use Kct\Turinka\RouteEmbed;   vypnuto s trasami, viz níž
 use Kct\Turinka\EventState;
 use Kct\Turinka\TokenStore;
 use KctDeps\Wpify\CustomFields\CustomFields;
@@ -90,10 +94,15 @@ class Settings {
 		$settings = array_merge( $fields, $this->facebook_fields() );
 		$settings = array_merge( $settings, $this->turinka_fields() );
 
+		// Nastavení sedí pod vlastním menu šablony, ne pod obecným Nastavením:
+		// patří k přehledům, se kterými se používá, a v menu jsou tím pádem
+		// všechny věci šablony pohromadě. Pozice drží pořadí Nástěnka →
+		// přehledy → Nastavení.
 		$this->wcf->create_options_page( array(
-			'parent_slug' => 'options-general.php',
+			'parent_slug' => AdminMenu::SLUG,
+			'position'    => 90,
 			'page_title'  => __( 'Nastavení funkcí KČT', 'kct' ),
-			'menu_title'  => __( 'KČT', 'kct' ),
+			'menu_title'  => __( 'Nastavení', 'kct' ),
 			'menu_slug'   => self::KEY,
 			'capability'  => 'manage_options',
 			// Knihovna čte `option_name`; `option_key` nezná a tiše ho ignoruje.
@@ -204,12 +213,16 @@ class Settings {
 				'max'   => 23,
 			),
 			array(
-				'label' => __( 'Připojení k Facebooku', 'kct' ),
-				'title' => __( 'Ověřit připojení', 'kct' ),
-				'desc'  => __( 'Zkusí se připojit k Facebooku a vypíše název stránky, ke které token patří.', 'kct' ),
-				'id'    => 'fb_verify',
-				'type'  => 'button',
-				'url'   => $this->fb_verify_url(),
+				'label'  => __( 'Připojení k Facebooku', 'kct' ),
+				'title'  => __( 'Ověřit připojení', 'kct' ),
+				'desc'   => __( 'Zkusí se připojit k Facebooku a vypíše název stránky, ke které token patří.', 'kct' ),
+				'id'     => 'fb_verify',
+				'type'   => 'button',
+				// Bez target se odkazové tlačítko otevře v nové záložce. Obsluha
+				// ale výsledek uloží a přesměruje zpět na nastavení, takže by
+				// hlášení skončilo v nové záložce a původní by zůstala stará.
+				'target' => '_self',
+				'url'    => $this->fb_verify_url(),
 			),
 		);
 		
@@ -253,14 +266,40 @@ class Settings {
 			'default' => true,
 		);
 
+		// Předpověď je v Turince veřejná stejně jako akce, takže i tenhle
+		// přepínač stojí mimo obě větve propojení.
+		$fields[] = array(
+			'title'   => __( 'Předpověď počasí u akcí', 'kct' ),
+			'label'   => __( 'V postranním sloupci akce zobrazit předpověď počasí z Turinky.', 'kct' ),
+			'desc'    => __( 'Zobrazí se jen u akce, která teprve bude, má souřadnice startu v Česku a je v dosahu předpovědi — tedy nejvýš šestnáct dní dopředu.', 'kct' ),
+			'id'      => Weather::OPTION,
+			'type'    => 'toggle',
+			'default' => true,
+		);
+
+		// Přepínač widgetu tras je vypnutý spolu s trasami (viz
+		// Managers/PostTypesManager): dokud není stránka trasy, nemá co ovládat.
+		// Vrátí se s blokem, kterým se trasa vloží do stránky nebo příspěvku.
+		// $fields[] = array(
+		// 'title'   => __( 'Widget Turinky u tras', 'kct' ),
+		// 'label'   => __( 'Na stránce trasy zobrazit rámeček z Turinky s mapou, výškovým profilem a údaji o trase.', 'kct' ),
+		// 'desc'    => __( 'Zobrazí se u trasy propojené s Turinkou. Vypnutím zmizí i odchozí odkaz na Turinku.', 'kct' ),
+		// 'id'      => RouteEmbed::OPTION,
+		// 'type'    => 'toggle',
+		// 'default' => true,
+		// );
+
 		if ( TokenStore::STATE_ACTIVE !== $state ) {
 			$fields[] = array(
-				'label' => __( 'Přístup k Turince', 'kct' ),
-				'title' => __( 'Požádat o přístup', 'kct' ),
-				'desc'  => __( 'Odešle žádost s doménou tohoto webu a kódem oblasti nebo odboru. Schvaluje ji člověk, takže to není hned.', 'kct' ),
-				'id'    => 'turinka_request',
-				'type'  => 'button',
-				'url'   => $this->turinka_action_url( 'turinka_request', TurinkaFeature::REQUEST_NONCE ),
+				'label'  => __( 'Přístup k Turince', 'kct' ),
+				'title'  => __( 'Požádat o přístup', 'kct' ),
+				'desc'   => __( 'Odešle žádost s doménou tohoto webu a kódem oblasti nebo odboru. Schvaluje ji člověk, takže to není hned.', 'kct' ),
+				'id'     => 'turinka_request',
+				'type'   => 'button',
+				// Stejný důvod jako u ověření Facebooku: obsluha se vrací zpět
+				// na nastavení a hlášení patří do téže záložky.
+				'target' => '_self',
+				'url'    => $this->turinka_action_url( 'turinka_request', TurinkaFeature::REQUEST_NONCE ),
 			);
 
 			$fields[] = array(
@@ -271,12 +310,13 @@ class Settings {
 			);
 		} else {
 			$fields[] = array(
-				'label' => __( 'Připojení k Turince', 'kct' ),
-				'title' => __( 'Ověřit připojení', 'kct' ),
-				'desc'  => __( 'Zkusí se připojit k Turince a vypíše, komu přístup patří a co smí.', 'kct' ),
-				'id'    => 'turinka_verify',
-				'type'  => 'button',
-				'url'   => $this->turinka_action_url( 'turinka_verify', TurinkaFeature::VERIFY_NONCE ),
+				'label'  => __( 'Připojení k Turince', 'kct' ),
+				'title'  => __( 'Ověřit připojení', 'kct' ),
+				'desc'   => __( 'Zkusí se připojit k Turince a vypíše, komu přístup patří a co smí.', 'kct' ),
+				'id'     => 'turinka_verify',
+				'type'   => 'button',
+				'target' => '_self',
+				'url'    => $this->turinka_action_url( 'turinka_verify', TurinkaFeature::VERIFY_NONCE ),
 			);
 
 			$options = array();
@@ -431,6 +471,6 @@ class Settings {
 	 * @return string The URL of the plugin settings page.
 	 */
 	public static function get_settings_url(): string {
-		return add_query_arg( array( 'page' => self::KEY ), admin_url( 'options-general.php' ) );
+		return add_query_arg( array( 'page' => self::KEY ), admin_url( 'admin.php' ) );
 	}
 }

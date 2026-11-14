@@ -22,6 +22,13 @@ get_header();
 						printf( esc_html__( 'Výsledky hledání: %s', 'kct' ), '<span>' . get_search_query() . '</span>' );
 						?>
 					</h1>
+					<?php
+					// Počet výsledků i formulář patří NAD výpis. Dosud tu nebyl ani
+					// jeden: kdo hledal špatné slovo, musel se vracet zpátky, a
+					// nikde nestálo, jestli je výsledek jeden nebo sto.
+					?>
+					<p class="search-count"><?php echo esc_html( kct_search_found_label( (int) $wp_query->found_posts ) ); ?></p>
+					<div class="search-again"><?php get_search_form(); ?></div>
 				</header><!-- .page-header -->
 
 				<?php

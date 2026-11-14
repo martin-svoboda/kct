@@ -43,9 +43,13 @@ class EventPayload {
 			$payload['short_description'] = $short;
 		}
 
-		if ( $with_source_url && ! empty( $event['permalink'] ) ) {
-			$payload['source_url'] = (string) $event['permalink'];
-		}
+		// Odkaz se posílá vždy, i jako `null`. Vynechaný klíč pro API znamená
+		// „nesahat“, takže odpublikovaná akce by v Turince zůstala s odkazem na
+		// stránku, která vrací 404, a nevrátila by se do indexu; `null` je
+		// výslovné zrušení.
+		$payload['source_url'] = $with_source_url && ! empty( $event['permalink'] )
+			? (string) $event['permalink']
+			: null;
 
 		return $payload;
 	}
@@ -97,9 +101,10 @@ class EventPayload {
 			$payload['short_description'] = $short;
 		}
 
-		if ( $published && ! empty( $event['permalink'] ) ) {
-			$payload['source_url'] = (string) $event['permalink'];
-		}
+		// Vždy, i jako `null` — stejný důvod jako u obsahu k akci z feedu výš.
+		$payload['source_url'] = $published && ! empty( $event['permalink'] )
+			? (string) $event['permalink']
+			: null;
 
 		return $payload;
 	}

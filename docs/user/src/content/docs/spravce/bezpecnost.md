@@ -44,7 +44,7 @@ plnohodnotný klíč: kdo ho má, může za stránku publikovat.
 
 Zadat se dá dvěma způsoby a nejsou rovnocenné:
 
-- **Do pole v Nastavení → KČT, na záložce Facebook.** Funguje, ale token pak
+- **Do pole v KČT → Nastavení, na záložce Facebook.** Funguje, ale token pak
   leží v databázové option, která se načítá při každém požadavku na web, a je
   součástí každé zálohy databáze. Kdokoli se dostane k záloze, dostane se i k tokenu.
 - **Do konstanty `KCT_FB_PAGE_TOKEN` v souboru `wp-config.php`.** Bezpečnější
@@ -62,3 +62,5 @@ s provozovatelem. Jak sdílení funguje dál, popisuje stránka
 
 Pokud se token někdy objevil ve sdíleném dokumentu, e-mailu nebo chatu, je
 namístě vygenerovat v Meta aplikaci nový — starý tím okamžitě přestane platit.
+Jak ta aplikace vzniká a co v ní musí být nastavené, popisuje stránka
+[Aplikace v Metě pro sdílení](/spravce/facebook-aplikace/).

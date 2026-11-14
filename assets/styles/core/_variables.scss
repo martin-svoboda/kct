@@ -14,9 +14,9 @@
 	--surface-alt:     #f4f6f9;
 	--surface-invert:  #0d1926;
 	--text:            #16202b;
-	--text-muted:      #7b8492;
-	--text-faint:      #9aa4b1;
-	--primary:         #1466B0;
+	--text-muted:      #5c6573;
+	--text-faint:      #667080;
+	--primary:         #0178a3;
 	--primary-contrast:#ffffff;
 	--hero-eyebrow:    #8fd0ff;
 	--line:            #eef1f5;
@@ -30,12 +30,15 @@
 	--btn-radius:      var(--radius-md);
 	--chip-radius:     var(--radius-sm);
 	--shadow-card:     0 22px 46px -30px rgba(11, 22, 34, .5);
+	// Plovoucí panely (rozbalené menu, vyhledávání v hlavičce) — leží NAD
+	// obsahem, ne v jeho toku, a potřebují proto vlastní token. Oba si dřív
+	// nesly ručně psaný stín, každý o pár pixelů jiný, a skin je nijak ovlivnit
+	// nemohl: v plochém skinu tak panel kropil stín, který ten skin nikde jinde
+	// nemá.
+	--shadow-overlay:  0 20px 44px -24px rgba(11, 22, 34, .55);
 	--hero-size:       88px;
 	--hero-align:      left;
 	--h2-size:         44px;
-	--members-bg:      #f4f6f9;
-	--members-text:    #16202b;
-	--members-accent:  #009640;
 }
 
 // Fonty

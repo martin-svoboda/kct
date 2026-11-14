@@ -46,6 +46,11 @@ get_header();
 							$title = $parent_cat->name . ' / ' . $current_cat->name;
 						} elseif ( $current_cat ) {
 							$title = $current_cat->name;
+						} elseif ( is_post_type_archive() ) {
+							// Archiv vlastního typu příspěvku se jmenuje podle typu. Bez toho
+							// by nad výpisem tras stál název stránky s články — ta s tím
+							// výpisem nemá nic společného.
+							$title = post_type_archive_title( '', false );
 						}
 						?>
 						<header>

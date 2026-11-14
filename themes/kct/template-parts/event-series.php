@@ -38,7 +38,7 @@ if ( ! $kct_series ) {
 $kct_today = current_time( 'Y-m-d' );
 ?>
 <section class="event-series">
-	<h3 class="event-series__title"><?php esc_html_e( 'Další ročníky', 'kct' ); ?></h3>
+	<h2 class="event-series__title event-section__title"><?php esc_html_e( 'Další ročníky', 'kct' ); ?></h2>
 	<ul class="event-series__list">
 		<?php
 		foreach ( $kct_series as $kct_item ) :

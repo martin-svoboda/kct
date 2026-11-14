@@ -84,6 +84,13 @@ zaplněná — někde je dlouhé menu, jinde dvě loga a tlačítko — takže v
 si má zapnout ten, komu se do hlavičky ještě vejde. Dokud je vypnuté, dá se na
 webu hledat jen přes adresu ve tvaru `/?s=výraz`.
 
+Stránka s výsledky je **seznam k přelétnutí, ne řada článků**: nad každým
+výsledkem stojí štítek s typem obsahu (příspěvek, stránka, akce, odbor), nadpis
+je menší než titulek stránky a náhledový obrázek je zkrácený na pruh. Výsledek,
+který vlastní obrázek nemá, ho nedostane ani náhradní — zástupné logo dává
+smysl v mřížce karet, kde by po něm zůstala díra, kdežto v seznamu pod sebou by
+se jen několikrát opakovalo totéž. Nastavovat se na tom nedá nic.
+
 ### Odkaz tlačítka v hlavičce
 
 Adresa, kam vede tlačítko „Stát se členem" v hlavičce. Když pole zůstane
@@ -109,6 +116,19 @@ barva se vybírá z palety nebo zadává jako hexadecimální kód.
 
 Vyplatí se změnu udělat a pak projít web: barva se propisuje na mnoha místech
 a příliš světlý odstín zhorší čitelnost textu na tlačítkách.
+
+:::caution
+Výchozí barvy stylů jsou vybrané tak, aby text na nich i text v nich splnil
+požadavek na kontrast (WCAG AA, tedy 4,5:1 u běžně velkého písma). **Vlastní
+barva tuhle záruku ruší** — šablona ji použije přesně tak, jak se zadá.
+
+Světlejší odstín se přitom na obrazovce neprojeví jako chyba, jen se hůř čte,
+takže si ho při výběru nikdo nevšimne. Když se odbor drží vlastní barvy a ta
+je svěží a světlá, stojí za to zadat o odstín tmavší variantu: bílý text na
+tlačítku i barevný odkaz v textu jsou pak čitelné i na horším displeji a na
+slunci. Zkontrolovat se to dá kterýmkoli kontrastním kalkulátorem — porovnává
+se barva proti bílé a bílá proti barvě.
+:::
 
 ## Sekce Základní informace
 

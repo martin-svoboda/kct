@@ -19,6 +19,11 @@ $kct_departments = array_values( array_filter( (array) $kct_departments, static 
 	return is_array( $d ) && ! empty( $d['title'] );
 } ) );
 
+// Abecedně, ne v pořadí importu. Odborů jsou u oblasti desítky a hledá se v nich
+// podle jména — v pořadí, v jakém kdysi přišly z databáze, se jméno hledá očima
+// jedno po druhém.
+$kct_departments = kct_sort_by_title( $kct_departments );
+
 // Data pro mapu — jen pole potřebná pro markery (bez telefonů/e-mailů apod.).
 $kct_map_data = array_map( static function ( $d ) {
 	return array(
@@ -33,7 +38,7 @@ $kct_map_data = array_map( static function ( $d ) {
 ?>
 <script>window.kctMarkers = <?php echo wp_json_encode( $kct_map_data ); ?>;</script>
 
-<div class="kct-map"><div id="map"></div></div>
+<div class="kct-map"><div id="map" data-map-label="<?php esc_attr_e( 'Mapa odborů', 'kct' ); ?>"></div></div>
 
 <div class="container pt-0">
 	<main id="primary" class="site-main" style="width:100%">
@@ -43,17 +48,37 @@ $kct_map_data = array_map( static function ( $d ) {
 		</header>
 		<div class="departments">
 			<?php if ( empty( $kct_departments ) ) : ?>
-				<div>Nebyli nalezeny žádné odbory.</div>
+				<div><?php esc_html_e( 'Nebyly nalezeny žádné odbory.', 'kct' ); ?></div>
 			<?php else : ?>
-				<ul class="departments-list">
+				<?php
+				// Hledání v seznamu. Políčko přidává teprve skript (data-departments-filter
+				// na seznamu), protože bez JS by filtrovat neumělo a nabízet nefunkční
+				// políčko je horší než žádné — seznam je i tak celý na stránce.
+				?>
+				<p class="departments-count" role="status" data-departments-count><?php echo esc_html( kct_plural(
+					count( $kct_departments ),
+					/* translators: %d je počet odborů (1). */
+					__( '%d odbor', 'kct' ),
+					/* translators: %d je počet odborů (2 až 4). */
+					__( '%d odbory', 'kct' ),
+					/* translators: %d je počet odborů (0 a 5 a více). */
+					__( '%d odborů', 'kct' )
+				) ); ?></p>
+				<ul class="departments-list" data-departments-filter>
 					<?php foreach ( $kct_departments as $kct_d ) : ?>
-						<li>
-							<a href="<?php echo esc_url( $kct_d['permalink'] ?? '#' ); ?>" class="department" title="<?php echo esc_attr( $kct_d['title'] ); ?>">
+						<li data-title="<?php echo esc_attr( remove_accents( mb_strtolower( $kct_d['title'] ) ) . ' ' . remove_accents( mb_strtolower( $kct_d['town'] ?? '' ) ) ); ?>">
+							<a href="<?php echo esc_url( $kct_d['permalink'] ?? '#' ); ?>" class="department">
 								<?php if ( ! empty( $kct_d['image']['url'] ) ) : ?>
-									<img src="<?php echo esc_url( $kct_d['image']['url'] ); ?>" title="<?php echo esc_attr( $kct_d['title'] ); ?>" alt="<?php echo esc_attr( $kct_d['title'] ); ?>">
+									<?php
+									// Prázdný alt: logo stojí v témž odkazu jako nadpis
+									// s názvem odboru, takže název by odečítač obrazovky
+									// přečetl dvakrát. `title` na odkazu i obrázku byl
+									// týž název potřetí a počtvrté — proto je taky pryč.
+									?>
+									<img src="<?php echo esc_url( $kct_d['image']['url'] ); ?>" alt="" loading="lazy">
 								<?php endif; ?>
 								<div class="content">
-									<h3><?php echo esc_html( $kct_d['title'] ); ?></h3>
+									<h2><?php echo esc_html( $kct_d['title'] ); ?></h2>
 									<?php
 									// Číslo i obec můžou u ručně vedeného odboru chybět — vypisuje
 									// se jen to, co je vyplněné, ať nezůstane viset „č. 0 |“.

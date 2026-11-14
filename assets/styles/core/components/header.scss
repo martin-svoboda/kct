@@ -142,8 +142,11 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 36px;
-		height: 36px;
+		// 44 px, ne 36: je to jediné tlačítko v hlavičce vedle loga a míří se
+		// na něj prstem. WCAG žádá nejmíň 24, doporučených 44 je rozdíl mezi
+		// „jde to“ a „jde to i v chůzi“. Ikona uvnitř zůstává stejně velká.
+		width: 44px;
+		height: 44px;
 		padding: 0;
 		border: 0;
 		border-radius: 50%;
@@ -165,7 +168,7 @@
 		background: var(--surface);
 		border: 1px solid var(--line);
 		border-radius: var(--radius-md);
-		box-shadow: 0 18px 40px -22px rgba(11, 22, 34, .55);
+		box-shadow: var(--shadow-overlay);
 	}
 
 	.header-search__field {
@@ -249,7 +252,13 @@
 			background: var(--surface);
 			box-shadow: -20px 0 60px -30px rgba(11, 22, 34, .6);
 			transform: translateX(100%);
-			transition: transform .3s ease;
+			// `visibility` zavřený panel vyřadí z pořadí tabulátoru i z
+			// přístupnostního stromu. Bez ní je odsunutý jen posunem, takže
+			// fokus do něj Tabem spadl mimo obrazovku a odečítač obrazovky
+			// předčítal zavřené menu jako obsah stránky. Je v přechodu, aby
+			// panel nezmizel v polovině zasouvání (stejně jako u podmenu).
+			visibility: hidden;
+			transition: transform .3s ease, visibility .3s ease;
 			overflow-y: auto;
 			z-index: 1200;
 		}
@@ -336,7 +345,10 @@
 	body.menu-open {
 		overflow: hidden; // zamknout scroll pod drawerem
 
-		.site-nav { transform: translateX(0); }
+		.site-nav {
+			transform: translateX(0);
+			visibility: visible;
+		}
 
 		.menu-backdrop {
 			opacity: 1;

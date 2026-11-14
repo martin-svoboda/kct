@@ -101,6 +101,12 @@ function kct_customize_register( $wp_customize ) {
 		'type'        => 'text',
 	) );
 
+	// Nadpis výpisu tras je vypnutý spolu s trasami (viz
+	// src/Managers/PostTypesManager.php) — nastavení k neexistující stránce
+	// by v Přizpůsobení jen mátlo. Hodnota v databázi zůstává.
+	// $wp_customize->add_setting( 'kct_trasa_archive_title', array( … ) );
+	// $wp_customize->add_control( 'kct_trasa_archive_title', array( … ) );
+
 	// Mapa ve výpisu akcí — některé odbory ji nechtějí (per-web nastavení).
 	$wp_customize->add_setting( 'kct_events_map', array(
 		'default'           => true,

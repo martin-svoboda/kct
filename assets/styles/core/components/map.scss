@@ -6,6 +6,14 @@
 	#map {
 		width: 100%;
 		height: 500px;
+
+		// Na telefonu nižší. Pruh zůstává tím, čím je — přehledem oblasti nad
+		// stránkou — ale v plné výšce zabral celou první obrazovku a výpis, pro
+		// který lidé na stránku chodí, začínal až za ní. Na 260 px je pořád vidět
+		// rozložení značek po kraji, což je to, co z mapy na mobilu někdo přečte.
+		@media (max-width: $medium-screen) {
+			height: 260px;
+		}
 	}
 
 	// Trikolóra na spodní hraně mapy (přebít výchozí top:0 z mixinu na bottom).

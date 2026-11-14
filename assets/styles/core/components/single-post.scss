@@ -18,6 +18,31 @@
 	}
 }
 
+// ── Měřítko řádku na stránce bez postranního sloupce ───────────────────────
+// Stránka, která postranní sloupec nemá, roztáhne text přes celý kontejner,
+// a to je na širokém monitoru řádek, na jehož konci oko ztratí začátek
+// následujícího. Tam, kde sloupec je, strop netřeba — šířku drží rozvržení.
+//
+// Strop je v `rem`, ne v `ch`: jednotka `ch` je šířka číslice nula, a ta je
+// v běžném písmu znatelně širší než průměrné malé písmeno, takže strop zadaný
+// v `ch` pouští na řádek o třetinu víc znaků, než se čeká. `rem`, a ne `em`,
+// kvůli nadpisům: ty mají vlastní, větší písmo a v `em` by jim strop vyšel
+// tak široký, že by nedržel.
+//
+// Platí jen pro text, ne pro obrázky, tabulky, galerie ani bloky šablony —
+// ty mají být tak široké, jak je kontejner pustí.
+.page .container > .site-main:only-child .entry-content {
+	> p,
+	> ul,
+	> ol,
+	> blockquote,
+	> h2,
+	> h3,
+	> h4 {
+		max-width: 50rem;
+	}
+}
+
 // Rozvržení obsah + sidebar: content roste (flex:1), sidebar pevná šířka
 // zarovnaná k pravému okraji kontejneru, větší mezera mezi nimi.
 .single-body {

@@ -78,7 +78,7 @@ $secondary_logo = get_theme_mod( 'secondary_logo', '' );
 			</button>
 
 			<div class="site-nav" id="site-nav">
-				<nav id="site-navigation" class="main-navigation">
+				<nav id="site-navigation" class="main-navigation" aria-label="<?php esc_attr_e( 'Hlavní menu', 'kct' ); ?>">
 					<?php
 					wp_nav_menu(
 						array(

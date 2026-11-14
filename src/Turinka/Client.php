@@ -53,6 +53,102 @@ class Client {
 	}
 
 	/**
+	 * Výpis položek jednoho typu.
+	 *
+	 * Jedna kostra pro akce, místa i trasy — odpověď má u všech tří stejná
+	 * pole, takže se liší jen cesta a filtry.
+	 *
+	 * **Posílat se smí jen parametry, které výpis zná** — neznámý je 422
+	 * s výčtem povolených, ne tiché ignorování.
+	 *
+	 * Výpis akcí vrací bez parametrů i proběhlé akce, nejnovější nahoře.
+	 * Kalendář pro návštěvníka proto musí říct `period=upcoming`; inventura
+	 * v administraci naopak chce všechno.
+	 *
+	 * @param string $type  `events` | `places` | `routes`.
+	 * @param array  $query Filtry výpisu (`mine`, `page`, `per_page`, `period`…).
+	 */
+	public function listing( string $token, string $type, array $query = array() ): array {
+		return $this->request(
+			'GET',
+			'/api/v1/integrations/' . rawurlencode( $type ) . ( $query ? '?' . http_build_query( $query ) : '' ),
+			array( 'token' => $token )
+		);
+	}
+
+	/**
+	 * Detail položky podle id v Turince.
+	 *
+	 * Výpis nese jen to, co potřebuje karta; vazby na druhou stranu (trasy
+	 * u akce, akce u trasy) jsou až v detailu.
+	 *
+	 * @param string $type `events` | `places` | `routes`.
+	 */
+	public function detail( string $token, string $type, int $id ): array {
+		return $this->request(
+			'GET',
+			'/api/v1/integrations/' . rawurlencode( $type ) . '/' . $id,
+			array( 'token' => $token )
+		);
+	}
+
+	/**
+	 * Vazba trasa ↔ akce.
+	 *
+	 * Jedna vazba, jedno volání: `PUT` vrací 201 při vzniku a 200, když už
+	 * byla, takže opakování nevadí. Nahrazovací seznamy (`route_ids`,
+	 * `event_ids`) se tím vyhýbáme — ty by uměly vynulovat i vazby, které
+	 * udělal někdo jiný.
+	 *
+	 * Vazbu spravuje **pořadatel akce**: akce musí patřit webu, trasa může být
+	 * cizí, jen viditelná. Jinak 403.
+	 *
+	 * @param array $link Trasa (`route_id` | `route_source_id`) a akce
+	 *                    (`event_id` | `event_kct_id` | `event_source_id`).
+	 */
+	public function link_route_event( string $token, array $link ): array {
+		return $this->request( 'PUT', '/api/v1/integrations/route-event-links', array(
+			'token' => $token,
+			'body'  => $link,
+		) );
+	}
+
+	/**
+	 * Zrušení vazby. 204 když zanikla, 404 když nebyla.
+	 */
+	public function unlink_route_event( string $token, array $link ): array {
+		return $this->request(
+			'DELETE',
+			'/api/v1/integrations/route-event-links?' . http_build_query( $link ),
+			array( 'token' => $token )
+		);
+	}
+
+	/**
+	 * Odebrání položky, kterou web do Turinky dodal.
+	 *
+	 * Odpověď říká, co se stalo: `archived` (položku web založil a Turinka ji
+	 * schovala), `unlinked` (web se odpojil od cizí položky, ta zůstává) nebo
+	 * `kept` (proběhlá akce zůstává lidem v deníku).
+	 *
+	 * @param string $type `events` | `places` | `routes`.
+	 */
+	public function delete_item( string $token, string $type, string $source_id ): array {
+		return $this->request(
+			'DELETE',
+			'/api/v1/integrations/' . rawurlencode( $type ) . '/source/' . rawurlencode( $source_id ),
+			array( 'token' => $token )
+		);
+	}
+
+	/**
+	 * Číselníky — hodnoty a jejich popisky pro všechny typy naráz.
+	 */
+	public function codelists( string $token ): array {
+		return $this->request( 'GET', '/api/v1/integrations/codelists', array( 'token' => $token ) );
+	}
+
+	/**
 	 * Obsah, který web dodává k akci známé z feedu KČT.
 	 *
 	 * `PUT`, protože je to nahrazení obsahu, ne přidání dalšího — opakovaný
@@ -77,6 +173,68 @@ class Client {
 	 */
 	public function write_event( string $token, array $payload ): array {
 		return $this->request( 'PUT', '/api/v1/integrations/events', array(
+			'token' => $token,
+			'body'  => $payload,
+		) );
+	}
+
+	/**
+	 * Trasa z webu.
+	 *
+	 * Bez id v cestě, stejně jako u vlastních akcí: trasu identifikuje dvojice
+	 * (klient, `source_id` v těle), takže opakované volání je úprava.
+	 *
+	 * Plugin tím trasu **nezakládá** — API u nové trasy vyžaduje GPX, které
+	 * plugin nemá. Zakládá ji formulář Turinky; tohle je jen dodání názvu
+	 * a textu k trase, která už existuje.
+	 */
+	public function write_route( string $token, array $payload ): array {
+		return $this->request( 'PUT', '/api/v1/integrations/routes', array(
+			'token' => $token,
+			'body'  => $payload,
+		) );
+	}
+
+	/**
+	 * Trasa podle vlastního id webu.
+	 *
+	 * Tím se po uložení formuláře zjišťuje, co v Turince opravdu vzniklo —
+	 * odpověď formuláře z prohlížeče se k tomu nepoužívá, protože ji posílá
+	 * rám, ne server.
+	 */
+	public function route_by_source( string $token, string $source_id ): array {
+		return $this->request(
+			'GET',
+			'/api/v1/integrations/routes/source/' . rawurlencode( $source_id ),
+			array( 'token' => $token )
+		);
+	}
+
+	/**
+	 * Odebrání trasy z Turinky.
+	 *
+	 * Odpověď říká, co se stalo: `archived` (trasu založil web, Turinka ji
+	 * schovala), `unlinked` (web se jen odpojil od trasy, kterou doplňoval),
+	 * nebo `kept`.
+	 */
+	public function delete_route( string $token, string $source_id ): array {
+		return $this->request(
+			'DELETE',
+			'/api/v1/integrations/routes/source/' . rawurlencode( $source_id ),
+			array( 'token' => $token )
+		);
+	}
+
+	/**
+	 * Lístek na formulář Turinky vložený do stránky webu.
+	 *
+	 * Platí dvě hodiny a je jednorázový, takže se vydává až na kliknutí
+	 * redakce, ne dopředu při vykreslení obrazovky.
+	 *
+	 * @param array $payload `type`, `source_id`, `source_url`, volitelně `prefill`.
+	 */
+	public function form_ticket( string $token, array $payload ): array {
+		return $this->request( 'POST', '/api/v1/integrations/forms', array(
 			'token' => $token,
 			'body'  => $payload,
 		) );

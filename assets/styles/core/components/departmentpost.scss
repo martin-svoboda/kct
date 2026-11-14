@@ -69,6 +69,35 @@
 .departments {
 	margin-top: 1rem;
 
+	// Hledání v seznamu — políčko staví skript, viz assets/scripts/plugin.js.
+	.departments-search {
+		display: flex;
+		gap: .5rem;
+		align-items: center;
+		flex-wrap: wrap;
+		max-width: 520px;
+		margin-bottom: .75rem;
+
+		label {
+			font-weight: 600;
+			white-space: nowrap;
+		}
+
+		input[type="search"] {
+			flex: 1 1 200px;
+			min-width: 0;
+		}
+	}
+
+	// Počet odborů. `role="status"`, takže po napsání do hledání odečítač
+	// obrazovky řekne, kolik položek zbylo — jinak se seznam tiše zkrátí.
+	.departments-count {
+		margin: 0 0 1rem;
+		font-size: .9rem;
+		font-weight: 600;
+		color: var(--text-muted);
+	}
+
 	.departments-list {
 		list-style-type: none;
 		padding: 0;
@@ -84,6 +113,12 @@
 
 			@media (min-width: 500px) {
 				min-width: 450px;
+			}
+
+			// Skryté hledáním. Explicitně, protože `flex: 1` výš by jinak
+			// s `[hidden]` z prohlížeče mohlo soupeřit.
+			&[hidden] {
+				display: none;
 			}
 		}
 	}

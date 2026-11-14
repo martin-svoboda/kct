@@ -1,0 +1,91 @@
+// ── Stránka výsledků hledání ────────────────────────────────────────────────
+// Nad výpisem stojí počet nalezených a znovu formulář. Oboje tu dřív nebylo:
+// kdo napsal špatné slovo, musel se vracet v prohlížeči, a nikde nestálo,
+// jestli je výsledek jeden nebo sto dvacet.
+
+.search-count {
+	margin: .25rem 0 1rem;
+	font-size: .9rem;
+	font-weight: 600;
+	color: var(--text-muted);
+}
+
+.search-again {
+	max-width: 520px;
+	margin-bottom: 2rem;
+
+	// Formulář jádra je label + input + tlačítko; v hlavičce stránky ho chceme
+	// na jednom řádku, ať nerozhání nadpis od prvního výsledku.
+	form {
+		display: flex;
+		gap: .5rem;
+		align-items: flex-end;
+		flex-wrap: wrap;
+	}
+
+	label {
+		flex: 1 1 220px;
+		min-width: 0;
+	}
+
+	input[type="search"] {
+		width: 100%;
+	}
+}
+
+// Výsledek hledání je položka seznamu, ne stránka sama pro sebe.
+//
+// Nadpis a náhled sem dosud padaly z pravidel pro článek: titulek verzálkami
+// v téměř stejné velikosti jako h1 stránky a náhled bez omezené výšky, který
+// si vzal plnou šířku sloupce. Jeden výsledek tak měřil víc než půl obrazovky
+// a seznam se nedal přelétnout očima — přitom právě přelétnout ho je jediné,
+// proč na stránku s výsledky člověk chodí.
+.search-results {
+	.entry-title {
+		font-size: clamp(1.25rem, 2.4vw, 1.5rem);
+		text-transform: none;
+		letter-spacing: 0;
+		line-height: 1.25;
+	}
+
+	// Pevná výška dlaždice, ne proporce obrázku. Náhledy mají různé poměry
+	// stran a bez stropu se seznam zubatí podle toho, co kdo nahrál.
+	.post-thumbnail {
+		display: block;
+		height: 160px;
+		margin: 0 0 .6rem;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
+
+	// Výsledek bez vlastního obrázku zůstane bez obrázku.
+	//
+	// Náhradní logo má smysl v mřížce karet, kde by po chybějícím náhledu
+	// zůstala díra. Tady karty nejsou — výsledky stojí pod sebou, takže se
+	// nemá co rozbít, a tři stejné modré pruhy s týmž logem za sebou nesou
+	// jen šum. Kdo na stránce hledá, čte štítek typu a nadpis.
+	.post-thumbnail:has(.thumbnail-replacement) {
+		display: none;
+	}
+
+	article + article {
+		margin-top: 1.75rem;
+	}
+}
+
+// Štítek typu obsahu u výsledku — příspěvek / stránka / akce / odbor.
+// Plná barva textu, ne ztlumená: je to jediné, co o výsledku napoví, než
+// člověk přečte nadpis, a drobné verzálky ztlumené šedi se čtou nejhůř.
+.entry-kind {
+	margin: 0 0 .25rem;
+	font-family: var(--font-head);
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	color: var(--text);
+}

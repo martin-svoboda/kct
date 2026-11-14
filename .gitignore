@@ -35,3 +35,8 @@ themes/kct/.DS_Store
 # Provozní data endpointu aktualizací — SQLite a cache GitHubu. Vznikají při
 # lokálním běhu i na serveru a do repozitáře nepatří.
 /server/updates/public/data/
+
+# Výstupy návrhového auditu (skill impeccable). Jsou to interní poznámky
+# s naměřenými čísly a jmény konkrétních webů — do veřejného repozitáře
+# nepatří, stejně jako docs/superpowers.
+/.impeccable/

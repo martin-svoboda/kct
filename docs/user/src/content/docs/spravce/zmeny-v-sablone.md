@@ -2,7 +2,7 @@
 title: Změny v šabloně
 description: Co přinesly poslední vydané verze šablony KČT z pohledu správce webu.
 sidebar:
-  order: 7
+  order: 8
 ---
 
 Po přečtení téhle stránky bude jasné, co přinesly poslední vydané verze šablony
@@ -15,6 +15,24 @@ stránky [Aktualizace šablony](/spravce/aktualizace/).
 Historie začíná u verze 2.0.0, kterou se šablona začala vydávat veřejně.
 Předchozí vydání vznikala jen pro weby provozované přímo autorem šablony a
 zpětně se nedoplňují — všechno, co uměla, je součástí verze 2.0.0.
+
+## Připravuje se
+
+- **Nastavení šablony se přestěhovalo.** Dřív bylo v *Nastavení → KČT*, nově má
+  šablona vlastní menu **KČT** v levém sloupci (nad Vzhledem) a nastavení je
+  v něm jako poslední položka. Adresa stránky se tím změnila, takže uloženou záložku
+  v prohlížeči je potřeba přepsat.
+
+- **Přibyla Nástěnka KČT.** Na jedné stránce je vidět, kolik má web akcí a
+  odkud jsou, jestli běží import z databáze KČT, jak je na tom propojení
+  s Turinkou a jestli je nastavené sdílení na Facebook.
+
+- **Přehled akcí u akcí.** Pod *Akce* přibyla stránka **Přehled akcí**, která
+  ukazuje jednu akci jako jeden řádek napříč zdroji — vlastní příspěvek,
+  databáze KČT i Turinka — a umí najít nespárované dvojice.
+
+- **Trasy a místa z Turinky.** Propojený web má v menu KČT přehledy tras a míst,
+  které aplikace vede pod jeho organizací.
 
 ## 2.1.2 — 8. 11. 2026
 
@@ -104,7 +122,7 @@ První veřejné vydání. Šablonu si nově může nainstalovat kterýkoli odbo
 jen weby ve spravované síti.
 
 - **Adresa exportu z Databáze akcí KČT se zadává v nastavení.** V
-  **Nastavení → KČT → Obecné** přibylo pole **Adresa exportu z Databáze akcí
+  **KČT → Nastavení → Obecné** přibylo pole **Adresa exportu z Databáze akcí
   KČT**. Dřív byla adresa v šabloně napevno, teď ji vyplňuje správce webu.
   Adresa není veřejná a **sdělí ji na vyžádání ústředí KČT** — napište si o ni
   stejnou cestou, jakou odbor s ústředím komunikuje běžně. Postup popisuje

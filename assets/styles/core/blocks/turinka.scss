@@ -1,0 +1,265 @@
+// Karty výpisu z Turinky (bloky Trasy a Místa).
+//
+// Mřížka je sdílená s ostatními výpisy (.articles_grid), takže karta sedí do
+// stejného rastru jako aktuality a trasy webu. Vlastní je jen vnitřek karty:
+// u trasy je nahoře obrázek mapy se stopou, který má jiný poměr stran než
+// fotka, a pod názvem řádek údajů.
+.block-turinka {
+	// Sloupců tolik, kolik se jich vejde do **místa, které blok dostal** — ne
+	// podle šířky okna. Sdílená mřížka výpisů počítá sloupce z breakpointů, a
+	// tak na stránce s postranním panelem natlačila tři karty do sloupce
+	// širokého 760 px; karta pak měla 237 px a název se lámal přes tři řádky.
+	//
+	// 300 px je nejmenší šířka, ve které se vejde název na dva řádky a pod něj
+	// řádek údajů. Z toho vychází trojice na plné šířce, dvojice vedle
+	// postranního panelu a jedna karta na mobilu — bez jediného breakpointu.
+	.articles_grid {
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		margin-bottom: 1rem;
+	}
+
+	// Sdílená karta výpisu odsazuje všechno kromě `.post-thumbnail`; obrázek
+	// z Turinky se jmenuje jinak, a tak zůstával odsazený od kraje karty.
+	// Odsazení si karta řídí sama uvnitř `.turinka-card__body`.
+	.articles_grid article > * {
+		padding-left: 0;
+		padding-right: 0;
+	}
+}
+
+.turinka-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: var(--radius-card);
+	overflow: hidden;
+	box-shadow: var(--shadow-card);
+
+	// Obrázek drží poměr 16:9 bez ohledu na to, co přijde: fotky míst bývají
+	// i na výšku (960 × 1450) a s obyčejným `height: 100%` si obrázek protáhl
+	// kartu na dvojnásobek — v řádku pak byla jedna karta o 350 px vyšší.
+	// Absolutní pozice obrázek z výpočtu výšky vyřadí, o tu se stará poměr.
+	&__image {
+		display: block;
+		position: relative;
+		aspect-ratio: 16 / 9;
+		overflow: hidden;
+		background: var(--surface-alt);
+
+		img {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+		}
+	}
+
+	// Tělo roste, aby karta vyplnila výšku řádku a patička mohla dolů.
+	&__body {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+		padding: 16px;
+	}
+
+	// Doporučená trasa nebo tip na místo — hodnota z API, ne naše volba.
+	&__badge {
+		position: absolute;
+		top: 10px;
+		left: 10px;
+		padding: 2px 10px;
+		border-radius: 999px;
+		background: var(--primary);
+		color: var(--primary-contrast, #fff);
+		font-size: 11px;
+		font-weight: 700;
+		letter-spacing: .03em;
+		text-transform: uppercase;
+	}
+
+	&__activities {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin: 0;
+	}
+
+	&__title {
+		margin: 0;
+		font-family: var(--font-head);
+		font-size: 1.05rem;
+		line-height: 1.3;
+
+		a {
+			color: var(--text);
+			text-decoration: none;
+
+			// Odkaz přes celou kartu (stretched link) — stejný postup, jaký má
+			// karta příspěvku ve výpisech. Kliknout jde kamkoli, ale v kódu
+			// zůstane jediný odkaz s názvem jako textem, takže čtečka i
+			// vyhledávač pořád vidí, kam vede.
+			&::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				z-index: 1;
+			}
+		}
+	}
+
+	&:hover &__title a {
+		text-decoration: underline;
+	}
+
+	// Délka, převýšení a obtížnost u trasy; kategorie a obec u místa.
+	&__meta {
+		margin: 0;
+		font-weight: 600;
+		font-size: 0.9rem;
+		color: var(--text-muted);
+	}
+
+	// Výškový profil pod údaji. Barvy z tokenů, ať sedí do skinu webu.
+	&__profile {
+		margin-top: 2px;
+	}
+
+	&__tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+		margin: 0;
+	}
+
+	// Patička karty: kam odkaz vede a kolik lidí si položku uložilo.
+	//
+	// `margin-top: auto` ji drží u spodní hrany karty i u krátkého popisu —
+	// v řádku pak patičky sedí na stejné lince a karty nevypadají rozsypaně.
+	&__footer {
+		margin-top: auto;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 8px;
+		margin-bottom: 0;
+		padding-top: 10px;
+		border-top: 1px solid var(--line);
+		font-size: 0.8rem;
+		color: var(--text-muted);
+	}
+
+	&__open {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
+	}
+
+	// Uvedení autora fotky patří k obrázku, ne na konec karty — jinak by po
+	// přisazení patičky ke spodní hraně skončilo pod ní. Drobné a nalepené pod
+	// fotku: je to povinnost z licence, ne údaj o trase nebo místě, a nemá
+	// přetahovat pozornost z názvu.
+	// Nad překryvem odkazu, aby se text dal označit a případné odkazy v něm
+	// fungovaly samy za sebe.
+	&__attribution {
+		position: relative;
+		z-index: 2;
+		margin: 2px 16px 0;
+		font-size: 0.68rem;
+		line-height: 1.35;
+		color: var(--text-muted);
+
+		small {
+			font-size: inherit;
+		}
+	}
+
+	// Logo aplikace v patičce. Výšku drží CSS, ať se nerozhodí, kdyby se
+	// soubor loga někdy změnil.
+	&__logo {
+		height: 16px;
+		width: auto;
+		display: block;
+	}
+
+	&__text {
+		margin: 0;
+		font-size: 0.95rem;
+		color: var(--text-muted);
+	}
+}
+
+// Odkaz na aplikaci pod výpisem — protihodnota za vypsaná data, proto je
+// v DOM hostitele a ne jen uvnitř karet.
+.turinka-cards__source {
+	// Mezera pod výpisem patří sem, ne do obalu: za blokem bývá rovnou další
+	// nadpis a bez ní by se zdroj dat lepil na něj.
+	margin: 0 0 2rem;
+	color: var(--text-muted);
+}
+
+.turinka-profile {
+	display: block;
+	width: 100%;
+	height: 36px;
+
+	&__area {
+		fill: var(--primary);
+		opacity: 0.12;
+	}
+
+	&__line {
+		stroke: var(--primary);
+		stroke-width: 2;
+		stroke-linejoin: round;
+		vector-effect: non-scaling-stroke;
+	}
+}
+
+// Ikona odchozího odkazu u názvu a v patičce karty.
+.turinka-out {
+	margin-left: 5px;
+	vertical-align: -1px;
+	opacity: 0.75;
+}
+
+// Druh aktivity: ikona dlaždice na podkladu v barvě, kterou posílá API.
+// Barva přichází jako proměnná v atributu style, takže se neopisuje do CSS
+// a nerozejde se s tím, jak aktivitu kreslí Turinka.
+.turinka-activity {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 2px 10px 2px 4px;
+	border-radius: 999px;
+	background: color-mix(in srgb, var(--turinka-activity) 14%, transparent);
+	color: var(--text);
+	font-size: 0.78rem;
+	font-weight: 600;
+	line-height: 1.6;
+
+	&__icon {
+		width: 18px;
+		height: 18px;
+		padding: 2px;
+		border-radius: 50%;
+		background: var(--turinka-activity);
+	}
+}
+
+// Vhodnost a sezónnost — vlastnosti, ne čísla.
+.turinka-tag {
+	display: inline-block;
+	padding: 2px 9px;
+	border-radius: 999px;
+	border: 1px solid var(--line);
+	background: var(--surface-alt);
+	font-size: 0.78rem;
+	line-height: 1.6;
+	color: var(--text);
+}

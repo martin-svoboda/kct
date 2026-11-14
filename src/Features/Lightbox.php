@@ -173,6 +173,9 @@ class Lightbox {
 		wp_enqueue_style( 'kct-lightbox' );
 		wp_add_inline_style( 'kct-lightbox', implode( '', array(
 			'.wp-block-gallery.is-cropped .wp-lightbox-container > button{top:16px !important;right:16px !important}',
+			// Jádro kreslí spouštěč jako 20×20 px. WCAG 2.2 (2.5.8) chce u dotykového
+			// cíle aspoň 24×24 px; zvětšuje se jen plocha, ikona uvnitř zůstává.
+			'.wp-lightbox-container > button{min-width:24px;min-height:24px}',
 			'.wp-lightbox-overlay .kct-lightbox-caption{position:absolute;z-index:2000002;margin:0;',
 			'bottom:calc(env(safe-area-inset-bottom) + 16px);left:50%;transform:translateX(-50%);',
 			'max-width:min(60ch,calc(100% - 160px));padding:8px 16px;border-radius:4px;',

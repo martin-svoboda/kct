@@ -25,15 +25,27 @@ class GraphClient {
 	/**
 	 * Publikuje příspěvek na zeď stránky.
 	 *
+	 * Obrázek se připojuje přes `attached_media` jako už nahraná fotka, ne
+	 * adresou — viz upload_photo(), proč to jde na dvakrát.
+	 *
+	 * `link` a `photo_id` se vylučují: odkaz si Facebook rozbalí do náhledové
+	 * karty, a ta nemá kam jít, když příspěvek nese vlastní fotku.
+	 *
+	 * @param string|null $photo_id ID fotky nahrané přes upload_photo().
+	 *
 	 * @return array{ok: bool, id?: string, code?: int, message?: string}
 	 */
-	public function publish( string $page_id, string $token, string $message, ?string $link = null ): array {
+	public function publish( string $page_id, string $token, string $message, ?string $link = null, ?string $photo_id = null ): array {
 		$body = array(
 			'message'      => $message,
 			'access_token' => $token,
 		);
 
-		if ( $link ) {
+		if ( $photo_id ) {
+			// Indexovaný zápis, ne JSON pole — pole v jedné hodnotě chce
+			// Graph API Explorer, běžné volání indexy.
+			$body['attached_media[0]'] = wp_json_encode( array( 'media_fbid' => $photo_id ) );
+		} elseif ( $link ) {
 			$body['link'] = $link;
 		}
 
@@ -49,41 +61,42 @@ class GraphClient {
 	}
 
 	/**
-	 * Publikuje na zeď stránky fotku s popiskem.
+	 * Nahraje fotku na stránku, ale nepublikuje ji.
 	 *
-	 * Obrázek se nenahrává — předá se jeho veřejná adresa a Facebook si ho
-	 * stáhne sám. Z toho plyne, že se to nedá vyzkoušet z lokálního vývoje —
-	 * na adresu, která není dostupná z internetu, Facebook nedosáhne.
+	 * Tohle je první polovina sdílení fotkou. Druhá je publish() s vráceným
+	 * ID v `attached_media`. Na dvakrát to je proto, že fotka publikovaná
+	 * rovnou přes `/photos` nevytvoří běžný příspěvek na zdi, ale fotopříspěvek
+	 * (`status_type: added_photos`) — ten skončí v albu stránky a ve výpisu
+	 * příspěvků se čtenářům většinou vůbec neukáže. Sdílení tím ztrácí smysl:
+	 * příspěvek technicky vznikne, ale nikdo se k němu nedostane.
 	 *
-	 * Endpoint vrací dvě různá ID: `id` je identifikátor fotky, `post_id`
-	 * identifikátor příspěvku na zdi. Ukládá se ten druhý, protože z něj
-	 * Facebook\ShareMetabox staví odkaz na příspěvek — s ID fotky by odkaz
-	 * nefungoval, a to tiše, protože odeslání by proběhlo v pořádku. Volajícím
-	 * se vrací pod klíčem `id`, aby se nemusely měnit.
+	 * Obrázek se nenahrává po bajtech — předá se jeho veřejná adresa a Facebook
+	 * si ho stáhne sám. Z toho plyne, že se to nedá vyzkoušet z lokálního
+	 * vývoje — na adresu, která není dostupná z internetu, Facebook nedosáhne.
+	 *
+	 * Popisek se sem nedává: text nese až příspěvek z publish(). Parametr
+	 * `message` je tu navíc podle dokumentace zastaralý.
+	 *
+	 * Nepublikovanou fotku drží Facebook zhruba 24 hodin a pak ji maže. Pro
+	 * sdílení, kde druhý krok následuje hned, to není omezení — a když druhý
+	 * krok selže, je to naopak úklid zadarmo.
 	 *
 	 * @return array{ok: bool, id?: string, code?: int, message?: string}
 	 */
-	public function publish_photo( string $page_id, string $token, string $message, string $image_url ): array {
+	public function upload_photo( string $page_id, string $token, string $image_url ): array {
 		$response = wp_remote_post(
 			self::API_URL . self::API_VERSION . '/' . $page_id . '/photos',
 			array(
 				'timeout' => self::TIMEOUT,
 				'body'    => array(
-					'message'      => $message,
 					'url'          => $image_url,
+					'published'    => 'false',
 					'access_token' => $token,
 				),
 			)
 		);
 
-		$result = $this->parse( $response, 'post_id' );
-
-		if ( ! empty( $result['ok'] ) ) {
-			$result['id'] = $result['post_id'];
-			unset( $result['post_id'] );
-		}
-
-		return $result;
+		return $this->parse( $response, 'id' );
 	}
 
 	/**

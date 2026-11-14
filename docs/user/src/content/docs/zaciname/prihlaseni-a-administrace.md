@@ -80,10 +80,27 @@ uživatel přihlášený. Slouží k přeskakování mezi obojím:
   odkaz **Upravit**, který otevře daný obsah rovnou v editoru. Je to nejrychlejší
   cesta k opravě překlepu.
 
-## Nastavení → KČT
+## Menu KČT
 
-Vše, co je specifické pro šablonu KČT, je pohromadě v **Nastavení → KČT**.
-Stránka je rozdělená na tři záložky:
+Vše, co je specifické pro šablonu KČT, je pohromadě v menu **KČT** v levém
+sloupci — za oddělovačem pod obsahem, hned nad Vzhledem. Není to správa obsahu,
+proto nesedí mezi Příspěvky a Médii.
+
+Co v něm je:
+
+- **Nástěnka** — kolik má web akcí a odkud jsou, jestli běží import z databáze
+  KČT, jestli je web propojený s Turinkou a co o něm ví, jestli je nastavené
+  sdílení na Facebook;
+- **Trasy v Turince** a **Místa v Turince** — jen na propojeném webu, viz
+  [Propojení s Turinkou](/funkce/turinka/);
+- **Nastavení** — níž na téhle stránce.
+
+Přehled akcí je u akcí, ne tady: akce web drží i jako vlastní příspěvky, takže
+patří k nim.
+
+## KČT → Nastavení
+
+Nastavení šablony je rozdělené na tři záložky:
 
 - **Obecné** — kód odboru nebo oblasti,
 - **Facebook** — sdílení aktualit a akcí na facebookovou stránku odboru,

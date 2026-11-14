@@ -57,14 +57,18 @@ detaily.
 
 **Nastavení karty** (postranní panel vpravo):
 
-- **Barva boxu** — *Výchozí (primární)*, *Primární barva*, *Sekundární barva*,
-  *Červená*, *Modrá*, *Zelená*, *Žlutá*. Volba určuje barvu proužku nad kartou,
-  pozadí karty zůstává světlé. Primární a sekundární barva se řídí nastavením
-  webu, takže se změní společně se zbytkem vzhledu — viz
-  [Vzhled webu](/funkce/vzhled-webu/). Pevné barvy se hodí na odlišení karet
-  v jedné řadě, ale střídat jich víc než dvě až tři se nevyplácí. V editoru se
-  zvolená barva zatím ukazuje jako podbarvení celé karty, na webu se projeví jen
-  proužkem — rozhoduje podoba na webu.
+- **Barva proužku nad kartou** — *Primární barva webu*, *Modrá značka*,
+  *Červená značka*, *Zelená značka*, *Žlutá značka*, *Tmavá*. Mění se jen tenký
+  proužek nad kartou, pozadí zůstává světlé. Výchozí volba se řídí
+  [primární barvou webu](/funkce/vzhled-webu/), takže se změní společně se
+  zbytkem vzhledu; čtyři barvy značek jsou pevné a stejné na každém webu, takže
+  se kartou dá odkázat na konkrétní barvu značení.
+
+  Jedna řada karet vypadá nejlépe v jednom tónu — barvy mají smysl tam, kde
+  každá karta opravdu patří k jiné značce, ne jako ozdoba. A **žlutý proužek je
+  na světlé kartě skoro neznatelný**: proti bílé má kontrast 1,5:1, kdežto modrý
+  5,9:1. Od ostatních tří barev proužku se pozná, od karty pod sebou ale téměř
+  ne, takže na žlutou trasu odkáže jen tomu, kdo barvy porovnává vedle sebe.
 - **URL odkazu** — když je adresa vyplněná, stane se odkazem **celá karta**,
   ne jen nadpis. Samostatné tlačítko karta nemá.
 - **Otevřít v novém okně** — otevře cíl v nové záložce prohlížeče.

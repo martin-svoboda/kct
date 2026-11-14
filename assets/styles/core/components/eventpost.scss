@@ -75,9 +75,66 @@
 	}
 }
 
+// ── Oddíly za textem akce ──────────────────────────────────────────────────
+// Za obsahem akce stojí ještě trasy z Turinky, propozice a vkládaný widget.
+// Jsou to tři různé věci z různých míst kódu, a každá si dřív nesla vlastní
+// mezeru: mapa žádnou, blok tras osmdesát pixelů zespodu a widget nic, takže
+// se oddíly jednou lepily na sebe a jinde mezi nimi zela díra.
+//
+// Rytmus proto drží jedna proměnná a platí pro všechny tři stejně. Oddíl
+// s nadpisem (trasy, propozice) navíc odděluje linka — tentýž přechod „od
+// slova webu k údajům odjinud“, jaký má stránka trasy.
+.event-post .entry-content {
+	--event-section-gap: 2.5rem;
+
+	@media (max-width: $medium-screen) {
+		--event-section-gap: 1.5rem;
+	}
+
+	> :is(.event-routes, .event-proposal, .kct-turinka-embed) {
+		margin-top: var(--event-section-gap);
+
+		// Mezeru dělá vždycky až oddíl, který přijde po něm — i widget, který
+		// si pro stránku trasy nese vlastní odsazení zespodu.
+		margin-bottom: 0;
+	}
+
+	// Mapa je poslední částí obsahu, ne samostatný oddíl — mezeru pod ní
+	// dělá až odstup následujícího oddílu.
+	> .event-map {
+		margin-bottom: 0;
+	}
+}
+
+// ── Trasy akce z Turinky ───────────────────────────────────────────────────
+// Výpis uvnitř je tentýž blok jako ve stránce a nese si rytmus bloků
+// (osmdesát pixelů pod sekcí); na stránce akce o něm rozhoduje oddíl.
+.event-routes {
+	padding-top: 2rem;
+	border-top: 1px solid var(--line);
+
+	.kct-block {
+		margin-bottom: 0;
+	}
+
+	// Nadpis oddílu se řídí stránkou akce, ne bloky. Nadpisy bloků jsou na
+	// webu verzálkami, kdežto oddíly akce (Propozice, Kontakt, Další ročníky)
+	// mají nadpis psaný normálně — a trasy stojí mezi nimi.
+	.wp-block-heading {
+		font-family: var(--font-head);
+		text-transform: none;
+		letter-spacing: normal;
+		margin: 0 0 1.25rem;
+	}
+
+	.turinka-cards__source {
+		margin-bottom: 0;
+	}
+}
+
 // ── Náhled PDF propozice na konci obsahu detailu akce ──────────────────────
 .event-proposal {
-	margin-top: 2.5rem;
+	margin-top: var(--event-section-gap, 2.5rem);
 	padding-top: 2rem;
 	border-top: 1px solid var(--line);
 
@@ -98,6 +155,29 @@
 		font-weight: 700;
 		margin-bottom: .6rem;
 		color: var(--text);
+	}
+
+	// Náhled je sbalitelný a adresu dostává skriptem — viz content-akce.php
+	// a assets/scripts/plugin.js. Na desktopu se přepínač nenabízí, tam náhled
+	// místo neubírá.
+	&__preview {
+		margin-top: 1rem;
+
+		&-toggle {
+			display: none;
+		}
+
+		@media (max-width: $medium-screen) {
+			&-toggle {
+				display: block;
+				min-height: 44px;
+				padding: 11px 0;
+				font-family: var(--font-head);
+				font-weight: 700;
+				color: var(--primary);
+				cursor: pointer;
+			}
+		}
 	}
 
 	&__frame {
@@ -124,15 +204,23 @@
 		color: var(--text-muted);
 	}
 
+	// Odkaz na soubor je hlavní akce oddílu, ne doplněk pod náhledem: stojí nad
+	// ním a vypadá jako tlačítko, protože propozice se čtou v prohlížeči PDF.
 	&__open {
-		display: inline-block;
-		margin-top: .85rem;
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+		padding: 10px 18px;
+		border-radius: var(--btn-radius);
+		background: var(--primary);
+		color: var(--primary-contrast);
+		font-family: var(--font-head);
 		font-weight: 700;
-		color: var(--primary);
 		text-decoration: none;
 
 		&:hover {
-			text-decoration: underline;
+			filter: brightness(.92);
+			text-decoration: none;
 		}
 	}
 }
@@ -150,10 +238,9 @@
 	border-left: 4px solid var(--primary);
 	background: var(--surface-alt);
 	font-weight: 600;
-	// Plná barva textu, ne --text-muted: ta na --surface-alt vychází 3,49:1,
-	// tedy pod hranicí WCAG AA (4,5:1). U poznámky, jejímž jediným úkolem je
+	// Plná barva textu, ne --text-muted: u poznámky, jejímž jediným úkolem je
 	// upozornit návštěvníka z vyhledávače, že se dívá na archiv, je ztlumená
-	// šeď navíc proti záměru.
+	// šeď proti záměru.
 	color: var(--text);
 }
 
@@ -276,9 +363,9 @@
 		gap: 8px;
 	}
 
-	// Štítek proběhlo / chystá se. Barvy jsou plné, ne ztlumené: na
-	// --surface-alt nevychází --text-muted na kontrast podle WCAG AA,
-	// stejný důvod jako u .event-past-notice výš.
+	// Štítek proběhlo / chystá se. Barvy jsou plné, ne ztlumené: štítek je
+	// signál stavu, ne údaj druhé úrovně — a ztlumený by zmizel vedle data,
+	// které vedle něj stojí a ztlumené BÝT má.
 	&__state {
 		display: inline-block;
 		padding: 2px 8px;
@@ -307,4 +394,30 @@
 		font-size: 13px;
 		white-space: nowrap;
 	}
+}
+
+// ── Předpověď počasí v postranním oddílu akce ──────────────────────────────
+// Výšku si rám hlásí sám skriptem hostitele, odstup mu dává postranní oddíl
+// (.event-sidebar > * { margin-bottom }) — vlastní spodní odsazení by se s ním
+// sečetlo. Nadpis má týž tvar jako ostatní nadpisy oddílu („Kontakt“,
+// „Propozice“), proto jen srovnané odsazení k rámu pod ním.
+.kct-turinka-weather {
+	// Odstup od oddílu nad ním nese obal, ne nadpis: ostatní nadpisy oddílu
+	// jsou přímo dětmi sloupce a odstup si dávají samy, tenhle je o patro níž.
+	margin-top: 2rem;
+	margin-bottom: 0;
+
+	> h2 {
+		margin: 0 0 1rem;
+	}
+}
+
+// ── Nadpisy oddílů na detailu akce ─────────────────────────────────────────
+// Pořadatel, Místo konání, Start, Cíl, Kontakt, Propozice, Předpověď počasí.
+// Pro odečítač obrazovky je to druhá úroveň — oddíly stojí přímo pod titulkem
+// akce a `h3` za `h1` mu stránku rozpadalo. Velikost ale zůstává ta menší:
+// jsou to návěsti údajů v postranním sloupci, ne kapitoly textu, a ve velikosti
+// `h2` by přebily samotný titulek akce.
+.event-post .event-section__title {
+	font-size: $fs-h3;
 }

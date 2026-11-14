@@ -1,107 +1,73 @@
 <?php
 /**
- * Template part for displaying posts
+ * Detail trasy.
  *
- * @link    https://developer.wordpress.org/themes/basics/template-hierarchy/
+ * Stavba je stejná jako u detailu akce a odboru: hlavička přes celou šířku
+ * s náhledovým obrázkem na pozadí, pod ní dva sloupce — obsah a postranní
+ * oddíl — a pod článkem navigace a další trasy.
+ *
+ * Widget Turinky je rozdělený na tři rámy: nad textem mapa se stopou, v
+ * postranním oddílu údaje o trase (tam, kde má akce svoje údaje) a pod textem
+ * výškový profil s tlačítky aplikace. Mezi nimi stojí to, co vlastní web:
+ * text článku.
+ *
+ * Nepropojená trasa vypíše jen článek. Je to normální stav rozepsané trasy,
+ * ne chyba, kterou by měl návštěvník vidět.
  *
  * @package kct
  */
 
-/** @var \Kct\Models\RoadModel $department */
-$road     = kct_container()->get( \Kct\Repositories\RoadRepository::class )->get( get_the_ID() );
-$gpx_file = $road->gpx;
-$gpx_url  = '';
-
-if ( $gpx_file ) {
-	$gpx_url = wp_get_attachment_url( $gpx_file );
-}
-
-$image_url = '';
-if ( is_single() && has_post_thumbnail() ) {
-	$image_url = get_the_post_thumbnail_url( null, 'full' );
-} /*elseif ( isset( $department['image'] ) && $department['image'] ) {
-	$image_url = $department['image']['url'];
-}*/
+$kct_post_id = (int) get_the_ID();
+$kct_title   = (string) get_the_title();
+$kct_embed   = kct_container()->get( \Kct\Turinka\RouteEmbed::class );
+$kct_map     = $kct_embed->map( $kct_post_id, $kct_title );
+$kct_facts   = $kct_embed->facts( $kct_post_id, $kct_title );
+$kct_details = $kct_embed->details( $kct_post_id, $kct_title );
+$kct_image   = has_post_thumbnail() ? (string) get_the_post_thumbnail_url( null, 'full' ) : '';
 ?>
 
-<article id="post-<?php echo get_the_ID(); ?>" class="department-post">
-	<header
-		class="entry-header full-width <?= $image_url ? 'large' : '' ?>" <?php if ( $image_url ) { ?> style="background-image: url('<?= $image_url ?>')" <?php } ?>>
+<article id="post-<?php echo esc_attr( (string) $kct_post_id ); ?>" class="route-post">
+	<header class="entry-header full-width <?php echo $kct_image ? 'large' : ''; ?>"
+		<?php if ( $kct_image ) : ?>style="background-image: url('<?php echo esc_url( $kct_image ); ?>')"<?php endif; ?>>
 		<div class="container">
-			<div>
-				<h1 class="entry-title"><?= $road->title ?></h1>
-			</div>
+			<?php
+			// Tmavá varianta jen s fotkou (.large má vlastní color:#fff) —
+			// bez fotky je pozadí var(--line), tam musí být muted (viz
+			// components/breadcrumbs.scss pro výpočet kontrastu).
+			get_template_part( 'template-parts/breadcrumbs', null, array( 'muted' => ! $kct_image ) );
+			?>
+			<h1 class="entry-title"><?php the_title(); ?></h1>
 		</div>
 	</header><!-- .entry-header -->
 
-	<?php if ( $gpx_url ) : ?>
-		<?php
-		// Leaflet dřív visel v hlavičce šablony, takže se stahoval i na stránkách
-		// bez mapy. Zůstal jen tady, kde ho inline skript níž potřebuje jako
-		// globální L — stejně jako doplňky pro GPX stopu a výškový profil.
-		// (Bundlovaný Leaflet z build/map.js je modul, globál nevystavuje.)
-		?>
-		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css" integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14=" crossorigin="" />
-		<script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js" integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg=" crossorigin=""></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-gpx/2.1.2/gpx.min.js" defer></script>
-		<link rel="stylesheet" href="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.css" />
-		<script src="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.js"></script>
-
-
-		<div id="map" style="width: 100%; height: 600px;"></div>
-
-		<script>
-			document.addEventListener('DOMContentLoaded', function () {
-				const map = L.map('map').setView([49.9, 14.4], 13);
-
-				// Mapy.cz tiles
-				L.tileLayer('https://api.mapy.cz/v1/maptiles/outdoor/256/{z}/{x}/{y}?apikey=IVelrOn442cgk26I87WOwie-2jnq_fdhNT_o8qmT74o', {
-					attribution: '&copy; Seznam.cz a.s.',
-					maxZoom: 18,
-				}).addTo(map);
-
-				// Elevation control
-				const controlElevation = L.control.elevation({
-					position: "bottomright",
-					theme: "steelblue-theme",
-					collapsed: false,
-					height: 200,
-				}).addTo(map);
-
-				// GPX loading
-				new L.GPX("<?= esc_url( $gpx_url ); ?>", {
-					async: true,
-					marker_options: {
-						startIconUrl: null,
-						endIconUrl: null,
-						shadowUrl: null,
-					}
-				})
-					.on("loaded", function (e) {
-						map.fitBounds(e.target.getBounds());
-					})
-					.on("addline", function (e) {
-						controlElevation.addData(e.line);
-					})
-					.addTo(map);
-			});
-		</script>
-	<?php endif; ?>
-
-	<div class="department-content-wrap">
+	<div class="route-content-wrap">
 		<div class="entry-content">
 			<?php
+			// Mapa nad textem: kvůli ní návštěvník na trasu přišel.
+			echo $kct_map; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escapováno v RouteEmbed.
+
 			the_content();
+
+			// Pod textem výškový profil a tlačítka aplikace (oblíbit, sdílet,
+			// stáhnout GPX) a odkaz na trasu v Turince.
+			echo $kct_details; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escapováno v RouteEmbed.
+
+			get_template_part( 'template-parts/post-share' );
 			?>
 		</div><!-- .entry-content -->
-		<div class="department-sidebar">
 
-			<h3>Kontaktní informace odboru</h3>
+		<div class="route-sidebar">
+			<?php
+			// Údaje o trase — délka, převýšení, odhad času, obtížnost. Drží je
+			// aplikace, proto je to rám, a ne výpis z polí příspěvku.
+			echo $kct_facts; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escapováno v RouteEmbed.
 
+			get_template_part( 'template-parts/route-others' );
+			?>
 		</div>
 	</div>
+</article><!-- #post-<?php echo esc_attr( (string) $kct_post_id ); ?> -->
 
-	<footer class="entry-footer">
-		<?php kct_entry_footer(); ?>
-	</footer><!-- .entry-footer -->
-</article><!-- #post-<?php the_ID(); ?> -->
+<?php
+get_template_part( 'template-parts/route-nav' );
+get_template_part( 'template-parts/route-related' );

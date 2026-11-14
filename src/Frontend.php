@@ -72,7 +72,22 @@ class Frontend {
 	}
 
 	public function setup_assets() {
+		// Texty hledání ve výpisu odborů jdou z PHP, ne ze skriptu: ve skriptu
+		// by zůstaly česky i na přeloženém webu. Políčko staví skript, takže
+		// jinak než proměnnými se k nim nedostane.
 		$this->asset_factory->wp_script( $this->utils->get_plugin_path( 'build/plugin.js' ), array(
+			'variables' => array(
+				'kct_departments_search_label'       => __( 'Hledat odbor', 'kct' ),
+				'kct_departments_search_placeholder' => __( 'Název nebo obec', 'kct' ),
+				'kct_departments_count'              => array(
+					/* translators: %d je počet odborů (1). */
+					'one'  => __( '%d odbor', 'kct' ),
+					/* translators: %d je počet odborů (2 až 4). */
+					'few'  => __( '%d odbory', 'kct' ),
+					/* translators: %d je počet odborů (0 a 5 a více). */
+					'many' => __( '%d odborů', 'kct' ),
+				),
+			),
 			'in_footer' => true,
 		) );
 
@@ -101,7 +116,13 @@ class Frontend {
 		if ( is_post_type_archive( 'akce' ) ) {
 			$this->asset_factory->wp_script( $this->utils->get_plugin_path( 'build/events-archive.js' ), array(
 				'variables' => array(
-					'kct_api_url' => rest_url( 'kct/v1' ),
+					'kct_api_url'     => rest_url( 'kct/v1' ),
+					// Hláška o nepovedeném filtrování musí jít z PHP: ve skriptu by
+					// zůstala v jednom jazyce, kdežto odsud ji přeloží táž .po jako
+					// zbytek šablony.
+					'kct_filter_error' => __( 'Filtr se nepodařilo použít. Zkuste to prosím znovu.', 'kct' ),
+					'kct_more_loading' => __( 'Načítám…', 'kct' ),
+					'kct_more_error'   => __( 'Další akce se nenačetly. Zkuste to prosím znovu.', 'kct' ),
 				),
 				'in_footer' => true,
 			) );

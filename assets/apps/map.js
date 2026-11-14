@@ -33,9 +33,19 @@ function setMarkers(items) {
 		markerGroup = null;
 	}
 
+	// `keyboard: false` a prázdný `alt` schválně. Leaflet dává každému markeru
+	// ve výchozím stavu `tabindex="0"`, takže z osmdesáti akcí vznikne osmdesát
+	// zastávek Tabu — a protože je to obrázek bez popisu, odečítač obrazovky na
+	// každé z nich mlčí. Cesta ke zbytku stránky tím byla zavalená. Nic se tím
+	// neztrácí: v bublině markeru je název, datum a odkaz na detail, a to všechno
+	// stojí i ve výpisu pod mapou, který klávesnice projde tak jako tak.
 	const markers = (items || [])
 		.filter(item => item.lat && item.lng)
-		.map(item => L.marker([item.lat, item.lng], { icon: customIcon }).bindPopup(buildPopup(item)));
+		.map(item => L.marker([item.lat, item.lng], {
+			icon: customIcon,
+			keyboard: false,
+			alt: '',
+		}).bindPopup(buildPopup(item)));
 
 	markerGroup = L.featureGroup(markers).addTo(map);
 
@@ -67,6 +77,11 @@ function init() {
 	// šedé pruhy po stranách.
 	map.setMaxBounds(L.latLngBounds([48.5, 11.0], [51.5, 18.0]));
 
+	// Kontejner mapy je zastávka Tabu (Leaflet jí dává `tabindex="0"` kvůli
+	// posouvání šipkami), ale sám o sobě je to bezejmenný `<div>`. Bez popisu
+	// klávesnice skočí někam, odkud nepozná kam se dostala.
+	el.setAttribute('aria-label', el.dataset.mapLabel || 'Mapa');
+
 	// Bez `bounds` na dlaždicích → dlaždice vyplní celý kontejner (žádné šedé pruhy).
 	L.tileLayer(`https://api.mapy.cz/v1/maptiles/outdoor/256/{z}/{x}/{y}?apikey=${API_KEY}`, {
 		minZoom: 9,
@@ -82,7 +97,9 @@ function init() {
 			const link = L.DomUtil.create('a', '', container);
 			link.setAttribute('href', 'http://mapy.cz/');
 			link.setAttribute('target', '_blank');
-			link.innerHTML = '<img src="https://api.mapy.cz/img/api/logo.svg" />';
+			// Logo je odkaz, takže alt nese jeho účel — bez něj je to pro
+			// odečítač obrazovky bezejmenná zastávka Tabu.
+			link.innerHTML = '<img src="https://api.mapy.cz/img/api/logo.svg" alt="Mapy.cz" />';
 			L.DomEvent.disableClickPropagation(link);
 			return container;
 		},

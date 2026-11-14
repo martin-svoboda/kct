@@ -88,7 +88,7 @@ $kct_current = kct_event_find( $kct_events, (int) get_the_ID(), (int) $db_event_
 					if ( ! empty( $event['organiser']['name'] ) ) {
 						$organiser[] = $event['organiser']['name'];
 						?>
-						<h3>Pořadatel</h3>
+						<h2 class="event-section__title">Pořadatel</h2>
 						<p><?php
 							//					if ( ! empty( $event['organiser']['street'] ) ) {
 							//						$organiser[] = $event['organiser']['street'];
@@ -106,7 +106,7 @@ $kct_current = kct_event_find( $kct_events, (int) get_the_ID(), (int) $db_event_
 						}
 						?></p>
 					<?php } ?>
-					<h3>Místo konání</h3>
+					<h2 class="event-section__title">Místo konání</h2>
 					<p><?php
 						$place = [];
 						if ( isset( $event['place'] ) && ! empty( $event['place'] ) ) {
@@ -130,8 +130,8 @@ $kct_current = kct_event_find( $kct_events, (int) get_the_ID(), (int) $db_event_
 						  color="currentColor"/>
 				</svg>
 				<div class="content">
-					<h3>
-						Start <?php echo $event['start']['date'] ? date( 'j. n. Y', strtotime( $event['start']['date'] ) ) : ''; ?></h3>
+					<h2 class="event-section__title">
+						Start <?php echo $event['start']['date'] ? date( 'j. n. Y', strtotime( $event['start']['date'] ) ) : ''; ?></h2>
 					<?php
 					if ( ! empty( $event['start']['time'] ) ) {
 						echo '<p>čas: ' . $event['start']['time'] . '</p>';
@@ -152,8 +152,8 @@ $kct_current = kct_event_find( $kct_events, (int) get_the_ID(), (int) $db_event_
 						  color="currentColor"/>
 				</svg>
 				<div class="content">
-					<h3>
-						Cíl <?php echo $event['finish']['date'] ? date( 'j. n. Y', strtotime( $event['finish']['date'] ) ) : ''; ?></h3>
+					<h2 class="event-section__title">
+						Cíl <?php echo $event['finish']['date'] ? date( 'j. n. Y', strtotime( $event['finish']['date'] ) ) : ''; ?></h2>
 					<?php
 					if ( ! empty( $event['finish']['time'] ) ) {
 						echo '<p>čas: ' . $event['finish']['time'] . '</p>';
@@ -216,6 +216,10 @@ $kct_current = kct_event_find( $kct_events, (int) get_the_ID(), (int) $db_event_
 				</div>
 			<?php }
 
+			// Trasy, po kterých akce vede, kartami jako ve výpisu tras. Vrací
+			// prázdný řetězec, když akce trasy nemá nebo Turinka neodpovídá.
+			echo kct_container()->get( \Kct\Turinka\EventRoutesPublic::class )->html( $event );
+
 			// ── Náhled PDF propozice na konci obsahu (pokud existuje) ──
 			$kct_proposals = array();
 			if ( ! empty( $event['proposal'] ) ) {
@@ -236,7 +240,7 @@ $kct_current = kct_event_find( $kct_events, (int) get_the_ID(), (int) $db_event_
 
 			if ( ! empty( $kct_proposals ) ) : ?>
 				<section class="event-proposal">
-					<h2 class="event-proposal__title">Propozice</h2>
+					<h2 class="event-proposal__title event-section__title">Propozice</h2>
 					<?php foreach ( $kct_proposals as $kct_p ) :
 						$kct_purl  = $kct_p['url'];
 						$kct_pname = ! empty( $kct_p['name'] ) ? $kct_p['name'] : 'Propozice (PDF)';
@@ -245,13 +249,26 @@ $kct_current = kct_event_find( $kct_events, (int) get_the_ID(), (int) $db_event_
 							<?php if ( count( $kct_proposals ) > 1 ) : ?>
 								<figcaption class="event-proposal__name"><?php echo esc_html( $kct_pname ); ?></figcaption>
 							<?php endif; ?>
-							<object class="event-proposal__frame" data="<?php echo esc_url( $kct_purl ); ?>#view=FitH" type="application/pdf">
-								<div class="event-proposal__fallback">
-									<p>Náhled PDF se nepodařilo zobrazit ve tvém prohlížeči.<br>
-										<a href="<?php echo esc_url( $kct_purl ); ?>" target="_blank" rel="noopener">Otevřít PDF ↗</a></p>
-								</div>
-							</object>
-							<a class="event-proposal__open" href="<?php echo esc_url( $kct_purl ); ?>" target="_blank" rel="noopener">Otevřít PDF v novém okně ↗</a>
+							<?php
+							// Odkaz je NAD náhledem, protože je to to užitečné: propozice
+							// jsou povinný formát a jejich obsah se čte v prohlížeči PDF,
+							// ne v rámečku na stránce.
+							//
+							// Náhled sám je `<details>` a adresu dostane teprve skriptem
+							// (`data-pdf`): na mobilu se A4 zmenšená na šířku telefonu
+							// nepřečte a stahovat kvůli ní megabajty by bylo plýtvání.
+							// Bez JavaScriptu zůstane místo náhledu text s odkazem.
+							?>
+							<a class="event-proposal__open" href="<?php echo esc_url( $kct_purl ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Otevřít propozice v PDF', 'kct' ); ?> ↗</a>
+							<details class="event-proposal__preview" data-pdf-preview open>
+								<summary class="event-proposal__preview-toggle"><?php esc_html_e( 'Náhled dokumentu', 'kct' ); ?></summary>
+								<object class="event-proposal__frame" data-pdf="<?php echo esc_url( $kct_purl ); ?>#view=FitH" type="application/pdf">
+									<div class="event-proposal__fallback">
+										<p><?php esc_html_e( 'Náhled PDF tento prohlížeč nezobrazí.', 'kct' ); ?><br>
+											<a href="<?php echo esc_url( $kct_purl ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Otevřít PDF', 'kct' ); ?> ↗</a></p>
+									</div>
+								</object>
+							</details>
 						</figure>
 					<?php endforeach; ?>
 				</section>
@@ -282,7 +299,7 @@ $kct_current = kct_event_find( $kct_events, (int) get_the_ID(), (int) $db_event_
 
 				<?php
 				if ( isset( $event['image'] ) && $event['image'] ) {
-					printf( '<img src="%s" title="%2$s" alt="%2$s">', $event['image']['url'], $event['title'] );
+					echo kct_event_sidebar_image( (string) $event['image']['url'], (string) $event['title'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- hotové HTML z jedné funkce
 				} elseif ( $image_url ) {
 					kct_post_thumbnail();
 				}
@@ -320,8 +337,13 @@ $kct_current = kct_event_find( $kct_events, (int) get_the_ID(), (int) $db_event_
 						echo '</ul>';
 					}
 				endif;
+
+				// Předpověď počasí k akci z Turinky. Vrací prázdný řetězec, když
+				// akce už byla, nemá souřadnice nebo je dál, než předpověď dohlédne.
+				echo kct_container()->get( \Kct\Turinka\Weather::class )->snippet( $event );
+
 				if ( isset( $event['contact'] ) && ! empty( $event['contact'] ) ) : ?>
-					<h3>Kontakt</h3>
+					<h2 class="event-section__title">Kontakt</h2>
 					<?php
 					$contacts = 1;
 					if ( ! empty( $event['contact']['person'] ) && is_array( $event['contact']['person'] ) ) {
@@ -356,8 +378,13 @@ $kct_current = kct_event_find( $kct_events, (int) get_the_ID(), (int) $db_event_
 					}
 					?>
 				<?php endif;
-				if ( isset( $event['proposal'] ) && ( ! empty( $event['proposal']['url'] ) || isset( $event['proposal'][0]['url'] ) ) ) : ?>
-					<h3>Propozice</h3>
+				// Odkaz na propozice v postranním sloupci jen tehdy, když je oddíl
+				// s náhledem v obsahu nemá. Oddíl bere jen PDF (`$kct_proposals`
+				// výš), takže tohle pokrývá propozice v jiném formátu — jinak by
+				// stránka měla dva stejné nadpisy „Propozice" a dva odkazy na týž
+				// soubor, jeden nad druhým.
+				if ( empty( $kct_proposals ) && isset( $event['proposal'] ) && ( ! empty( $event['proposal']['url'] ) || isset( $event['proposal'][0]['url'] ) ) ) : ?>
+					<h2 class="event-section__title">Propozice</h2>
 					<p>
 						<?php $icon = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 20 20">
 						<path fill="currentColor"

@@ -12,13 +12,13 @@ $image = $args['image'] ?? 0;
 $title = $args['title'] ?? '';
 $text  = $args['text'] ?? '';
 $link  = $args['link'] ?? array();
-$color = $args['color'] ?? '';
+$accent = $args['accent'] ?? '';
 
 $has_link = ! empty( $link['url'] );
 $tag      = $has_link ? 'a' : 'div';
 
 ?>
-<<?= $tag ?> class="cart shadow"<?php if ( $has_link ) : ?> href="<?= esc_url( $link['url'] ) ?>" target="<?= esc_attr( $link['target'] ?? '' ) ?>" title="<?= esc_attr( $link['label'] ?? '' ) ?>"<?php endif; ?><?= $color ? ' style="--cart-accent: var(' . esc_attr( $color ) . ')"' : '' ?>>
+<<?= $tag ?> class="cart shadow"<?php if ( $has_link ) : ?> href="<?= esc_url( $link['url'] ) ?>" target="<?= esc_attr( $link['target'] ?? '' ) ?>" title="<?= esc_attr( $link['label'] ?? '' ) ?>"<?php endif; ?><?= $accent ? ' style="--cart-accent: ' . esc_attr( $accent ) . '"' : '' ?>>
 	<?php if ( ! empty( $image ) ) {
 		echo wp_get_attachment_image( $image, 'medium' );
 	} ?>

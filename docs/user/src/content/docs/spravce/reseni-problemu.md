@@ -2,7 +2,7 @@
 title: Řešení problémů
 description: Nejčastější potíže na webech se šablonou KČT a postup, jak je odstranit.
 sidebar:
-  order: 6
+  order: 7
 ---
 
 Po přečtení téhle stránky bude jasné, co dělat u nejčastějších potíží — a kdy
@@ -23,7 +23,7 @@ načítají v dávkách, ne při každém zobrazení stránky.
 
 ## Příspěvek se neodeslal na Facebook
 
-1. V **Nastavení → KČT** na záložce *Facebook* stisknout tlačítko **Ověřit
+1. V **KČT → Nastavení** na záložce *Facebook* stisknout tlačítko **Ověřit
    připojení**. Vypíše se název stránky, ke které token patří, nebo chyba od
    Facebooku.
 2. Nejčastější příčina je **propadlý nebo zneplatněný token**. Platnost končí
@@ -38,6 +38,20 @@ načítají v dávkách, ne při každém zobrazení stránky.
 Podrobnosti jsou na stránce
 [Sdílení na Facebook](/funkce/sdileni-na-facebook/), uložení tokenu řeší
 stránka [Bezpečnost](/spravce/bezpecnost/).
+
+## Příspěvek se odeslal, ale nikdo ho nevidí
+
+Editor hlásí úspěšné odeslání, odkaz na příspěvek se otevře a příspěvek na zdi
+stránky opravdu je — jenže ostatní lidé ho na stránce nenajdou.
+
+Příčinou bývá **nezveřejněná aplikace** v Metě. Dokud je ve vývojovém režimu,
+vidí její příspěvky jen ti, kdo v ní mají přidělenou roli; pro všechny ostatní
+jsou neviditelné, přestože Facebook odeslání potvrdil. V kódu ani v nastavení
+webu se po tom pátrat nedá, chyba tam žádná není.
+
+Ověřit se to dá otevřením stránky odboru v anonymním okně prohlížeče. Postup
+nápravy je na stránce
+[Aplikace v Metě pro sdílení](/spravce/facebook-aplikace/).
 
 ## Změna na webu není vidět
 

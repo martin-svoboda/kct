@@ -5,7 +5,7 @@
 	"title": "Info karta",
 	"category": "kct",
 	"icon": "index-card",
-	"description": "Jedna info karta – obrázek, nadpis, text, odkaz a barva. Ideální do sloupců.",
+	"description": "Jedna info karta – obrázek, nadpis, text, odkaz a barva proužku. Ideální do sloupců.",
 	"textdomain": "kct",
 	"supports": {
 		"html": false,

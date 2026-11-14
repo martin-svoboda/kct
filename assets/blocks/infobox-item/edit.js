@@ -12,17 +12,30 @@ import { useSelect } from '@wordpress/data';
 
 /**
  * Info karta — nativní blok do sloupců. Nadpis a text inline (RichText), obrázek
- * přes Media, barva a odkaz v postranním panelu. Render zajišťuje PHP (.cart markup).
+ * přes Media, barva proužku a odkaz v postranním panelu. Render zajišťuje PHP
+ * (.cart markup).
+ *
+ * Hodnota barvy je KLÍČ, ne jméno CSS proměnné: na token ho přeloží PHP
+ * (InfoboxItemBlock::ACCENTS), takže se z obsahu nedá do stylu dostat nic
+ * jiného než barva ze seznamu. Tenhle seznam proto musí držet s tím v PHP.
  */
 
+const ACCENTS = {
+	'': 'var(--primary)',
+	blue: 'var(--kct-blue)',
+	red: 'var(--kct-red)',
+	green: 'var(--kct-green)',
+	yellow: 'var(--kct-yellow)',
+	dark: 'var(--text)',
+};
+
 const COLORS = [
-	{ value: '', label: __( 'Výchozí (primární)', 'kct' ) },
-	{ value: '--primary-color', label: __( 'Primární barva', 'kct' ) },
-	{ value: '--secondary-color', label: __( 'Sekundární barva', 'kct' ) },
-	{ value: '--red-color', label: __( 'Červená', 'kct' ) },
-	{ value: '--blue-color', label: __( 'Modrá', 'kct' ) },
-	{ value: '--green-color', label: __( 'Zelená', 'kct' ) },
-	{ value: '--yellow-color', label: __( 'Žlutá', 'kct' ) },
+	{ value: '', label: __( 'Primární barva webu', 'kct' ) },
+	{ value: 'blue', label: __( 'Modrá značka', 'kct' ) },
+	{ value: 'red', label: __( 'Červená značka', 'kct' ) },
+	{ value: 'green', label: __( 'Zelená značka', 'kct' ) },
+	{ value: 'yellow', label: __( 'Žlutá značka', 'kct' ) },
+	{ value: 'dark', label: __( 'Tmavá', 'kct' ) },
 ];
 
 export default function Edit( { attributes, setAttributes } ) {
@@ -33,9 +46,13 @@ export default function Edit( { attributes, setAttributes } ) {
 
 	const setLink = ( next ) => setAttributes( { link: { ...link, ...next } } );
 
+	// Proužek nad kartou, ne podbarvení celé karty: editor má ukazovat totéž,
+	// co uvidí návštěvník. Starší obsah nese klíče `--*-color`, které tenhle
+	// seznam nezná — proužek se v editoru ukáže primární barvou, na webu
+	// správnou, a srovná se to, jak kdo kartu uloží.
 	const blockProps = useBlockProps( {
 		className: 'cart shadow',
-		style: color ? { backgroundColor: `var(${ color })` } : undefined,
+		style: { '--cart-accent': ACCENTS[ color ] || ACCENTS[ '' ] },
 	} );
 
 	return (
@@ -43,8 +60,8 @@ export default function Edit( { attributes, setAttributes } ) {
 			<InspectorControls>
 				<PanelBody title={ __( 'Nastavení karty', 'kct' ) } initialOpen={ true }>
 					<SelectControl
-						label={ __( 'Barva boxu', 'kct' ) }
-						value={ color }
+						label={ __( 'Barva proužku nad kartou', 'kct' ) }
+						value={ COLORS.some( ( c ) => c.value === color ) ? color : '' }
 						options={ COLORS }
 						onChange={ ( v ) => setAttributes( { color: v } ) }
 						__nextHasNoMarginBottom

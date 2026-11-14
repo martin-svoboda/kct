@@ -35,6 +35,12 @@
 }
 
 // ── Filtr ──────────────────────────────────────────────────────────────────
+// Celý filtr je sbalitelný box (`<details>`). Na mobilu je zavřený a zavřený
+// říká v jednom řádku, co je nastavené; na tabletu a výš je rozbalený a
+// přepínač se vůbec nenabízí.
+//
+// `display` se na `<details>` nikde nenastavuje: prohlížeč tím přestane
+// v zavřeném stavu schovávat obsah. Rozvržení drží `__body` a `__fields`.
 .events-filter {
 	background: var(--surface);
 	color: var(--text);
@@ -46,14 +52,46 @@
 	transform: translateX(-50%);
 	margin-bottom: 28px;
 
-	&__inner {
+	&__summary {
+		// Na tabletu a výš není co sbalovat — filtr je buď lišta na plnou šířku,
+		// nebo postranní karta, a v obojím je místa dost.
+		display: none;
+	}
+
+	// Zavřený box schováme SAMI. Spoléhat na to, že `<details>` obsah skryje,
+	// nejde: jakmile má potomek vlastní `display`, prohlížeč výchozí skrytí
+	// přebije a obsah zůstane vykreslený — jen přeteče mimo box.
+	&__box:not([open]) &__body {
+		display: none;
+	}
+
+	&__body {
+		display: flex;
+		flex-direction: column;
 		max-width: $container-width;
 		margin: 0 auto;
+		padding: 16px 20px;
+		// Rychlá volba teď stojí nad poli na každé šířce, takže mezi nimi musí
+		// být odstup; dokud byla pod nimi, vystačila si s vlastním paddingem.
+		gap: 14px;
+
+		// Pořadí drží HTML a `order` se tu nepoužívá. Rychlá volba je první na
+		// všech šířkách: tři odkazy pokryjí většinu toho, proč lidé na výpis
+		// chodí, kdežto vyplnit dvě data je výjimka. Dřív to tak bylo jen na
+		// mobilu a na širší obrazovce `order` pořadí obracel — jenže Tab chodí
+		// po HTML, ne po tom, co je vidět, takže fokus skákal z poloviny karty
+		// nahoru a zase dolů.
+	}
+
+	&__inner {
+		margin: 0;
+	}
+
+	&__fields {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 1rem 1.5rem;
-		padding: 16px 20px;
 	}
 
 	label {
@@ -91,6 +129,101 @@
 		padding: 10px 18px;
 		cursor: pointer;
 	}
+
+	// 767, ne 768: na týž pixel se musí trefit i skript, který box zavírá.
+	@media (max-width: $medium-screen - 1px) {
+		margin-bottom: 20px;
+
+		&__summary {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: .75rem;
+			// Dotykový cíl s rezervou: je to jediné, čím se filtr na mobilu otevírá.
+			min-height: 48px;
+			padding: 12px 16px;
+			cursor: pointer;
+			font-family: var(--font-head);
+
+			&::-webkit-details-marker {
+				display: none;
+			}
+
+			&::marker {
+				content: '';
+			}
+
+			// Šipka vpravo, otočená podle stavu. Vlastní, protože výchozí trojúhelník
+			// prohlížeče stojí vlevo a text by se o něj odsadil.
+			&::after {
+				content: '';
+				flex: 0 0 auto;
+				width: .55rem;
+				height: .55rem;
+				border-right: 2px solid var(--primary);
+				border-bottom: 2px solid var(--primary);
+				transform: rotate(45deg);
+				transform-origin: center;
+				transition: transform .15s ease;
+			}
+		}
+
+		&__box[open] &__summary::after {
+			transform: rotate(-135deg);
+		}
+
+		&__summary-title {
+			font-weight: 700;
+			color: var(--primary);
+			white-space: nowrap;
+		}
+
+		// Co je nastavené. Zkrátí se třemi tečkami, ať řádek nepřeteče.
+		&__summary-state {
+			flex: 1 1 auto;
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			text-align: right;
+			font-size: .85rem;
+			font-weight: 600;
+			color: var(--text-muted);
+		}
+
+		&__body {
+			padding: 0 16px 14px;
+		}
+
+		&__fields {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 10px;
+		}
+
+		// Popisek nad polem a zarovnaný vlevo. `align-items: center` ze
+		// základních pravidel platí pro řádek popisek+pole na desktopu; tady je
+		// pole pod popiskem, a tam by to oboje srazilo na střed sloupce.
+		&__field {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 4px;
+			text-align: left;
+		}
+
+		&__field label {
+			text-align: left;
+		}
+
+		input,
+		select {
+			width: 100%;
+			box-sizing: border-box;
+			// Pod 16 px si iOS stránku při zaostření pole sám přiblíží.
+			font-size: 16px;
+		}
+	}
+
 }
 
 // Průběh AJAX filtrování — jemné ztlumení výpisu.
@@ -103,6 +236,140 @@
 .events-empty {
 	color: var(--text-muted);
 	padding: 20px 0;
+
+	p {
+		margin: 0 0 .4rem;
+	}
+
+	// Nejbližší akce je tu to podstatné — ne ztlumená poznámka, ale věta,
+	// kvůli které se dá z prázdného výpisu pokračovat.
+	&__next {
+		color: var(--text);
+		font-size: 1.05rem;
+	}
+
+	&__all a {
+		font-weight: 600;
+	}
+}
+
+// ── Rychlá volba rozsahu ───────────────────────────────────────────────────
+// Odkazy, ne tlačítka: každý rozsah má vlastní adresu. Vedle datumových polí,
+// protože ta zůstávají pro vlastní rozsah — tohle jsou jen tři nejčastější.
+.events-filter__ranges {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: .5rem .75rem;
+	padding: 0;
+
+	// Stejný popisek jako „Od“, „Do“ a „Typ akce“ — všechny čtyři teď stojí
+	// pod sebou v jedné kartě a lišily by se jen tenhle.
+	&-label {
+		font-weight: 700;
+		font-size: 12.5px;
+		text-transform: uppercase;
+		letter-spacing: .04em;
+		color: var(--text-muted);
+	}
+
+	ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: .4rem;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	a {
+		display: inline-flex;
+		align-items: center;
+		min-height: 36px;
+		padding: 6px 14px;
+		border: 1px solid var(--line);
+		border-radius: var(--chip-radius);
+		font-size: .9rem;
+		font-weight: 600;
+		color: var(--text);
+		text-decoration: none;
+
+		&:hover {
+			filter: none;
+			background: var(--surface-alt);
+		}
+
+		&.is-current {
+			background: var(--primary);
+			border-color: var(--primary);
+			color: var(--primary-contrast);
+
+			// Obrys fokusu bere barvu z `currentColor` (base.scss) a ten je
+			// tady světlý, aby se četl na barevném chipu. Jenže `outline`
+			// leží kus VEDLE prvku, tedy už na pozadí stránky, kde se světlá
+			// barva ztratí. Tmavý prstenec pod obrysem ho od stránky oddělí —
+			// stejné řešení jako u barevných tlačítek v button.scss.
+			&:focus-visible {
+				box-shadow: 0 0 0 4px rgba(9, 16, 26, .35);
+			}
+		}
+	}
+
+	.events-filter__reset {
+		border-style: dashed;
+		color: var(--text-muted);
+	}
+}
+
+// ── Dotažení dalších akcí ──────────────────────────────────────────────────
+// Tlačítko pod výpisem. Při běžném rolování na něj většinou nedojde — skript
+// dotahuje sám — takže tu nestojí jako hlavní akce stránky, ale jako klidná
+// patka seznamu.
+.events-more {
+	margin-top: 2rem;
+	text-align: center;
+
+	&__button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		// 44 px na výšku: je to jediný ovládací prvek pod dlouhým seznamem
+		// a trefit se do něj palcem musí jít napoprvé.
+		min-height: 44px;
+		padding: 0 1.4rem;
+		border: 1px solid var(--line);
+		border-radius: var(--chip-radius);
+		font-weight: 700;
+		text-decoration: none;
+		color: var(--text);
+
+		&:hover {
+			filter: none;
+			background: var(--surface-alt);
+		}
+	}
+
+	&.is-loading &__button {
+		opacity: .7;
+		pointer-events: none;
+	}
+
+	// Po nepovedeném pokusu: text tlačítka to říká slovy, čára přerušovaně
+	// naznačí, že tohle není obvyklý stav. Barvu pro chybu šablona nemá
+	// a vymýšlet ji kvůli jednomu tlačítku by znamenalo zavést ji potichu.
+	&.has-error &__button {
+		border-style: dashed;
+	}
+}
+
+// Počet nalezených akcí nad výpisem. Je to zároveň `role="status"`, takže ho
+// odečítač obrazovky přečte po každém přefiltrování — a při chybě sem skript
+// napíše, že se filtr nepovedl. Proto zůstává vidět i při nule.
+.events-count {
+	margin: 0 0 1rem;
+	font-size: .9rem;
+	font-weight: 600;
+	color: var(--text-muted);
 }
 
 // ── Desktop: sticky sidebar vpravo ──────────────────────────────────────────
@@ -139,13 +406,16 @@
 		box-shadow: var(--shadow-card);
 		overflow: hidden;
 
-		&__inner {
+		&__body {
+			padding: 20px;
+			max-width: none;
+			gap: 16px;
+		}
+
+		&__fields {
 			flex-direction: column;
 			align-items: stretch;
 			gap: 16px;
-			padding: 20px;
-			max-width: none;
-			margin: 0;
 		}
 
 		&__field {

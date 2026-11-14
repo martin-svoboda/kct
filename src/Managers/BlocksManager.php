@@ -10,6 +10,8 @@ use Kct\Blocks\ImageWithContentBlock;
 use Kct\Blocks\InfoBoxesBlock;
 use Kct\Blocks\InfoboxItemBlock;
 use Kct\Blocks\NewsBlock;
+use Kct\Blocks\TurinkaItemsBlock;
+// use Kct\Blocks\RoutesBlock;          trasy vypnuté, viz PostTypesManager
 use KctDeps\Wpify\Asset\AssetFactory;
 use KctDeps\Wpify\PluginUtils\PluginUtils;
 
@@ -24,7 +26,9 @@ final class BlocksManager {
 		ActionBlock $action_block,
 		InfoBoxesBlock $info_boxes_block,
 		EventsBlock $events_block,
+		// RoutesBlock $routes_block,        trasy vypnuté, viz PostTypesManager
 		NewsBlock $news_block,
+		TurinkaItemsBlock $turinka_items_block,
 		ImageWithContentBlock $image_with_content_block,
 		InfoboxItemBlock $infobox_item_block,
 		EyebrowBlock $eyebrow_block

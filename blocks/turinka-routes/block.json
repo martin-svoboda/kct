@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "kct/turinka-routes",
+	"title": "Trasy z Turinky",
+	"category": "kct",
+	"icon": "location-alt",
+	"description": "Výpis tras z aplikace Turinka (dynamický blok).",
+	"textdomain": "kct",
+	"supports": {
+		"html": false,
+		"customClassName": false,
+		"reusable": true
+	},
+	"attributes": {
+		"count": { "type": "number", "default": 6 },
+		"scope": { "type": "string", "default": "mine" },
+		"difficulty": { "type": "string", "default": "" },
+		"heading": { "type": "string", "default": "" }
+	}
+}

@@ -127,7 +127,7 @@ class Departments {
 	 */
 	private function warn_missing_export_url(): void {
 		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			\WP_CLI::warning( __( 'Adresa exportu z Databáze akcí KČT není vyplněná v Nastavení → KČT. Import se nespustil.', 'kct' ) );
+			\WP_CLI::warning( __( 'Adresa exportu z Databáze akcí KČT není vyplněná v KČT → Nastavení. Import se nespustil.', 'kct' ) );
 		}
 	}
 

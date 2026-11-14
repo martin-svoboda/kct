@@ -9,6 +9,14 @@
 			& > a {
 				border-top: 2px solid transparent;
 				padding: 10px 12px;
+				// Ve vysouvacím panelu se na položky míří prstem, takže dostanou
+				// doporučených 44 px. Na desktopu, kde se míří myší, se výška
+				// nemění — tam by o šest pixelů narostl celý pruh hlavičky.
+				@media (max-width: $large-screen - 1px) {
+					display: flex;
+					align-items: center;
+					min-height: 44px;
+				}
 				font-family: var(--font-body);
 				font-weight: 600;
 				font-size: 14px;
@@ -32,7 +40,7 @@
 					background: var(--surface);
 					border: 1px solid var(--line);
 					border-radius: var(--radius-card);
-					box-shadow: 0 20px 44px -24px rgba(11, 22, 34, .55);
+					box-shadow: var(--shadow-overlay);
 					z-index: 99999;
 
 					// skryté; plynulé zobrazení místo starého left:-999em
@@ -56,6 +64,13 @@
 					padding: 9px 12px;
 					border-radius: var(--radius-sm);
 					font-size: 14px;
+
+					// Totéž co u položek první úrovně: v panelu na dotyk 44 px.
+					@media (max-width: $large-screen - 1px) {
+						display: flex;
+						align-items: center;
+						min-height: 44px;
+					}
 					font-weight: 600;
 					line-height: 1.25;
 					letter-spacing: .01em;
