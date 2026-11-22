@@ -5,6 +5,7 @@ namespace Kct\Managers;
 use Kct\Features\AdminHelp;
 use Kct\Features\AdminMenu;
 use Kct\Features\ArchiveSeo;
+use Kct\Features\ContactGuard;
 use Kct\Features\DbEventShare;
 use Kct\Features\DepartmentSeo;
 use Kct\Features\EventRoutes;
@@ -25,6 +26,7 @@ use Kct\Updates\UpdateChecker;
 final class FeaturesManager {
 	public function __construct(
 		Events $events,
+		ContactGuard $contact_guard,
 		EventRoutes $event_routes,
 		EventsOverview $events_overview,
 		// Routes $routes,                    trasy vypnuté, viz PostTypesManager

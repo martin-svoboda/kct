@@ -23,7 +23,10 @@ a popisek výpisu aktualit. Šablona to za něj udělá správně.
 - **Popisek** poskládaný z dat akce: druh akce, kdy a kde se koná, kdo ji
   pořádá. Zkrátí se na délku, kterou vyhledávač zobrazí. Volný text má
   vyplněná jen menšina akcí, popisek proto stojí na datech a text ho jen
-  doplní, když po nich zbude místo.
+  doplní, když po nich zbude místo. Je-li v tom textu e-mail nebo telefon,
+  ukázka z něj se vynechá celá: popisek je čistý text bez odkazů, takže by
+  v něm kontakt stál čitelně a obešel
+  [ochranu kontaktů](/funkce/ochrana-kontaktu/).
 - **Kanonická adresa** — viz oddíl níž.
 - **Strukturovaná data typu Event**: název, začátek a konec, stav akce, místo
   se souřadnicemi a adresou, pořadatel, obrázek, adresa stránky. Díky nim
@@ -41,7 +44,10 @@ u každé akce stálo jméno oblasti, což by nebyla pravda.
   odbor, takže by jinak zůstal prázdný.
 - **Sdílecí obrázek**.
 - **Strukturovaná data typu SportsOrganization**: název, adresa, souřadnice,
-  kontakt.
+  odkaz na web odboru. Telefon ani e-mail v nich **záměrně nejsou** —
+  strukturovaná data jsou ve stránce čitelným textem, takže by kontakt obešel
+  [ochranu kontaktů](/funkce/ochrana-kontaktu/), a ve výsledcích vyhledávání
+  se neukazují.
 
 Tahle část se zapojí jen na webu, kde běží Rank Math. Bez něj dostane detail
 odboru aspoň obecné značky pro sociální sítě, které šablona vypisuje u každé

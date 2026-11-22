@@ -92,15 +92,18 @@ class DepartmentSeoData {
 			$schema['geo'] = $geo;
 		}
 
-		$phone = $this->first( $department['phones'] ?? array() );
-		if ( $phone ) {
-			$schema['telephone'] = $phone;
-		}
-
-		$email = $this->first( $department['emails'] ?? array() );
-		if ( $email ) {
-			$schema['email'] = $email;
-		}
+		// Telefon ani e-mail do schématu nepatří, i když je schema.org u
+		// organizace připouští. Schéma je `<script>` s čistým textem, takže by
+		// kontakt každého odboru ležel ve zdroji stránky čitelně — a to je ta
+		// nejpohodlnější podoba pro sběrače adres, strojově čitelnější než
+		// cokoli ve vlastním textu stránky. Zbytek webu kontakt vydává jedině
+		// zakódovaně (viz Kct\Features\ContactGuard), tak to tady nemá kudy
+		// obejít.
+		//
+		// Vyhledávač o to nepřijde: `telephone` a `email` u SportsOrganization
+		// nic viditelného ve výsledcích nenesou, kontakt na odbor stojí
+		// v obsahu jeho stránky a popisek na něj upozorňuje větou
+		// CONTACT_SENTENCE.
 
 		$website = $this->website_url( $department );
 		if ( $website ) {
@@ -189,23 +192,6 @@ class DepartmentSeoData {
 			'latitude'  => $lat,
 			'longitude' => $lng,
 		);
-	}
-
-	/** První neprázdná hodnota ze serializovaného pole (telefony, e-maily). */
-	private function first( $values ): string {
-		if ( ! is_array( $values ) ) {
-			return $this->text( $values );
-		}
-
-		foreach ( $values as $value ) {
-			$value = $this->text( $value );
-
-			if ( '' !== $value ) {
-				return $value;
-			}
-		}
-
-		return '';
 	}
 
 	/**

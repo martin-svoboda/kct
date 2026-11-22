@@ -360,13 +360,17 @@ $kct_current = kct_event_find( $kct_events, (int) get_the_ID(), (int) $db_event_
 							'web'    => ! isset( $event['contact']['web'] ) ? '' : ( is_array( $event['contact']['web'] ) && isset( $event['contact']['web'][ $k ] ) ? $event['contact']['web'][ $k ] : $event['contact']['web'] ),
 						);
 
+						// Telefon ani e-mail nejde do HTML čitelně — skládá je
+						// ContactGuard a odkaz z nich udělá skript v prohlížeči.
+						$kct_contacts = kct_container()->get( \Kct\Features\ContactGuard::class );
+
 						$data = [];
 						foreach ( $input_data as $name => $value ) {
 							if ( ! empty( $value ) ) {
 								if ( $name === 'phone' ) {
-									$data[] = sprintf( '<a href="tel:%1$s">%1$s</a>', $value );
+									$data[] = $kct_contacts->phone( (string) $value );
 								} elseif ( $name === 'email' ) {
-									$data[] = sprintf( '<a href="mailto:%1$s">%1$s</a>', $value );
+									$data[] = $kct_contacts->email( (string) $value );
 								} elseif ( $name === 'web' ) {
 									$data[] = sprintf( '<a href="%1$s" target="_blank">%1$s</a>', $value );
 								} else {
@@ -374,7 +378,7 @@ $kct_current = kct_event_find( $kct_events, (int) get_the_ID(), (int) $db_event_
 								}
 							}
 						}
-						echo '<p>' . implode( ', ', $data ) . '</p>';
+						echo '<p>' . implode( ', ', array_filter( $data ) ) . '</p>';
 					}
 					?>
 				<?php endif;

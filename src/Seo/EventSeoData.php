@@ -3,6 +3,7 @@
 namespace Kct\Seo;
 
 use DateTimeImmutable;
+use Kct\Features\ContactScanner;
 
 /**
  * Skládá SEO hodnoty z pole akce.
@@ -67,6 +68,8 @@ class EventSeoData {
 	 * Volný text (`content`) má vyplněná jen menšina akcí a bývá krátký, takže
 	 * popisek stojí na datech a text ho jen doplní, když po nich zbude místo.
 	 *
+	 * Ukázka z textu se vynechá celá, když je v něm kontakt — viz níže.
+	 *
 	 * @param array $event Pole akce z Events::get_event().
 	 * @param int   $limit Maximální délka výsledku. Meta popisek má jiný strop
 	 *                      než Event.description ve schema.org — volající si
@@ -84,6 +87,18 @@ class EventSeoData {
 		$description = implode( ' ', $sentences );
 
 		$content = trim( wp_strip_all_tags( $this->text( $event['content'] ?? '' ) ) );
+
+		// Popisek je čistý text bez odkazů, takže chráněný zápis kontaktu
+		// ({@see \Kct\Features\ContactGuard}) do něj vložit nejde — adresa
+		// z textu akce by v něm stála čitelně a byla by pro sběrače tou
+		// nejpohodlnější podobou vůbec. Text s kontaktem se proto do ukázky
+		// nebere vůbec: vyškrtnout z něj adresu by znamenalo přepsat větu
+		// uprostřed a nechat ji bez konce. Popisek stojí na datech akce,
+		// ukázka ho jen doplňuje, takže bez ní nechybí nic podstatného.
+		if ( $content && ContactScanner::has_contact( $content ) ) {
+			$content = '';
+		}
+
 		if ( $content ) {
 			$remaining = $limit - mb_strlen( $description ) - 1;
 

@@ -1,10 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-	var obfuscatedEmails = document.querySelectorAll('.email-obfuscated');
-
-	obfuscatedEmails.forEach(function(element) {
-		var obfuscatedEmail = element.getAttribute('data-email').replace(" [zav] ", "@");
-		element.innerHTML = '<a href="mailto:' + obfuscatedEmail + '">' + obfuscatedEmail + '</a>';
-	});
+	initContactGuard();
 
 	// Záložní přepínač mobilního menu pro šablonu, která si žádný nenese.
 	//
@@ -38,6 +33,68 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	initDepartmentsFilter();
 });
+
+/**
+ * Složení kontaktních odkazů ze zakódovaných hodnot.
+ *
+ * E-mail ani telefon nejsou v HTML čitelně — ve zdroji leží jen hex, který
+ * server složil XORem jednoho bajtu (prvním bajtem výstupu). Není to šifra,
+ * klíč je ve stejné stránce; jde o to, aby ve zdroji nezbyl vzorek, na který
+ * se dá napsat regulární výraz.
+ *
+ * Teprve tady vznikne skutečný odkaz s plným textem, takže kopírování,
+ * odečítač obrazovky i klepnutí na číslo na mobilu fungují jako u obyčejného
+ * odkazu. Kdo skripty nemá, vidí čitelnou zálohu v `<noscript>`.
+ */
+function initContactGuard() {
+	const nodes = document.querySelectorAll('[data-kct-email], [data-kct-tel]');
+
+	Array.prototype.forEach.call(nodes, function(node) {
+		const isEmail = node.hasAttribute('data-kct-email');
+		const value = decodeContact(node.getAttribute(isEmail ? 'data-kct-email' : 'data-kct-tel'));
+
+		if (!value) {
+			// Poškozená hodnota: `<noscript>` zálohu nahradit není čím, ale
+			// smazat ji taky ne — ať tam zůstane, co tam je.
+			return;
+		}
+
+		const link = document.createElement('a');
+
+		// V odkazu `tel:` nemají mezery co dělat, zobrazené číslo si je nechá.
+		link.setAttribute('href', isEmail ? 'mailto:' + value : 'tel:' + value.replace(/[^\d+]/g, ''));
+		link.textContent = node.getAttribute('data-kct-label') || value;
+
+		node.textContent = '';
+		node.appendChild(link);
+	});
+}
+
+/**
+ * Rozebere hex zakódovaný ContactScanner::encode().
+ *
+ * Server hodnotu před XORem procentuálně zakódoval, takže se tady skládá
+ * jen ASCII a diakritiku dorovná decodeURIComponent — po bajtech by se
+ * UTF-8 muselo slepovat ručně.
+ */
+function decodeContact(hex) {
+	if (!hex || hex.length < 4 || hex.length % 2 !== 0 || !/^[0-9a-fA-F]+$/.test(hex)) {
+		return '';
+	}
+
+	const key = parseInt(hex.slice(0, 2), 16);
+	let out = '';
+
+	for (let i = 2; i < hex.length; i += 2) {
+		out += String.fromCharCode(parseInt(hex.slice(i, i + 2), 16) ^ key);
+	}
+
+	try {
+		return decodeURIComponent(out);
+	} catch (e) {
+		return '';
+	}
+}
 
 /**
  * Hledání ve výpisu odborů.

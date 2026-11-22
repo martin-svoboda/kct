@@ -70,23 +70,29 @@ if ( is_single() && has_post_thumbnail() ) {
 			if ( $kct_address ) { ?>
 				<p><?php echo esc_html( implode( ', ', $kct_address ) ) ?></p>
 			<?php } ?>
+			<?php
+			// Kontakt skládá ContactGuard, ne šablona: do HTML nejde čitelně a
+			// odkaz z něj udělá skript v prohlížeči. Dřív se tu e-mail zakrýval
+			// záměnou `@` za ` [zav] ` — pevný vzorek, který se hledá stejně
+			// snadno jako zavináč, a text „Skryto" navíc nechal uživatele bez
+			// skriptů i odečítač obrazovky bez adresy.
+			$kct_contacts = kct_container()->get( \Kct\Features\ContactGuard::class );
+			?>
 			<?php if ( $department->phones ) {
-				$phones = [];
+				$phones = array();
 				foreach ( $department->phones as $phone ) {
-					$phones[] = sprintf( '<a href="tel:%1$s">%1$s</a>', $phone );
+					$phones[] = $kct_contacts->phone( (string) $phone );
 				}
 				?>
-				<p>Tel.: <?php echo implode( ', ', $phones ) ?></p>
+				<p>Tel.: <?php echo implode( ', ', array_filter( $phones ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escapuje ContactGuard ?></p>
 			<?php } ?>
 			<?php if ( $department->emails ) {
-				$emails = [];
+				$emails = array();
 				foreach ( $department->emails as $email ) {
-					// Zakrýt e-mailovou adresu pomocí obfuscation
-					$obfuscated_email = str_replace( "@", " [zav] ", $email );
-					$emails[]         = sprintf( '<span class="email-obfuscated" data-email="%1$s">Skryto</span>', $obfuscated_email );
+					$emails[] = $kct_contacts->email( (string) $email );
 				}
 				?>
-				<p>E-mail: <?php echo implode( ', ', $emails ) ?></p>
+				<p>E-mail: <?php echo implode( ', ', array_filter( $emails ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escapuje ContactGuard ?></p>
 			<?php } ?>
 			<?php if ( $department->web ) { ?>
 				<p><?php printf( '<a href="%s" class="button" target="_blank">%s</a>', esc_url( $department->web ), __( 'Web odboru' ) ) ?></p>

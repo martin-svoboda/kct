@@ -16,6 +16,29 @@ Historie začíná u verze 2.0.0, kterou se šablona začala vydávat veřejně.
 Předchozí vydání vznikala jen pro weby provozované přímo autorem šablony a
 zpětně se nedoplňují — všechno, co uměla, je součástí verze 2.0.0.
 
+## 2.3.0 — 22. 11. 2026
+
+- **Kontakty jsou chráněné před sběrem.** E-mail ani telefon už ve stránce
+  nestojí čitelně; odkaz z zakódované podoby složí prohlížeč teprve člověku.
+  Pro čtenáře se nemění nic a nastavení k tomu žádné není. Viz
+  [Ochrana kontaktů](/funkce/ochrana-kontaktu/).
+
+- **Kontakt přečte i odečítač obrazovky a prohlížeč bez JavaScriptu.** Dřív
+  tam stálo jen slovo „Skryto".
+
+- **Telefon a e-mail pryč ze strukturovaných dat odboru.** Byly v nich čistým
+  textem, takže ochranu obcházely. Ve výsledcích hledání se nezobrazovaly.
+
+- **Popisek akce vynechá text s kontaktem.** Popisek je čistý text bez odkazů,
+  tak se v něm ukázka z textu akce s adresou nebo číslem neobjeví.
+
+- **Zrušené adresy rozhraní.** `/wp-json/kct/v1/events`, `/event-types`
+  a `/departments` vydávaly komukoli bez přihlášení seznam akcí i odborů
+  s kontakty. Šablona je nepoužívala. Kdo si na ně napojil vlastní skript,
+  přijde o ně; výpis akcí dál obsluhuje `/wp-json/kct/v1/events-list`.
+
+Na webu odboru není kvůli tomuhle vydání potřeba nic nastavovat.
+
 ## 2.2.0 — 14. 11. 2026
 
 - **Nastavení šablony se přestěhovalo.** Dřív bylo v *Nastavení → KČT*, nově má

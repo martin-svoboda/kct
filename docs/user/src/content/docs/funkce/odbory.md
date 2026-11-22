@@ -30,7 +30,7 @@ Nadpis příspěvku je název odboru. V panelu **Data odboru** pod editorem se v
 - **Číslo odboru** — registrační číslo odboru v KČT. Zobrazí se v záhlaví stránky odboru a ve výpisu.
 - **Číslo oblasti** — oblast, pod kterou odbor patří.
 - **Adresa** — ulice a číslo popisné, PSČ, obec, stát.
-- **Telefony a e-maily** — dá se jich přidat víc, tlačítkem pod polem. Telefony se vypíšou jako odkazy k vytočení, e-maily skrytě, aby je z webu nesbírali roboti.
+- **Telefony a e-maily** — dá se jich přidat víc, tlačítkem pod polem. Oboje se na webu vypíše jako odkaz, ale zakódovaně, aby adresy z webu nesbírali roboti; podrobně na stránce [Ochrana kontaktů](/funkce/ochrana-kontaktu/).
 - **Web odboru** — adresa včetně `https://`. Zobrazí se jako tlačítko.
 - **Poloha** — zeměpisná šířka a délka jako desetinná čísla (např. 50.2306 a 14.0875). Bez obou souřadnic se u odboru nezobrazí mapka a odbor nebude mít značku v mapě nad výpisem.
 

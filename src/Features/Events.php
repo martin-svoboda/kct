@@ -36,10 +36,10 @@ class Events {
 	 *
 	 * to_array() bez argumentů rozbalí i relace, které tu nikdo nečte —
 	 * author, parent, top_parent, children, featured_image, categories, tags —
-	 * a každá je dotaz navíc (měřeno 52 dotazů na 12 příspěvků místo 16).
-	 * Zároveň tím z veřejného endpointu /kct/v1/events odpadnou pole, která
-	 * tam nemají co dělat (password, filter, guid, to_ping) a tvar položky z
-	 * příspěvku se srovná s tvarem databázové akce.
+	 * a každá je dotaz navíc — u výpisu o desítkách akcí jich tím odpadnou
+	 * násobky. Zároveň se tvar položky z příspěvku srovná s tvarem databázové
+	 * akce a vypadnou pole, která do výpisu nepatří (password, filter, guid,
+	 * to_ping).
 	 *
 	 * Jsou tu jen vlastnosti modelu. `post_id`, `db_title` a `db_department`
 	 * sem nepatří — ty se do pole dopisují až po to_array().

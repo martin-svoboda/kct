@@ -86,7 +86,7 @@ class DepartmentSeo {
 	 * Klíč `richSnippet` záměrně, stejně jako u Event schématu — Rank Math
 	 * u něj v connect_properties() doplní `@id`, `isPartOf` a `publisher`
 	 * (odkaz na organizaci webu), aniž by bylo nutné to psát ručně. Na `name`,
-	 * `address`, `geo`, `telephone`, `email`, `sameAs` ani `parentOrganization`
+	 * `address`, `geo`, `sameAs` ani `parentOrganization`
 	 * přitom nesahá — connect_properties() přepisuje jen `@id`, `isPartOf`,
 	 * `publisher`, `image` a `inLanguage` (viz add_prop() v class-jsonld.php),
 	 * takže tu na rozdíl od Event.organizer u akcí není potřeba druhý filtr na

@@ -28,6 +28,13 @@ Nápověda pro správce webu je na https://napoveda.sokct.cz.
 Podrobněji, s obrázky a odkazy, totéž popisuje
 https://napoveda.sokct.cz/spravce/zmeny-v-sablone/.
 
+= 2.3.0 =
+
+* Ochrana kontaktů: e-maily a telefony se vypisují zakódovaně. Roboti je nesbírají, lidé je vidí a klepnutím použijí.
+* Kontakt přečte i odečítač obrazovky a prohlížeč bez JavaScriptu.
+* Telefon a e-mail pryč ze strukturovaných dat odboru a z popisku akce.
+* Zrušené adresy rozhraní /wp-json/kct/v1/events, /event-types a /departments. Vydávaly akce i odbory s kontakty bez přihlášení.
+
 = 2.2.0 =
 
 * Přibylo menu KČT v administraci — nastavení se přestěhovalo z Nastavení → KČT do vlastního menu nad Vzhledem.

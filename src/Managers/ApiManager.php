@@ -2,7 +2,6 @@
 
 namespace Kct\Managers;
 
-use Kct\Api\DepartmentsApi;
 use Kct\Api\KctApi;
 // use Kct\Api\TurinkaRouteFormApi;     trasy vypnuté, viz PostTypesManager
 use Kct\Api\TurinkaEventRoutesApi;
